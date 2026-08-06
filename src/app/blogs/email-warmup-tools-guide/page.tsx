@@ -48,13 +48,13 @@ function MiniInfographic({
       <h3 className="text-[18px] md:text-[22px] font-bold text-[#111827] leading-tight mb-5">
         {title}
       </h3>
-      <div className="space-y-4 text-[#4f5668] text-[17px] leading-7">
+      <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
         {paragraphs.map((text, index) => (
           <p key={index}>{text}</p>
         ))}
       </div>
       {bullets && bullets.length > 0 ? (
-        <ul className="mt-5 space-y-3 text-[#4f5668] text-[17px] leading-7 list-disc pl-5">
+        <ul className="mt-5 space-y-3 text-[#4f5668] text-[17px] leading-7 list-disc pl-5 text-justify">
           {bullets.map((item, index) => (
             <li key={index}>{item}</li>
           ))}
@@ -76,7 +76,7 @@ function ContentBlock({
       <h3 className="text-[17px] md:text-[19px] font-bold text-[#111827] mb-3">
         {subtitle}
       </h3>
-      <div className="space-y-4 text-[#4f5668] text-[17px] leading-7">
+      <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
         {paragraphs.map((text, index) => (
           <p key={index}>{text}</p>
         ))}
@@ -106,7 +106,6 @@ function SectionImage({ id }: { id: string }) {
   );
 }
 
-// ArticleSection – h2 fixed at 24px, intro text at 17px
 function ArticleSection({
   id,
   title,
@@ -132,7 +131,7 @@ function ArticleSection({
         <h2 className="text-[24px] font-bold text-[#111827] mb-5">
           {title}
         </h2>
-        <div className="space-y-4 text-[#4f5668] text-[17px] leading-7">
+        <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
           {intro.map((text, index) => (
             <p key={index}>{text}</p>
           ))}
@@ -299,12 +298,10 @@ export default function BlogEmailWarmupPage() {
                 <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[11px] md:text-[12px] mb-3">
                   Deliverability Guide
                 </p>
-                {/* Hero title – exactly 42px on desktop */}
-                <h1 className="text-[#111827] text-[28px] md:text-[42px] lg:text-[42px] font-bold leading-[1.08] tracking-[-0.02em] mb-5">
+                <h1 className="text-[#111827] text-[28px] md:text-[36px] lg:text-[42px] font-bold leading-[1.08] tracking-[-0.02em] mb-5">
                   What Are Email Warmup Tools and How Do They Work?
                 </h1>
-                {/* Hero description – exactly 17px */}
-                <p className="text-[17px] text-[#5f6472] max-w-2xl mb-8 leading-relaxed">
+                <p className="text-[17px] text-[#5f6472] max-w-2xl mb-8 leading-relaxed text-justify">
                   You’ve created a new email address. Your prospect list is ready. But sending hundreds of emails immediately could damage your sender reputation. Here’s how warmup tools help.
                 </p>
                 <div className="mb-8 inline-flex flex-wrap items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm">
@@ -373,7 +370,6 @@ export default function BlogEmailWarmupPage() {
 
             {/* Articles */}
             <div className="min-w-0 space-y-14">
-              {/* Introduction */}
               <ArticleSection
                 key="introduction"
                 id="introduction"
@@ -394,7 +390,6 @@ export default function BlogEmailWarmupPage() {
                 blocks={[]}
               />
 
-              {/* What Is Email Warmup */}
               <ArticleSection
                 key="what-is-email-warmup"
                 id="what-is-email-warmup"
@@ -454,7 +449,6 @@ export default function BlogEmailWarmupPage() {
                 blocks={[]}
               />
 
-              {/* What Are Email Warmup Tools */}
               <ArticleSection
                 key="what-are-email-warmup-tools"
                 id="what-are-email-warmup-tools"
@@ -521,7 +515,6 @@ export default function BlogEmailWarmupPage() {
                 blocks={[]}
               />
 
-              {/* How Do Email Warmup Tools Work */}
               <ArticleSection
                 key="how-do-email-warmup-tools-work"
                 id="how-do-email-warmup-tools-work"
@@ -560,7 +553,6 @@ export default function BlogEmailWarmupPage() {
                 ]}
               />
 
-              {/* Sender Reputation */}
               <ArticleSection
                 key="how-sender-reputation-affects-warmup"
                 id="how-sender-reputation-affects-warmup"
@@ -635,7 +627,6 @@ export default function BlogEmailWarmupPage() {
                 ]}
               />
 
-              {/* Choosing a Tool */}
               <ArticleSection
                 key="how-to-choose-an-email-warmup-tool"
                 id="how-to-choose-an-email-warmup-tool"
@@ -667,7 +658,6 @@ export default function BlogEmailWarmupPage() {
                 ]}
               />
 
-              {/* Free vs Paid */}
               <ArticleSection
                 key="free-vs-paid-email-warmup-tools"
                 id="free-vs-paid-email-warmup-tools"
@@ -698,7 +688,6 @@ export default function BlogEmailWarmupPage() {
                 ]}
               />
 
-              {/* Does it work */}
               <ArticleSection
                 key="does-email-warmup-actually-work"
                 id="does-email-warmup-actually-work"
@@ -729,7 +718,6 @@ export default function BlogEmailWarmupPage() {
                 ]}
               />
 
-              {/* Best Practices */}
               <ArticleSection
                 key="best-practices-for-email-warmup"
                 id="best-practices-for-email-warmup"
@@ -766,7 +754,6 @@ export default function BlogEmailWarmupPage() {
                 ]}
               />
 
-              {/* FAQs */}
               <ArticleSection
                 key="faqs"
                 id="faqs"
@@ -805,7 +792,6 @@ export default function BlogEmailWarmupPage() {
                 ]}
               />
 
-              {/* Conclusion */}
               <ArticleSection
                 key="conclusion"
                 id="conclusion"
