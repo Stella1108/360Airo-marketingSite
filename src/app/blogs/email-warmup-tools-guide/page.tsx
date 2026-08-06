@@ -48,13 +48,13 @@ function MiniInfographic({
       <h3 className="text-[18px] md:text-[22px] font-bold text-[#111827] leading-tight mb-5">
         {title}
       </h3>
-      <div className="space-y-4 text-[#4f5668] text-[14px] leading-7">
+      <div className="space-y-4 text-[#4f5668] text-[17px] leading-7">
         {paragraphs.map((text, index) => (
           <p key={index}>{text}</p>
         ))}
       </div>
       {bullets && bullets.length > 0 ? (
-        <ul className="mt-5 space-y-3 text-[#4f5668] text-[14px] leading-7 list-disc pl-5">
+        <ul className="mt-5 space-y-3 text-[#4f5668] text-[17px] leading-7 list-disc pl-5">
           {bullets.map((item, index) => (
             <li key={index}>{item}</li>
           ))}
@@ -76,7 +76,7 @@ function ContentBlock({
       <h3 className="text-[17px] md:text-[19px] font-bold text-[#111827] mb-3">
         {subtitle}
       </h3>
-      <div className="space-y-4 text-[#4f5668] text-[14px] leading-7">
+      <div className="space-y-4 text-[#4f5668] text-[17px] leading-7">
         {paragraphs.map((text, index) => (
           <p key={index}>{text}</p>
         ))}
@@ -86,7 +86,6 @@ function ContentBlock({
 }
 
 function SectionImage({ id }: { id: string }) {
-  // Using a relevant generic image for warmup tools
   const image = {
     src: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1400&q=80',
     alt: 'Email warmup dashboard',
@@ -107,7 +106,7 @@ function SectionImage({ id }: { id: string }) {
   );
 }
 
-// ✅ Updated: infographic is now optional
+// ArticleSection – h2 fixed at 24px, intro text at 17px
 function ArticleSection({
   id,
   title,
@@ -130,15 +129,14 @@ function ArticleSection({
   return (
     <section id={id} className="scroll-mt-28">
       <div>
-        <h2 className="text-[24px] md:text-[28px] font-bold text-[#111827] mb-5">
+        <h2 className="text-[24px] font-bold text-[#111827] mb-5">
           {title}
         </h2>
-        <div className="space-y-4 text-[#4f5668] text-[14px] leading-7">
+        <div className="space-y-4 text-[#4f5668] text-[17px] leading-7">
           {intro.map((text, index) => (
             <p key={index}>{text}</p>
           ))}
         </div>
-        {/* ✅ Only render infographic if provided */}
         {infographic && (
           <MiniInfographic
             title={infographic.title}
@@ -273,7 +271,7 @@ export default function BlogEmailWarmupPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#072f63]/95 via-[#0b4f96]/70 to-transparent" />
                   <div className="relative z-10 h-full p-8 md:p-10 flex flex-col justify-between">
-                    <p className="text-white text-[26px] md:text-[36px] font-bold leading-tight max-w-[420px]">
+                    <p className="text-white text-[26px] md:text-[36px] lg:text-[42px] font-bold leading-tight max-w-[420px]">
                       Email Warmup
                       <br />
                       Tools Guide
@@ -301,10 +299,12 @@ export default function BlogEmailWarmupPage() {
                 <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[11px] md:text-[12px] mb-3">
                   Deliverability Guide
                 </p>
-                <h1 className="text-[#111827] text-[22px] md:text-[30px] lg:text-[34px] font-bold leading-[1.08] tracking-[-0.02em] mb-5">
+                {/* Hero title – exactly 42px on desktop */}
+                <h1 className="text-[#111827] text-[28px] md:text-[42px] lg:text-[42px] font-bold leading-[1.08] tracking-[-0.02em] mb-5">
                   What Are Email Warmup Tools and How Do They Work?
                 </h1>
-                <p className="text-[14px] md:text-[15px] text-[#5f6472] max-w-2xl mb-8 leading-relaxed">
+                {/* Hero description – exactly 17px */}
+                <p className="text-[17px] text-[#5f6472] max-w-2xl mb-8 leading-relaxed">
                   You’ve created a new email address. Your prospect list is ready. But sending hundreds of emails immediately could damage your sender reputation. Here’s how warmup tools help.
                 </p>
                 <div className="mb-8 inline-flex flex-wrap items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm">
@@ -321,6 +321,8 @@ export default function BlogEmailWarmupPage() {
                   <span>Updated: Jun 2026</span>
                   <span>•</span>
                   <span>12 min read</span>
+                  <span>•</span>
+                  <span>1.2K reads</span>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button className="px-7 py-3.5 rounded-xl bg-[#4f63ff] text-white font-semibold text-base shadow-md hover:bg-[#4154f5] transition-all">
@@ -369,7 +371,7 @@ export default function BlogEmailWarmupPage() {
               </nav>
             </aside>
 
-            {/* Articles - now with unique keys */}
+            {/* Articles */}
             <div className="min-w-0 space-y-14">
               {/* Introduction */}
               <ArticleSection
@@ -439,7 +441,6 @@ export default function BlogEmailWarmupPage() {
                 ]}
               />
 
-              {/* ✅ Domain warmup: infographic removed */}
               <ArticleSection
                 key="what-is-email-domain-warmup"
                 id="what-is-email-domain-warmup"
@@ -451,7 +452,6 @@ export default function BlogEmailWarmupPage() {
                   'For revenue teams operating multiple mailboxes, a strong warmup strategy should consider both levels.',
                 ]}
                 blocks={[]}
-                // infographic prop removed
               />
 
               {/* What Are Email Warmup Tools */}
@@ -805,7 +805,7 @@ export default function BlogEmailWarmupPage() {
                 ]}
               />
 
-              {/* ✅ Conclusion – infographic replaced with new content */}
+              {/* Conclusion */}
               <ArticleSection
                 key="conclusion"
                 id="conclusion"
@@ -822,7 +822,6 @@ export default function BlogEmailWarmupPage() {
                   paragraphs: [
                     '360Airo brings email warmup, deliverability intelligence, and AI-powered outreach into a connected workflow, helping revenue teams protect sender reputation and improve campaign performance.',
                   ],
-                  // bullets removed
                 }}
                 blocks={[
                   {
