@@ -1,0 +1,410 @@
+/* ==========================================================================
+   HOMEPAGE PRICING SECTION STYLES
+   ========================================================================== */
+
+.hp-pricing-section {
+  position: relative;
+  background-color: #070B17;
+  color: #FDFDFE;
+  font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+  padding: 100px 0 120px;
+  isolation: isolate;
+}
+
+/* Base Ambient Gradient */
+.hp-pricing-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1400px;
+  height: 800px;
+  background: radial-gradient(circle at 50% 0%, rgba(80, 120, 242, 0.04) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ==========================================================================
+   DOTTED GLOBE ANIMATION
+   ========================================================================== */
+
+.hp-globe-container {
+  position: absolute;
+  top: -100px;
+  right: -200px;
+  width: 800px;
+  height: 800px;
+  z-index: 0;
+  opacity: 0.15;
+  pointer-events: none;
+  animation: slowGlobeRotate 60s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes slowGlobeRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-globe-container {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   LAYOUT
+   ========================================================================== */
+
+.hp-pricing-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 40px);
+  position: relative;
+  z-index: 2;
+}
+
+.hp-pricing-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.hp-pricing-eyebrow {
+  display: inline-block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(253, 253, 254, 0.6);
+  margin-bottom: 16px;
+}
+
+.hp-pricing-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(36px, 4vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px 0;
+  color: #FDFDFE;
+}
+
+.hp-pricing-subtitle {
+  font-size: 16px;
+  color: rgba(253, 253, 254, 0.6);
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   BILLING TOGGLE
+   ========================================================================== */
+
+.hp-billing-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 64px;
+}
+
+.hp-toggle-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(253, 253, 254, 0.72);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.hp-toggle-label.active {
+  color: #FDFDFE;
+}
+
+.hp-toggle-switch {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background: #1A244D;
+  border-radius: 100px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.2s ease;
+}
+
+.hp-toggle-switch[data-yearly="true"] {
+  background: #5078F2;
+}
+
+.hp-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  background: #FFFFFF;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hp-toggle-switch[data-yearly="true"] .hp-toggle-thumb {
+  transform: translateX(24px);
+}
+
+.hp-yearly-badge {
+  position: absolute;
+  top: -24px;
+  right: -60px;
+  background: rgba(34, 197, 94, 0.15);
+  color: #22C55E;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   PRICING CARDS GRID
+   ========================================================================== */
+
+.hp-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.hp-card {
+  background: #0C162C;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 220ms ease, border-color 220ms ease;
+  z-index: 1;
+}
+
+.hp-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(156, 177, 249, 0.25);
+}
+
+/* Pro Card Special Styles */
+.hp-card-pro {
+  background: #121C3F;
+  border-color: rgba(156, 177, 249, 0.16);
+}
+
+.hp-card-pro::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(80, 120, 242, 0.12);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hp-most-popular {
+  position: absolute;
+  top: -12px;
+  left: 24px;
+  background: linear-gradient(135deg, #5078F2, #C15AE6);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Card Content */
+.hp-card-header {
+  margin-bottom: 16px;
+}
+
+.hp-card-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.hp-card-desc {
+  font-size: 14px;
+  color: rgba(253, 253, 254, 0.6);
+  margin: 0;
+  line-height: 1.4;
+  min-height: 40px;
+}
+
+.hp-card-price-wrap {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hp-card-price {
+  font-family: 'Outfit', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.hp-card-price-period {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: rgba(253, 253, 254, 0.45);
+  font-weight: 400;
+}
+
+.hp-card-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.09);
+  margin: 20px 0;
+}
+
+.hp-card-features-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #FDFDFE;
+  margin-bottom: 16px;
+}
+
+.hp-feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
+}
+
+.hp-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13.5px;
+  color: rgba(253, 253, 254, 0.72);
+  line-height: 1.4;
+}
+
+.hp-feature-icon {
+  color: #467AF4;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+
+.hp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 44px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.hp-btn:hover {
+  transform: translateY(-1px);
+}
+
+.hp-btn-free {
+  background: transparent;
+  color: #FDFDFE;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.hp-btn-free:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.hp-btn-starter {
+  background: #1F2956;
+  color: #FDFDFE;
+  border: 1px solid rgba(156, 177, 249, 0.15);
+}
+.hp-btn-starter:hover {
+  background: #1A244D;
+}
+
+.hp-btn-pro {
+  background: linear-gradient(135deg, #5078F2, #C15AE6);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.2);
+}
+.hp-btn-pro:hover {
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35);
+}
+
+.hp-btn-enterprise {
+  background: transparent;
+  color: #FDFDFE;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.hp-btn-enterprise:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ==========================================================================
+   TRUST TEXT
+   ========================================================================== */
+
+.hp-pricing-trust {
+  text-align: center;
+  margin-top: 32px;
+  font-size: 13px;
+  color: rgba(253, 253, 254, 0.45);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+
+@media (max-width: 1100px) {
+  .hp-pricing-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .hp-globe-container {
+    top: -50px;
+    right: -100px;
+    width: 600px;
+    height: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hp-pricing-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .hp-globe-container {
+    display: none;
+  }
+  .hp-card-desc {
+    min-height: auto;
+  }
+}

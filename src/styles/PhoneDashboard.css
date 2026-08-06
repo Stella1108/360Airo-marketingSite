@@ -1,0 +1,238 @@
+/* Phone Dashboard Styles - Redesigned */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+.phone-container{
+    width:100%;
+    max-width:420px;
+    background:#0F172A;
+    border:1px solid #1E293B;
+    border-radius:28px;
+    padding:24px;
+    color:white;
+    box-shadow:0 20px 60px rgba(0,0,0,.4);
+    font-family: 'Outfit', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+.pd-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.pd-header h1{
+    font-size:22px;
+    font-weight:700;
+    margin: 0;
+    color: #ffffff;
+    letter-spacing: normal !important;
+}
+
+.time-filter{
+    background:#111827;
+    color:#CBD5E1;
+    border:1px solid #1E293B;
+    border-radius:12px;
+    padding:8px 12px;
+    cursor:pointer;
+    font-size:12px;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.stat-card{
+    background:#111827;
+    border:1px solid #1E293B;
+    border-radius:16px;
+    padding:12px;
+}
+
+.channel-tag{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    color:#94A3B8;
+    font-size:12px;
+    margin-bottom:10px;
+}
+
+.dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    display: inline-block;
+}
+
+.dot.email{
+    background:#D9F99D;
+}
+
+.dot.linkedin{
+    background:#38BDF8;
+}
+
+.dot.sms{
+    background:#FB923C;
+}
+
+.stat-value{
+    font-size:22px;
+    font-weight:700;
+}
+
+.stat-label{
+    color:#94A3B8;
+    font-size:12px;
+    margin-top:4px;
+}
+
+.trend{
+    color:#22C55E;
+    font-size:12px;
+    margin-top:8px;
+}
+
+.replies-section{
+    margin-bottom:20px;
+}
+
+.replies-title{
+    color:#94A3B8;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.replies-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.replies-count{
+    font-size:34px;
+    font-weight:700;
+}
+
+.badge{
+    background:rgba(34,197,94,.12);
+    color:#22C55E;
+    padding:8px 12px;
+    border-radius:999px;
+    font-size:12px;
+}
+
+.chart-container{
+    background:#111827;
+    border:1px solid #1E293B;
+    border-radius:18px;
+    padding:15px;
+    height:180px;
+    margin-bottom:20px;
+}
+
+.chart-svg{
+    width:100%;
+    height:100%;
+}
+
+.bottom-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.metric-box{
+    background:#111827;
+    border:1px solid #1E293B;
+    border-radius:16px;
+    text-align:center;
+    padding:16px 10px;
+}
+
+.metric-num{
+    font-size:22px;
+    font-weight:700;
+}
+
+.metric-name{
+    font-size:12px;
+    color:#94A3B8;
+    margin-top:5px;
+}
+
+.contribution-card{
+    background:#111827;
+    border:1px solid #1E293B;
+    border-radius:16px;
+    padding:16px;
+}
+
+.contribution-header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:12px;
+}
+
+.contribution-label{
+    color:#CBD5E1;
+    font-size:14px;
+}
+
+.contribution-value{
+    color:#D9F99D;
+    font-weight:600;
+}
+
+.progress-bar-bg{
+    height:10px;
+    background:#1E293B;
+    border-radius:999px;
+    overflow:hidden;
+}
+
+.progress-bar-fill{
+    width:100%;
+    height:100%;
+    background:linear-gradient(90deg,#D9F99D,#38BDF8,#FB923C);
+    border-radius:999px;
+}
+
+@media (max-width:480px){
+    .phone-container{
+        padding:18px;
+        border-radius:20px;
+    }
+
+    .stats-grid{
+        grid-template-columns:1fr;
+    }
+
+    .bottom-grid{
+        grid-template-columns:1fr;
+    }
+
+    .pd-header{
+        flex-direction:column;
+        gap:10px;
+        align-items:flex-start;
+    }
+
+    .replies-row{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:10px;
+    }
+}
