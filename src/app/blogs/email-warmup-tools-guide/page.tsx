@@ -44,8 +44,8 @@ function MiniInfographic({
   bullets?: string[];
 }) {
   return (
-    <div className="mt-8 rounded-[20px] border border-[#dbe3f4] bg-[#f8f9ff] p-5 md:p-6">
-      <h3 className="text-[18px] md:text-[22px] font-bold text-[#111827] leading-tight mb-5">
+    <div className="mt-6 rounded-[20px] border border-[#dbe3f4] bg-[#f8f9ff] p-6 md:p-7">
+      <h3 className="text-[18px] md:text-[22px] font-bold text-[#111827] leading-tight mb-4">
         {title}
       </h3>
       <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
@@ -54,7 +54,7 @@ function MiniInfographic({
         ))}
       </div>
       {bullets && bullets.length > 0 ? (
-        <ul className="mt-5 space-y-3 text-[#4f5668] text-[17px] leading-7 list-disc pl-5 text-justify">
+        <ul className="mt-4 space-y-3 text-[#4f5668] text-[17px] leading-7 list-disc pl-5 text-justify">
           {bullets.map((item, index) => (
             <li key={index}>{item}</li>
           ))}
@@ -72,7 +72,7 @@ function ContentBlock({
   paragraphs: string[];
 }) {
   return (
-    <div className="mt-7">
+    <div className="mt-6">
       <h3 className="text-[17px] md:text-[19px] font-bold text-[#111827] mb-3">
         {subtitle}
       </h3>
@@ -94,7 +94,7 @@ function SectionImage({ id }: { id: string }) {
   if (!image) return null;
 
   return (
-    <div className="mt-8 rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
+    <div className="mt-6 rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
       <div className="relative h-[230px] md:h-[340px] w-full">
         <Image src={image.src} alt={image.alt} fill className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
@@ -127,31 +127,29 @@ function ArticleSection({
 }) {
   return (
     <section id={id} className="scroll-mt-28">
-      <div>
-        <h2 className="text-[24px] font-bold text-[#111827] mb-5">
-          {title}
-        </h2>
-        <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
-          {intro.map((text, index) => (
-            <p key={index}>{text}</p>
-          ))}
-        </div>
-        {infographic && (
-          <MiniInfographic
-            title={infographic.title}
-            paragraphs={infographic.paragraphs}
-            bullets={infographic.bullets}
-          />
-        )}
-        {blocks.map((block) => (
-          <ContentBlock
-            key={block.subtitle}
-            subtitle={block.subtitle}
-            paragraphs={block.paragraphs}
-          />
+      <h2 className="text-[24px] font-bold text-[#111827] mb-4">
+        {title}
+      </h2>
+      <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
+        {intro.map((text, index) => (
+          <p key={index}>{text}</p>
         ))}
-        {showImage ? <SectionImage id={id} /> : null}
       </div>
+      {infographic && (
+        <MiniInfographic
+          title={infographic.title}
+          paragraphs={infographic.paragraphs}
+          bullets={infographic.bullets}
+        />
+      )}
+      {blocks.map((block) => (
+        <ContentBlock
+          key={block.subtitle}
+          subtitle={block.subtitle}
+          paragraphs={block.paragraphs}
+        />
+      ))}
+      {showImage ? <SectionImage id={id} /> : null}
     </section>
   );
 }
@@ -243,9 +241,9 @@ export default function BlogEmailWarmupPage() {
         `}</style>
 
         {/* Hero Section */}
-        <section className="pt-8 md:pt-10 pb-14 px-4 border-b border-[#ddd9ef]">
+        <section className="pt-8 md:pt-10 pb-12 px-4 border-b border-[#ddd9ef]">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-wrap items-center gap-2 text-xs md:text-sm text-[#6b7280] mb-8">
+            <div className="flex flex-wrap items-center gap-2 text-xs md:text-sm text-[#6b7280] mb-6">
               <span className="font-medium text-[#111827]">Blog</span>
               <span>›</span>
               <span className="font-medium text-[#111827]">Deliverability</span>
@@ -298,13 +296,13 @@ export default function BlogEmailWarmupPage() {
                 <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[11px] md:text-[12px] mb-3">
                   Deliverability Guide
                 </p>
-                <h1 className="text-[#111827] text-[28px] md:text-[36px] lg:text-[42px] font-bold leading-[1.08] tracking-[-0.02em] mb-5">
+                <h1 className="text-[#111827] text-[28px] md:text-[36px] lg:text-[42px] font-bold leading-[1.08] tracking-[-0.02em] mb-4">
                   What Are Email Warmup Tools and How Do They Work?
                 </h1>
-                <p className="text-[17px] text-[#5f6472] max-w-2xl mb-8 leading-relaxed text-justify">
-                  You’ve created a new email address. Your prospect list is ready. But sending hundreds of emails immediately could damage your sender reputation. Here’s how warmup tools help.
+                <p className="text-[17px] text-[#5f6472] max-w-2xl mb-6 leading-relaxed text-justify">
+                  You've created a new email address. Your prospect list is ready. But sending hundreds of emails immediately could damage your sender reputation. Here's how warmup tools help.
                 </p>
-                <div className="mb-8 inline-flex flex-wrap items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm">
+                <div className="mb-6 inline-flex flex-wrap items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm">
                   <div className="flex items-center gap-2">
                     <Image
                       src="/logonew.png"
@@ -335,7 +333,7 @@ export default function BlogEmailWarmupPage() {
         </section>
 
         {/* Main Content */}
-        <section className="px-4 py-16">
+        <section className="px-4 py-12">
           <div className="max-w-[1440px] mx-auto grid xl:grid-cols-[250px_minmax(0,1fr)_250px] lg:grid-cols-[250px_minmax(0,1fr)] gap-8">
             {/* TOC */}
             <aside className="sticky top-[20vh] self-start hidden lg:block mb-10">
@@ -369,14 +367,14 @@ export default function BlogEmailWarmupPage() {
             </aside>
 
             {/* Articles */}
-            <div className="min-w-0 space-y-14">
+            <div className="min-w-0 space-y-12">
               <ArticleSection
                 key="introduction"
                 id="introduction"
                 title="Introduction"
                 showImage={false}
                 intro={[
-                  'You’ve created a new email address.',
+                  'You\'ve created a new email address.',
                   'Your prospect list is ready, your campaign is written, and your sales team is ready to begin outreach. But sending hundreds of emails immediately could damage your sender reputation before the campaign has a chance to perform.',
                   'Mailbox providers evaluate sending patterns, engagement, authentication, and reputation when deciding where an email belongs. A sudden increase in activity from a new or inactive account can appear suspicious.',
                   "That's where email warmup tools come in.",
