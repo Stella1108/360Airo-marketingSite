@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { Navbar } from '@/components/Navbar';
@@ -148,9 +149,50 @@ function ArticleSection({
   );
 }
 
+// --- FAQ Accordion Component ---
+function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[] }[] }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggle = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  return (
+    <div className="space-y-4">
+      {faqs.map((faq, index) => {
+        const isOpen = openIndex === index;
+        return (
+          <div key={index} className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]">
+            <button
+              onClick={() => toggle(index)}
+              className="w-full flex items-center justify-between px-6 py-4 text-left text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
+            >
+              <span>{faq.subtitle}</span>
+              <span className="text-[#4f63ff] text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                {isOpen ? '−' : '+'}
+              </span>
+            </button>
+            <div
+              className={`px-6 transition-all duration-300 ease-in-out ${
+                isOpen ? 'max-h-[1000px] pb-6 opacity-100' : 'max-h-0 pb-0 opacity-0'
+              } overflow-hidden`}
+            >
+              <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
+                {faq.paragraphs.map((text, idx) => (
+                  <p key={idx}>{text}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function RightPromoCards() {
   return (
-    <aside className="sticky top-[20vh] self-start hidden xl:block space-y-4 w-[250px]">
+    <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
         <div className="flex items-center justify-center gap-3 mb-4">
           <div className="relative w-[200px] h-[130px] shrink-0">
@@ -237,12 +279,19 @@ export default function BlogEmailWarmupPage() {
         {/* Hero Section */}
         <section className="pt-8 md:pt-10 pb-8 px-4 border-b border-[#ddd9ef]">
           <div className="max-w-7xl mx-auto">
+            {/* Breadcrumb – all three parts are now clickable links */}
             <div className="flex flex-wrap items-center gap-2 text-xs md:text-sm text-[#6b7280] mb-4">
-              <span className="font-medium text-[#111827]">Blog</span>
+              <Link href="/blogs" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
+                Blog
+              </Link>
               <span>›</span>
-              <span className="font-medium text-[#111827]">Deliverability</span>
+              <Link href="/blogs?category=deliverability" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
+                Deliverability
+              </Link>
               <span>›</span>
-              <span>What Are Email Warmup Tools and How Do They Work?</span>
+              <Link href="./" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
+                What Are Email Warmup Tools and How Do They Work?
+              </Link>
             </div>
 
             <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
@@ -296,7 +345,8 @@ export default function BlogEmailWarmupPage() {
                 <p className="text-[17px] text-[#5f6472] max-w-2xl mb-4 leading-relaxed text-justify">
                   You've created a new email address. Your prospect list is ready. But sending hundreds of emails immediately could damage your sender reputation. Here's how warmup tools help.
                 </p>
-                <div className="mb-4 inline-flex flex-wrap items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm">
+                {/* Meta info – single line */}
+                <div className="mb-4 inline-flex items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm whitespace-nowrap">
                   <div className="flex items-center gap-2">
                     <Image
                       src="/logonew.png"
@@ -306,7 +356,8 @@ export default function BlogEmailWarmupPage() {
                       className="h-10 w-auto object-contain"
                     />
                   </div>
-                  <span>•360AIRO Team </span>
+                  <span>•360AIRO Team</span>
+                  <span>•</span>
                   <span>Updated: Jun 2026</span>
                   <span>•</span>
                   <span>12 min read</span>
@@ -330,7 +381,7 @@ export default function BlogEmailWarmupPage() {
         <section className="px-4 py-8">
           <div className="max-w-[1440px] mx-auto grid xl:grid-cols-[250px_minmax(0,1fr)_250px] lg:grid-cols-[250px_minmax(0,1fr)] gap-8">
             {/* TOC */}
-            <aside className="sticky top-[20vh] self-start hidden lg:block mb-10">
+            <aside className="sticky top-20 self-start hidden lg:block mb-10">
               <h2 className="text-[16px] font-bold text-[#20242c] mb-4">Table of Contents</h2>
               <nav className="space-y-1.5 border-l border-[#d9dfef] pl-3">
                 {tocItems.map((item) => {
@@ -361,7 +412,6 @@ export default function BlogEmailWarmupPage() {
             </aside>
 
             {/* Articles */}
-            {/* Changed space-y-8 to space-y-4 for uniform 16px gaps between sections */}
             <div className="min-w-0 space-y-4">
               <ArticleSection
                 key="introduction"
@@ -747,43 +797,46 @@ export default function BlogEmailWarmupPage() {
                 ]}
               />
 
-              <ArticleSection
-                key="faqs"
-                id="faqs"
-                title="9. Frequently Asked Questions"
-                showImage={false}
-                intro={[]}
-                infographic={{
-                  title: 'Quick answers',
-                  paragraphs: ['Clarifying common questions about warmup.'],
-                }}
-                blocks={[
-                  {
-                    subtitle: '9.1 What is an email warmup tool?',
-                    paragraphs: ['An email warmup tool is software that automates gradual sending activity and helps monitor mailbox performance before higher-volume outreach begins.'],
-                  },
-                  {
-                    subtitle: '9.2 What are email warmup services?',
-                    paragraphs: ['Email warmup services help establish consistent sending activity for new or inactive email accounts through gradual volume increases and performance monitoring.'],
-                  },
-                  {
-                    subtitle: '9.3 Does email warmup actually work?',
-                    paragraphs: ['Email warmup can support consistent sending behavior, but it works best alongside authentication, clean data, responsible sending practices, and deliverability monitoring.'],
-                  },
-                  {
-                    subtitle: '9.4 What is the best email warmer?',
-                    paragraphs: ['The best email warmer depends on your needs. Look for automated warmup, multiple mailbox management, deliverability visibility, reputation monitoring, and useful integrations.'],
-                  },
-                  {
-                    subtitle: '9.5 What is Email Warmup Outlook?',
-                    paragraphs: ['Email warmup for Outlook involves gradually establishing consistent sending activity while monitoring performance across Microsoft\'s email ecosystem. Sender reputation, authentication, engagement, and list quality remain important.'],
-                  },
-                  {
-                    subtitle: '9.6 Which factors can negatively impact email sender reputation?',
-                    paragraphs: ['High bounce rates, spam complaints, poor list quality, missing authentication, sudden volume increases, and consistently low engagement can negatively affect sender reputation.'],
-                  },
-                ]}
-              />
+              {/* FAQ Section */}
+              <section id="faqs" className="scroll-mt-28">
+                <h2 className="text-[24px] font-bold text-[#111827] mb-4">
+                  9. Frequently Asked Questions
+                </h2>
+                <div className="space-y-4">
+                  <MiniInfographic
+                    title="Quick answers"
+                    paragraphs={['Clarifying common questions about warmup.']}
+                  />
+                  <FaqAccordion
+                    faqs={[
+                      {
+                        subtitle: '9.1 What is an email warmup tool?',
+                        paragraphs: ['An email warmup tool is software that automates gradual sending activity and helps monitor mailbox performance before higher-volume outreach begins.'],
+                      },
+                      {
+                        subtitle: '9.2 What are email warmup services?',
+                        paragraphs: ['Email warmup services help establish consistent sending activity for new or inactive email accounts through gradual volume increases and performance monitoring.'],
+                      },
+                      {
+                        subtitle: '9.3 Does email warmup actually work?',
+                        paragraphs: ['Email warmup can support consistent sending behavior, but it works best alongside authentication, clean data, responsible sending practices, and deliverability monitoring.'],
+                      },
+                      {
+                        subtitle: '9.4 What is the best email warmer?',
+                        paragraphs: ['The best email warmer depends on your needs. Look for automated warmup, multiple mailbox management, deliverability visibility, reputation monitoring, and useful integrations.'],
+                      },
+                      {
+                        subtitle: '9.5 What is Email Warmup Outlook?',
+                        paragraphs: ['Email warmup for Outlook involves gradually establishing consistent sending activity while monitoring performance across Microsoft\'s email ecosystem. Sender reputation, authentication, engagement, and list quality remain important.'],
+                      },
+                      {
+                        subtitle: '9.6 Which factors can negatively impact email sender reputation?',
+                        paragraphs: ['High bounce rates, spam complaints, poor list quality, missing authentication, sudden volume increases, and consistently low engagement can negatively affect sender reputation.'],
+                      },
+                    ]}
+                  />
+                </div>
+              </section>
 
               <ArticleSection
                 key="conclusion"
@@ -822,7 +875,6 @@ export default function BlogEmailWarmupPage() {
               <h2 className="text-[20px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
               <a href="/blogs" className="text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
             </div>
-            {/* Changed gap-6 to gap-4 for uniform 16px spacing */}
             <div className="grid gap-4 md:grid-cols-3">
               {[
                 {
