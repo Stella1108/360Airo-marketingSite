@@ -180,7 +180,6 @@ const blogPosts = [
     views: '1.2K',
     tags: ['Warmup', 'Deliverability', 'Sender Reputation'],
   },
-  // ✅ NEW: Email Deliverability Benchmark article
   {
     id: 12,
     title: 'What Factors Influence the 95–99% Email Deliverability Rate Benchmark?',
@@ -196,10 +195,41 @@ const blogPosts = [
     views: '980',
     tags: ['Deliverability', 'Authentication', 'SPF', 'DKIM', 'DMARC'],
   },
+  {
+    id: 13,
+    title: 'Best Practices to Keep Email Bounce Rates Below the 3% Target',
+    excerpt: 'You launch an email campaign to 1,000 prospects. Some emails fail to deliver. Those bounces aren\'t just missed opportunities — they can damage your sender reputation. Learn how to keep bounce rates below 3%.',
+    slug: 'best-practices-email-bounce-rates',
+    author: '360Airo Team',
+    date: 'June 20, 2026',
+    readTime: '10 min read',
+    category: 'Deliverability',
+    image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1000&q=80',
+    featured: true,
+    isNew: true,
+    views: '1.1K',
+    tags: ['Bounce Rate', 'Deliverability', 'Email Verification', 'List Hygiene'],
+  },
+  // ✅ NEW: AI Prospecting article
+  {
+    id: 14,
+    title: 'Best AI Tools for Outbound Prospecting in 2026',
+    excerpt: 'Artificial intelligence has fundamentally changed the way businesses identify, engage, and convert prospects. Discover the top AI-powered platforms that can supercharge your outbound sales in 2026.',
+    slug: 'ai-prospecting-tools-2026',
+    author: '360Airo Team',
+    date: 'June 25, 2026',
+    readTime: '18 min read',
+    category: 'AI Prospecting',
+    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1000&q=80',
+    featured: true,
+    isNew: true,
+    views: '2.1K',
+    tags: ['AI', 'Prospecting', 'Sales Tools', 'Automation'],
+  },
 ];
 
 export default function BlogsPage() {
-  const categories = ['All', 'Cold Email', 'Email Marketing', 'LinkedIn', 'Email Tools', 'Deliverability'];
+  const categories = ['All', 'Cold Email', 'Email Marketing', 'LinkedIn', 'Email Tools', 'Deliverability', 'AI Prospecting'];
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -217,7 +247,8 @@ export default function BlogsPage() {
         return haystack.includes(query);
       });
     }
-    return posts;
+    // Sort by date descending so the newest appears first
+    return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [selectedCategory, searchQuery]);
 
   const featuredPost = filteredPosts[0] || blogPosts[0];

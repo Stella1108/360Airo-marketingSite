@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { Navbar } from '@/components/Navbar';
@@ -45,17 +46,17 @@ function MiniInfographic({
   bullets?: string[];
 }) {
   return (
-    <div className="mt-8 rounded-[20px] border border-[#dbe3f4] bg-[#f8f9ff] p-5 md:p-6">
-      <h3 className="text-[18px] md:text-[22px] font-bold text-[#111827] leading-tight mb-5">
+    <div className="rounded-[20px] border border-[#dbe3f4] bg-[#f8f9ff] p-6 md:p-7">
+      <h3 className="text-[18px] md:text-[22px] font-bold text-[#111827] leading-tight mb-4">
         {title}
       </h3>
-      <div className="space-y-4 text-[#4f5668] text-[14px] leading-7">
+      <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
         {paragraphs.map((text, index) => (
           <p key={index}>{text}</p>
         ))}
       </div>
       {bullets && bullets.length > 0 ? (
-        <ul className="mt-5 space-y-3 text-[#4f5668] text-[14px] leading-7 list-disc pl-5">
+        <ul className="mt-4 space-y-4 text-[#4f5668] text-[17px] leading-7 list-disc pl-5 text-justify">
           {bullets.map((item, index) => (
             <li key={index}>{item}</li>
           ))}
@@ -73,11 +74,11 @@ function ContentBlock({
   paragraphs: string[];
 }) {
   return (
-    <div className="mt-7">
-      <h3 className="text-[17px] md:text-[19px] font-bold text-[#111827] mb-3">
+    <div>
+      <h3 className="text-[17px] md:text-[19px] font-bold text-[#111827] mb-4">
         {subtitle}
       </h3>
-      <div className="space-y-4 text-[#4f5668] text-[14px] leading-7">
+      <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
         {paragraphs.map((text, index) => (
           <p key={index}>{text}</p>
         ))}
@@ -95,7 +96,7 @@ function SectionImage({ id }: { id: string }) {
   if (!image) return null;
 
   return (
-    <div className="mt-8 rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
+    <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
       <div className="relative h-[230px] md:h-[340px] w-full">
         <Image src={image.src} alt={image.alt} fill className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
@@ -128,40 +129,73 @@ function ArticleSection({
 }) {
   return (
     <section id={id} className="scroll-mt-28">
-      <div>
-        <h2 className="text-[24px] md:text-[28px] font-bold text-[#111827] mb-5">
-          {title}
-        </h2>
-        <div className="space-y-4 text-[#4f5668] text-[14px] leading-7">
-          {intro.map((text, index) => (
-            <p key={index}>{text}</p>
-          ))}
-        </div>
-        {infographic && (
-          <MiniInfographic
-            title={infographic.title}
-            paragraphs={infographic.paragraphs}
-            bullets={infographic.bullets}
-          />
+      <h2 className="text-[24px] font-bold text-[#111827] mb-4">
+        {title}
+      </h2>
+      <div className="space-y-4">
+        {intro.length > 0 && (
+          <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
+            {intro.map((text, index) => (
+              <p key={index}>{text}</p>
+            ))}
+          </div>
         )}
+        {infographic && <MiniInfographic {...infographic} />}
         {blocks.map((block) => (
-          <ContentBlock
-            key={block.subtitle}
-            subtitle={block.subtitle}
-            paragraphs={block.paragraphs}
-          />
+          <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {showImage ? <SectionImage id={id} /> : null}
+        {showImage && <SectionImage id={id} />}
       </div>
     </section>
   );
 }
 
+// --- FAQ Accordion Component ---
+function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[] }[] }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggle = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  return (
+    <div className="space-y-4">
+      {faqs.map((faq, index) => {
+        const isOpen = openIndex === index;
+        return (
+          <div key={index} className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]">
+            <button
+              onClick={() => toggle(index)}
+              className="w-full flex items-center justify-between px-6 py-4 text-left text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
+            >
+              <span>{faq.subtitle}</span>
+              <span className="text-[#4f63ff] text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                {isOpen ? '−' : '+'}
+              </span>
+            </button>
+            <div
+              className={`px-6 transition-all duration-300 ease-in-out ${
+                isOpen ? 'max-h-[1000px] pb-4 opacity-100' : 'max-h-0 pb-0 opacity-0'
+              } overflow-hidden`}
+            >
+              <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
+                {faq.paragraphs.map((text, idx) => (
+                  <p key={idx}>{text}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function RightPromoCards() {
   return (
-    <aside className="sticky top-[20vh] self-start hidden xl:block space-y-4 w-[250px]">
+    <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-5">
+        <div className="flex items-center justify-center gap-3 mb-4">
           <div className="relative w-[200px] h-[130px] shrink-0">
             <Image
               src="/360aironewlog.png"
@@ -176,7 +210,7 @@ function RightPromoCards() {
           <br />
           Benchmark Guide
         </h3>
-        <p className="text-[12px] leading-5 text-white text-center mb-5">
+        <p className="text-[12px] leading-5 text-white text-center mb-4">
           Reach the 95–99% deliverability rate with better authentication, warmup, and list hygiene.
         </p>
         <button className="w-full rounded-[12px] border border-white bg-transparent px-4 py-3 text-white text-[13px] font-bold hover:opacity-95 transition">
@@ -244,14 +278,21 @@ export default function BlogDeliverabilityPage() {
         `}</style>
 
         {/* Hero Section */}
-        <section className="pt-8 md:pt-10 pb-14 px-4 border-b border-[#ddd9ef]">
+        <section className="pt-8 md:pt-10 pb-8 px-4 border-b border-[#ddd9ef]">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-wrap items-center gap-2 text-xs md:text-sm text-[#6b7280] mb-8">
-              <span className="font-medium text-[#111827]">Blog</span>
+            {/* Breadcrumb – all three parts are now clickable links */}
+            <div className="flex flex-wrap items-center gap-2 text-xs md:text-sm text-[#6b7280] mb-4">
+              <Link href="/blogs" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
+                Blog
+              </Link>
               <span>›</span>
-              <span className="font-medium text-[#111827]">Deliverability</span>
+              <Link href="/blogs?category=deliverability" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
+                Deliverability
+              </Link>
               <span>›</span>
-              <span>What Factors Influence the 95–99% Email Deliverability Rate Benchmark?</span>
+              <Link href="./" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
+                What Factors Influence the 95–99% Email Deliverability Rate Benchmark?
+              </Link>
             </div>
 
             <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
@@ -271,7 +312,7 @@ export default function BlogDeliverabilityPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#072f63]/95 via-[#0b4f96]/70 to-transparent" />
                   <div className="relative z-10 h-full p-8 md:p-10 flex flex-col justify-between">
-                    <p className="text-white text-[26px] md:text-[36px] font-bold leading-tight max-w-[420px]">
+                    <p className="text-white text-[26px] md:text-[36px] lg:text-[42px] font-bold leading-tight max-w-[420px]">
                       Email Deliverability
                       <br />
                       Benchmark
@@ -299,13 +340,14 @@ export default function BlogDeliverabilityPage() {
                 <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[11px] md:text-[12px] mb-3">
                   Deliverability Guide
                 </p>
-                <h1 className="text-[#111827] text-[22px] md:text-[30px] lg:text-[34px] font-bold leading-[1.08] tracking-[-0.02em] mb-5">
+                <h1 className="text-[#111827] text-[28px] md:text-[36px] lg:text-[42px] font-bold leading-[1.08] tracking-[-0.02em] mb-4">
                   What Factors Influence the 95–99% Email Deliverability Rate Benchmark?
                 </h1>
-                <p className="text-[14px] md:text-[15px] text-[#5f6472] max-w-2xl mb-8 leading-relaxed">
+                <p className="text-[17px] text-[#5f6472] max-w-2xl mb-4 leading-relaxed text-justify">
                   You send 1,000 emails. How many actually get delivered? A 95–99% rate is the benchmark, but reaching it takes more than just good content.
                 </p>
-                <div className="mb-8 inline-flex flex-wrap items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm">
+                {/* Meta info – single line */}
+                <div className="mb-4 inline-flex items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm whitespace-nowrap">
                   <div className="flex items-center gap-2">
                     <Image
                       src="/logonew.png"
@@ -315,10 +357,13 @@ export default function BlogDeliverabilityPage() {
                       className="h-10 w-auto object-contain"
                     />
                   </div>
-                  <span>•360AIRO Team </span>
+                  <span>•360AIRO Team</span>
+                  <span>•</span>
                   <span>Updated: Jun 2026</span>
                   <span>•</span>
                   <span>14 min read</span>
+                  <span>•</span>
+                  <span>1.4K reads</span>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button className="px-7 py-3.5 rounded-xl bg-[#4f63ff] text-white font-semibold text-base shadow-md hover:bg-[#4154f5] transition-all">
@@ -334,10 +379,10 @@ export default function BlogDeliverabilityPage() {
         </section>
 
         {/* Main Content */}
-        <section className="px-4 py-16">
+        <section className="px-4 py-8">
           <div className="max-w-[1440px] mx-auto grid xl:grid-cols-[250px_minmax(0,1fr)_250px] lg:grid-cols-[250px_minmax(0,1fr)] gap-8">
             {/* TOC */}
-            <aside className="sticky top-[20vh] self-start hidden lg:block mb-10">
+            <aside className="sticky top-20 self-start hidden lg:block mb-10">
               <h2 className="text-[16px] font-bold text-[#20242c] mb-4">Table of Contents</h2>
               <nav className="space-y-1.5 border-l border-[#d9dfef] pl-3">
                 {tocItems.map((item) => {
@@ -368,8 +413,7 @@ export default function BlogDeliverabilityPage() {
             </aside>
 
             {/* Articles */}
-            <div className="min-w-0 space-y-14">
-              {/* Introduction */}
+            <div className="min-w-0 space-y-4">
               <ArticleSection
                 key="introduction"
                 id="introduction"
@@ -391,7 +435,6 @@ export default function BlogDeliverabilityPage() {
                 blocks={[]}
               />
 
-              {/* 1. What Is Email Deliverability */}
               <ArticleSection
                 key="what-is-email-deliverability"
                 id="what-is-email-deliverability"
@@ -410,7 +453,6 @@ export default function BlogDeliverabilityPage() {
                 blocks={[]}
               />
 
-              {/* 1.1 Benchmark */}
               <ArticleSection
                 key="why-95-99-benchmark"
                 id="why-95-99-benchmark"
@@ -440,12 +482,11 @@ export default function BlogDeliverabilityPage() {
                 ]}
               />
 
-              {/* 2. Sender Reputation */}
               <ArticleSection
                 key="sender-reputation-and-domain-reputation"
                 id="sender-reputation-and-domain-reputation"
                 title="2. Sender Reputation and Domain Reputation"
-                showImage={false}
+                showImage={true}
                 intro={[
                   'Mailbox providers evaluate your sending history before deciding how to handle incoming messages.',
                   'This is where Sender Reputation and Domain Reputation become important.',
@@ -466,7 +507,6 @@ export default function BlogDeliverabilityPage() {
                 blocks={[]}
               />
 
-              {/* 2.1 Sender Score */}
               <ArticleSection
                 key="what-is-an-email-sender-score"
                 id="what-is-an-email-sender-score"
@@ -485,12 +525,11 @@ export default function BlogDeliverabilityPage() {
                 blocks={[]}
               />
 
-              {/* 3. Authentication */}
               <ArticleSection
                 key="email-authentication-spf-dkim-dmarc"
                 id="email-authentication-spf-dkim-dmarc"
                 title="3. Email Authentication: SPF, DKIM, and DMARC"
-                showImage={false}
+                showImage={true}
                 intro={[
                   'Email Authentication helps mailbox providers verify that messages are legitimately associated with the sending domain.',
                   'Three important authentication standards are SPF, DKIM, and DMARC.',
@@ -550,12 +589,11 @@ export default function BlogDeliverabilityPage() {
                 blocks={[]}
               />
 
-              {/* 4. List Quality */}
               <ArticleSection
                 key="email-list-quality-and-hygiene"
                 id="email-list-quality-and-hygiene"
                 title="4. Email List Quality and Hygiene"
-                showImage={false}
+                showImage={true}
                 intro={[
                   'One of the fastest ways to damage deliverability is sending emails to poor-quality data.',
                   'Email List Hygiene is the process of maintaining accurate, current, and relevant contact information.',
@@ -594,7 +632,6 @@ export default function BlogDeliverabilityPage() {
                 blocks={[]}
               />
 
-              {/* 5. Bounce Management */}
               <ArticleSection
                 key="bounce-rate-management"
                 id="bounce-rate-management"
@@ -626,7 +663,6 @@ export default function BlogDeliverabilityPage() {
                 ]}
               />
 
-              {/* 6. Spam Complaints */}
               <ArticleSection
                 key="spam-complaint-rates"
                 id="spam-complaint-rates"
@@ -656,7 +692,6 @@ export default function BlogDeliverabilityPage() {
                 ]}
               />
 
-              {/* 7. Engagement Metrics */}
               <ArticleSection
                 key="email-engagement-metrics"
                 id="email-engagement-metrics"
@@ -687,7 +722,6 @@ export default function BlogDeliverabilityPage() {
                 ]}
               />
 
-              {/* 8. Warmup */}
               <ArticleSection
                 key="the-role-of-email-warmup"
                 id="the-role-of-email-warmup"
@@ -718,12 +752,11 @@ export default function BlogDeliverabilityPage() {
                 ]}
               />
 
-              {/* 9. How to Improve */}
               <ArticleSection
                 key="how-to-improve-email-deliverability"
                 id="how-to-improve-email-deliverability"
                 title="9. How to Improve Email Deliverability"
-                showImage={false}
+                showImage={true}
                 intro={[
                   'There is no single action that guarantees a 95–99% Email Deliverability Rate.',
                   'Deliverability is the result of multiple factors working together.',
@@ -747,42 +780,43 @@ export default function BlogDeliverabilityPage() {
                 blocks={[]}
               />
 
-              {/* 10. FAQs */}
-              <ArticleSection
-                key="faqs"
-                id="faqs"
-                title="10. Frequently Asked Questions"
-                showImage={false}
-                intro={[]}
-                infographic={{
-                  title: 'Quick answers',
-                  paragraphs: ['Clear up common questions about deliverability.'],
-                }}
-                blocks={[
-                  {
-                    subtitle: '10.1 What is email deliverability?',
-                    paragraphs: ['Email deliverability is the ability of an email to reach the recipient\'s inbox rather than being rejected, blocked, or filtered into spam.'],
-                  },
-                  {
-                    subtitle: '10.2 Why is 95–99% deliverability considered a benchmark?',
-                    paragraphs: ['A 95–99% delivery rate indicates that most messages are being accepted by recipient mail servers. However, delivery rate should be evaluated alongside inbox placement, bounce rates, and spam complaints.'],
-                  },
-                  {
-                    subtitle: '10.3 How does sender reputation affect email deliverability?',
-                    paragraphs: ['Sender reputation helps mailbox providers evaluate the trustworthiness of sending activity. Poor reputation may increase the likelihood of filtering, throttling, or rejection.'],
-                  },
-                  {
-                    subtitle: '10.4 Why are SPF, DKIM, and DMARC important?',
-                    paragraphs: ['These authentication standards help recipient servers verify that messages are legitimately associated with the sending domain and haven\'t been altered during transit.'],
-                  },
-                  {
-                    subtitle: '10.5 How does email list hygiene improve deliverability?',
-                    paragraphs: ['Maintaining clean and verified contact data reduces hard bounces and helps protect sender reputation.'],
-                  },
-                ]}
-              />
+              {/* FAQ Section */}
+              <section id="faqs" className="scroll-mt-28">
+                <h2 className="text-[24px] font-bold text-[#111827] mb-4">
+                  10. Frequently Asked Questions
+                </h2>
+                <div className="space-y-4">
+                  <MiniInfographic
+                    title="Quick answers"
+                    paragraphs={['Clear up common questions about deliverability.']}
+                  />
+                  <FaqAccordion
+                    faqs={[
+                      {
+                        subtitle: '10.1 What is email deliverability?',
+                        paragraphs: ['Email deliverability is the ability of an email to reach the recipient\'s inbox rather than being rejected, blocked, or filtered into spam.'],
+                      },
+                      {
+                        subtitle: '10.2 Why is 95–99% deliverability considered a benchmark?',
+                        paragraphs: ['A 95–99% delivery rate indicates that most messages are being accepted by recipient mail servers. However, delivery rate should be evaluated alongside inbox placement, bounce rates, and spam complaints.'],
+                      },
+                      {
+                        subtitle: '10.3 How does sender reputation affect email deliverability?',
+                        paragraphs: ['Sender reputation helps mailbox providers evaluate the trustworthiness of sending activity. Poor reputation may increase the likelihood of filtering, throttling, or rejection.'],
+                      },
+                      {
+                        subtitle: '10.4 Why are SPF, DKIM, and DMARC important?',
+                        paragraphs: ['These authentication standards help recipient servers verify that messages are legitimately associated with the sending domain and haven\'t been altered during transit.'],
+                      },
+                      {
+                        subtitle: '10.5 How does email list hygiene improve deliverability?',
+                        paragraphs: ['Maintaining clean and verified contact data reduces hard bounces and helps protect sender reputation.'],
+                      },
+                    ]}
+                  />
+                </div>
+              </section>
 
-              {/* 11. Conclusion */}
               <ArticleSection
                 key="conclusion"
                 id="conclusion"
@@ -807,13 +841,13 @@ export default function BlogDeliverabilityPage() {
         </section>
 
         {/* Recent Posts */}
-        <section className="px-4 pb-16">
+        <section className="px-4 pb-8">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-[20px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
               <a href="/blogs" className="text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
             </div>
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3">
               {[
                 {
                   title: 'What Are Email Warmup Tools and How Do They Work?',
