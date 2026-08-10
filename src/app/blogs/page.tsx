@@ -226,10 +226,40 @@ const blogPosts = [
     views: '2.1K',
     tags: ['AI', 'Prospecting', 'Sales Tools', 'Automation'],
   },
+    {
+    id: 15, // Increment based on existing IDs
+    title: 'AI SDR vs Human SDR: Cost, Performance & ROI Comparison',
+    excerpt: 'Should you invest in an AI SDR, continue hiring human SDRs, or combine both? Compare cost, performance, scalability, and ROI to find the right answer for your business.',
+    slug: 'ai-sdr-vs-human-sdr',
+    author: '360Airo Team',
+    date: 'June 28, 2026',
+    readTime: '15 min read',
+    category: 'AI SDR',
+    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1000&q=80',
+    featured: true,
+    isNew: true,
+    views: '1.8K',
+    tags: ['AI SDR', 'Sales Development', 'Outbound', 'ROI'],
+  },
+  {
+    id: 16,
+    title: 'Cold Email Metrics: Which KPIs Actually Matter in 2026?',
+    excerpt: 'You send 1,000 cold emails. Seven hundred are opened. Fifty prospects reply. Ten book a meeting. Was the campaign successful? Learn which metrics truly measure cold email performance.',
+    slug: 'cold-email-metrics-kpis',
+    author: '360Airo Team',
+    date: 'July 1, 2026',
+    readTime: '10 min read',
+    category: 'Cold Email',
+    image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1000&q=80',
+    featured: true,
+    isNew: true,
+    views: '1.3K',
+    tags: ['Cold Email', 'KPIs', 'Metrics', 'Deliverability'],
+  },
 ];
 
 export default function BlogsPage() {
-  const categories = ['All', 'Cold Email', 'Email Marketing', 'LinkedIn', 'Email Tools', 'Deliverability', 'AI Prospecting'];
+  const categories = ['All', 'Cold Email', 'Email Marketing', 'LinkedIn', 'Email Tools', 'Deliverability', 'AI Prospecting', 'AI SDR'];
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
