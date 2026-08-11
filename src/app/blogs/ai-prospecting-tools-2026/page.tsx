@@ -134,8 +134,15 @@ function SectionImage({ id }: { id: string }) {
 
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
-      <div className="relative h-[230px] md:h-[340px] w-full">
-        <Image src={image.src} alt={image.alt} fill className="object-cover" />
+      <div className="relative w-full aspect-[16/9] md:aspect-[16/7] h-auto md:h-[340px]">
+        <Image
+          src={image.src}
+          alt={image.alt}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+          priority={false}
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#4f63ff] backdrop-blur">
           {image.label}
@@ -239,6 +246,7 @@ function RightPromoCards() {
               alt="360Airo logo"
               fill
               className="object-contain"
+              priority={false}
             />
           </div>
         </div>
@@ -273,28 +281,41 @@ export default function BlogAIProspectingToolsPage() {
   const [activeId, setActiveId] = useState('introduction');
   const [searchQuery, setSearchQuery] = useState('');
   const categoryScrollRef = useRef<HTMLDivElement | null>(null);
+  const ticking = useRef(false);
+  const rafId = useRef<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = tocItems
-        .map((item) => document.getElementById(item.id))
-        .filter(Boolean) as HTMLElement[];
+      if (!ticking.current) {
+        rafId.current = requestAnimationFrame(() => {
+          const sections = tocItems
+            .map((item) => document.getElementById(item.id))
+            .filter(Boolean) as HTMLElement[];
 
-      const scrollPosition = window.scrollY + 180;
-      let currentSectionId = sections[0]?.id || 'introduction';
+          const scrollPosition = window.scrollY + 180;
+          let currentSectionId = sections[0]?.id || 'introduction';
 
-      for (const section of sections) {
-        if (scrollPosition >= section.offsetTop) {
-          currentSectionId = section.id;
-        }
+          for (const section of sections) {
+            if (scrollPosition >= section.offsetTop) {
+              currentSectionId = section.id;
+            }
+          }
+          setActiveId(currentSectionId);
+          ticking.current = false;
+        });
+        ticking.current = true;
       }
-      setActiveId(currentSectionId);
     };
 
     handleScroll();
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll);
+    window.addEventListener('resize', handleScroll, { passive: true });
+
     return () => {
+      if (rafId.current) {
+        cancelAnimationFrame(rafId.current);
+      }
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
     };
@@ -313,6 +334,14 @@ export default function BlogAIProspectingToolsPage() {
             display: none;
           }
         `}</style>
+
+        <link
+          rel="preload"
+          fetchPriority="high"
+          as="image"
+          href="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80"
+          type="image/webp"
+        />
 
         {/* Hero Section */}
         <section className="pt-8 md:pt-10 pb-8 px-4 border-b border-[#ddd9ef]">
@@ -339,13 +368,15 @@ export default function BlogAIProspectingToolsPage() {
                 transition={{ duration: 0.6 }}
                 className="relative"
               >
-                <div className="relative min-h-[300px] md:min-h-[410px] rounded-[28px] overflow-hidden bg-gradient-to-br from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] shadow-xl">
+                <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[28px] overflow-hidden bg-gradient-to-br from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] shadow-xl">
                   <Image
                     src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80"
                     alt="AI prospecting tools hero"
                     fill
                     priority
+                    fetchPriority="high"
                     className="object-cover mix-blend-overlay opacity-35"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#072f63]/95 via-[#0b4f96]/70 to-transparent" />
                   <div className="relative z-10 h-full p-8 md:p-10 flex flex-col justify-between">
@@ -362,6 +393,7 @@ export default function BlogAIProspectingToolsPage() {
                         alt="AI team"
                         fill
                         className="object-contain object-bottom"
+                        priority={false}
                       />
                     </div>
                   </div>
@@ -383,8 +415,8 @@ export default function BlogAIProspectingToolsPage() {
                 <p className="text-[17px] text-[#5f6472] max-w-2xl mb-4 leading-relaxed text-justify">
                   Artificial intelligence has fundamentally changed the way businesses identify, engage, and convert prospects. Discover the top AI-powered platforms that can supercharge your outbound sales in 2026.
                 </p>
-                {/* Meta info */}
-                <div className="mb-4 inline-flex items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm whitespace-nowrap">
+                {/* Meta info – single row on desktop, wrap on mobile */}
+                <div className="mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm">
                   <div className="flex items-center gap-2">
                     <Image
                       src="/logonew.png"
@@ -392,6 +424,7 @@ export default function BlogAIProspectingToolsPage() {
                       width={140}
                       height={40}
                       className="h-10 w-auto object-contain"
+                      priority={false}
                     />
                   </div>
                   <span>•360AIRO Team</span>
@@ -418,7 +451,6 @@ export default function BlogAIProspectingToolsPage() {
         {/* Main Content */}
         <section className="px-4 py-8">
           <div className="max-w-[1440px] mx-auto grid xl:grid-cols-[250px_minmax(0,1fr)_250px] lg:grid-cols-[250px_minmax(0,1fr)] gap-8">
-            {/* TOC */}
             <aside className="sticky top-20 self-start hidden lg:block mb-10">
               <h2 className="text-[16px] font-bold text-[#20242c] mb-4">Table of Contents</h2>
               <nav className="space-y-1.5 border-l border-[#d9dfef] pl-3">
@@ -449,8 +481,8 @@ export default function BlogAIProspectingToolsPage() {
               </nav>
             </aside>
 
-            {/* Articles */}
             <div className="min-w-0 space-y-4">
+              {/* All ArticleSection components remain unchanged */}
               <ArticleSection
                 key="introduction"
                 id="introduction"
@@ -1845,8 +1877,8 @@ export default function BlogAIProspectingToolsPage() {
                 },
               ].map((post) => (
                 <a key={post.href} href={post.href} className="group overflow-hidden rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
-                  <div className="relative h-[200px] w-full overflow-hidden">
-                    <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+                  <div className="relative w-full aspect-[16/9] overflow-hidden">
+                    <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
                   </div>
                   <div className="p-5">
                     <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-2">{post.tag}</p>
