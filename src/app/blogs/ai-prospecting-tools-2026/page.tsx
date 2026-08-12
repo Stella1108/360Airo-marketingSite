@@ -180,7 +180,7 @@ function ArticleSection({
         {intro.length > 0 && (
           <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
             {intro.map((text, index) => (
-              <p key={index}>{text}</p>
+              <p key={index} dangerouslySetInnerHTML={{ __html: text }} />
             ))}
           </div>
         )}
@@ -415,8 +415,7 @@ export default function BlogAIProspectingToolsPage() {
                 <p className="text-[17px] text-[#5f6472] max-w-2xl mb-4 leading-relaxed text-justify">
                   Artificial intelligence has fundamentally changed the way businesses identify, engage, and convert prospects. Discover the top AI-powered platforms that can supercharge your outbound sales in 2026.
                 </p>
-                {/* Meta info – single row on desktop, wrap on mobile */}
-                <div className="mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm">
+                <div className="mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm md:whitespace-nowrap">
                   <div className="flex items-center gap-2">
                     <Image
                       src="/logonew.png"
@@ -482,7 +481,6 @@ export default function BlogAIProspectingToolsPage() {
             </aside>
 
             <div className="min-w-0 space-y-4">
-              {/* All ArticleSection components remain unchanged */}
               <ArticleSection
                 key="introduction"
                 id="introduction"
@@ -944,7 +942,7 @@ export default function BlogAIProspectingToolsPage() {
                 title="5.1 360 Airo"
                 showImage={false}
                 intro={[
-                  '**Best for:** Outbound prospecting and multichannel sales outreach',
+                  '<strong>Best for:</strong> Outbound prospecting and multichannel sales outreach',
                   '360AIRO helps B2B sales teams streamline the entire outbound process from identifying ideal accounts and finding decision-makers to creating personalized emails and managing follow-ups across multiple channels. It enables teams to build targeted prospect lists, personalize outreach at scale, and improve campaign performance while maintaining strong email deliverability.',
                 ]}
                 blocks={[]}
@@ -956,7 +954,7 @@ export default function BlogAIProspectingToolsPage() {
                 title="5.2 Salesforce Agentforce"
                 showImage={false}
                 intro={[
-                  '**Best for:** Enterprise organizations using Salesforce CRM',
+                  '<strong>Best for:</strong> Enterprise organizations using Salesforce CRM',
                   'Salesforce has integrated generative AI deeply into its sales ecosystem through Agentforce, enabling sales teams to automate prospect research, summarize accounts, prioritize opportunities, draft personalized emails, and recommend next-best actions.',
                   'One of its biggest strengths is its ability to leverage CRM data alongside external signals, giving representatives a complete view of every prospect without switching between multiple applications.',
                 ]}
@@ -990,7 +988,7 @@ export default function BlogAIProspectingToolsPage() {
                 title="5.3 Apollo.io"
                 showImage={false}
                 intro={[
-                  '**Best for:** SMBs and growing sales teams',
+                  '<strong>Best for:</strong> SMBs and growing sales teams',
                   'Apollo combines a large B2B contact database with AI-powered prospecting capabilities. Users can search companies using advanced filters, enrich contact information, create outreach sequences, and prioritize leads based on engagement signals.',
                   'Its affordability makes it attractive for startups building outbound sales functions.',
                 ]}
@@ -1023,7 +1021,7 @@ export default function BlogAIProspectingToolsPage() {
                 title="5.4 HubSpot Sales Hub"
                 showImage={false}
                 intro={[
-                  '**Best for:** Businesses aligning marketing and sales',
+                  '<strong>Best for:</strong> Businesses aligning marketing and sales',
                   'HubSpot combines CRM functionality with AI-powered prospecting and engagement tools. The platform uses customer interactions across marketing, sales, and customer service to recommend follow-up actions and personalize communication.',
                   'Organizations already using HubSpot Marketing Hub benefit from unified customer data throughout the buyer journey.',
                 ]}
@@ -1056,7 +1054,7 @@ export default function BlogAIProspectingToolsPage() {
                 title="5.5 ZoomInfo"
                 showImage={false}
                 intro={[
-                  '**Best for:** Sales teams focused on high-quality B2B data',
+                  '<strong>Best for:</strong> Sales teams focused on high-quality B2B data',
                   'ZoomInfo has become one of the leading providers of business intelligence and contact data. Its AI capabilities enhance prospect discovery by identifying buying signals, organizational changes, and account intent.',
                   'Sales teams can prioritize companies demonstrating active purchasing behavior before initiating outreach.',
                 ]}
@@ -1089,7 +1087,7 @@ export default function BlogAIProspectingToolsPage() {
                 title="5.6 Cognism"
                 showImage={false}
                 intro={[
-                  '**Best for:** International B2B prospecting',
+                  '<strong>Best for:</strong> International B2B prospecting',
                   'Cognism specializes in compliant global contact data, making it particularly valuable for organizations selling across Europe and international markets.',
                   'Its AI-driven search capabilities help sales teams identify decision-makers while maintaining data compliance.',
                 ]}
@@ -1122,7 +1120,7 @@ export default function BlogAIProspectingToolsPage() {
                 title="5.7 Clay"
                 showImage={false}
                 intro={[
-                  '**Best for:** Advanced prospect research and workflow automation',
+                  '<strong>Best for:</strong> Advanced prospect research and workflow automation',
                   'Clay has become increasingly popular among modern growth teams because it combines dozens of data providers with AI-powered workflows.',
                   'Instead of manually researching accounts, users can automatically enrich companies, generate personalized messaging, and build highly customized prospect lists.',
                 ]}
@@ -1155,7 +1153,7 @@ export default function BlogAIProspectingToolsPage() {
                 title="5.8 Outreach"
                 showImage={false}
                 intro={[
-                  '**Best for:** Large outbound sales organizations',
+                  '<strong>Best for:</strong> Large outbound sales organizations',
                   'Outreach focuses on improving sales execution after prospects have been identified.',
                   'Its AI capabilities recommend optimal engagement timing, prioritize accounts, analyze conversations, and improve sales coaching.',
                 ]}
@@ -1188,7 +1186,7 @@ export default function BlogAIProspectingToolsPage() {
                 title="5.9 Salesloft"
                 showImage={false}
                 intro={[
-                  '**Best for:** Revenue teams seeking AI-powered engagement',
+                  '<strong>Best for:</strong> Revenue teams seeking AI-powered engagement',
                   'Salesloft combines prospect engagement, conversation intelligence, forecasting, and AI recommendations into one platform.',
                   'Managers gain visibility into representative performance while AI recommends actions that increase conversion probability.',
                 ]}
@@ -1221,7 +1219,7 @@ export default function BlogAIProspectingToolsPage() {
                 title="5.10 LinkedIn Sales Navigator"
                 showImage={false}
                 intro={[
-                  '**Best for:** Relationship-based prospecting',
+                  '<strong>Best for:</strong> Relationship-based prospecting',
                   'LinkedIn remains one of the richest professional networking databases in the world.',
                   'Sales Navigator uses AI to recommend accounts, identify decision-makers, monitor job changes, and surface relationship opportunities.',
                 ]}
@@ -1254,7 +1252,7 @@ export default function BlogAIProspectingToolsPage() {
                 title="5.11 6sense"
                 showImage={false}
                 intro={[
-                  '**Best for:** Account-based marketing (ABM) and enterprise sales',
+                  '<strong>Best for:</strong> Account-based marketing (ABM) and enterprise sales',
                   '6sense uses AI to identify anonymous buying behavior, helping organizations engage accounts before they formally enter the sales process.',
                   'Its predictive analytics help prioritize enterprise accounts based on purchase readiness rather than simple demographic characteristics.',
                 ]}
