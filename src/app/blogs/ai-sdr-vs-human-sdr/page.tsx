@@ -102,7 +102,7 @@ function ContentBlock({
 
 function SectionImage({ id }: { id: string }) {
   const image = {
-    src: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1400&q=80',
+    src: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1400&q=80&fm=webp',
     alt: 'AI SDR vs Human SDR comparison',
     label: 'AI SDR',
   };
@@ -110,8 +110,15 @@ function SectionImage({ id }: { id: string }) {
 
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
-      <div className="relative h-[230px] md:h-[340px] w-full">
-        <Image src={image.src} alt={image.alt} fill className="object-cover" />
+      <div className="relative w-full aspect-[16/9] md:aspect-[16/7] h-auto md:h-[340px]">
+        <Image
+          src={image.src}
+          alt={image.alt}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+          priority={false}
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#4f63ff] backdrop-blur">
           {image.label}
@@ -149,7 +156,7 @@ function ArticleSection({
         {intro.length > 0 && (
           <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
             {intro.map((text, index) => (
-              <p key={index}>{text}</p>
+              <p key={index} dangerouslySetInnerHTML={{ __html: text }} />
             ))}
           </div>
         )}
@@ -215,6 +222,7 @@ function RightPromoCards() {
               alt="360Airo logo"
               fill
               className="object-contain"
+              priority={false}
             />
           </div>
         </div>
@@ -249,28 +257,42 @@ export default function BlogAISDRvsHumanSDRPage() {
   const [activeId, setActiveId] = useState('introduction');
   const [searchQuery, setSearchQuery] = useState('');
   const categoryScrollRef = useRef<HTMLDivElement | null>(null);
+  const ticking = useRef(false);
+  const rafId = useRef<number | null>(null);
 
+  // INP FIX: Throttle scroll handler with requestAnimationFrame
   useEffect(() => {
     const handleScroll = () => {
-      const sections = tocItems
-        .map((item) => document.getElementById(item.id))
-        .filter(Boolean) as HTMLElement[];
+      if (!ticking.current) {
+        rafId.current = requestAnimationFrame(() => {
+          const sections = tocItems
+            .map((item) => document.getElementById(item.id))
+            .filter(Boolean) as HTMLElement[];
 
-      const scrollPosition = window.scrollY + 180;
-      let currentSectionId = sections[0]?.id || 'introduction';
+          const scrollPosition = window.scrollY + 180;
+          let currentSectionId = sections[0]?.id || 'introduction';
 
-      for (const section of sections) {
-        if (scrollPosition >= section.offsetTop) {
-          currentSectionId = section.id;
-        }
+          for (const section of sections) {
+            if (scrollPosition >= section.offsetTop) {
+              currentSectionId = section.id;
+            }
+          }
+          setActiveId(currentSectionId);
+          ticking.current = false;
+        });
+        ticking.current = true;
       }
-      setActiveId(currentSectionId);
     };
 
     handleScroll();
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll);
+    window.addEventListener('resize', handleScroll, { passive: true });
+
     return () => {
+      if (rafId.current) {
+        cancelAnimationFrame(rafId.current);
+      }
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
     };
@@ -288,7 +310,30 @@ export default function BlogAISDRvsHumanSDRPage() {
           .scrollbar-hide::-webkit-scrollbar {
             display: none;
           }
+
+          /* Font-display swap to prevent invisible text during font loading */
+          @font-face {
+            font-family: 'Barlow Condensed';
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'DM Sans';
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'Outfit';
+            font-display: swap;
+          }
         `}</style>
+
+        {/* LCP FIX: Preload hero image with WebP and high priority */}
+        <link
+          rel="preload"
+          fetchPriority="high"
+          as="image"
+          href="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80&fm=webp"
+          type="image/webp"
+        />
 
         {/* Hero Section */}
         <section className="pt-8 md:pt-10 pb-8 px-4 border-b border-[#ddd9ef]">
@@ -315,13 +360,17 @@ export default function BlogAISDRvsHumanSDRPage() {
                 transition={{ duration: 0.6 }}
                 className="relative"
               >
-                <div className="relative min-h-[300px] md:min-h-[410px] rounded-[28px] overflow-hidden bg-gradient-to-br from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] shadow-xl">
+                {/* CLS FIX + LCP FIX: aspect-ratio container and priority image */}
+                <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[28px] overflow-hidden bg-gradient-to-br from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] shadow-xl">
                   <Image
-                    src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80"
+                    src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80&fm=webp"
                     alt="AI SDR vs Human SDR hero"
                     fill
                     priority
+                    fetchPriority="high"
+                    decoding="sync"
                     className="object-cover mix-blend-overlay opacity-35"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#072f63]/95 via-[#0b4f96]/70 to-transparent" />
                   <div className="relative z-10 h-full p-8 md:p-10 flex flex-col justify-between">
@@ -334,10 +383,11 @@ export default function BlogAISDRvsHumanSDRPage() {
                     </p>
                     <div className="absolute bottom-0 right-0 w-[48%] h-[92%] hidden md:block">
                       <Image
-                        src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80"
+                        src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80&fm=webp"
                         alt="Sales team"
                         fill
                         className="object-contain object-bottom"
+                        priority={false}
                       />
                     </div>
                   </div>
@@ -359,8 +409,8 @@ export default function BlogAISDRvsHumanSDRPage() {
                 <p className="text-[17px] text-[#5f6472] max-w-2xl mb-4 leading-relaxed text-justify">
                   Outbound sales has always been a numbers game. But should you invest in an AI SDR, continue hiring human SDRs, or combine both? Compare cost, performance, scalability, and ROI to find the right answer for your business.
                 </p>
-                {/* Meta info */}
-                <div className="mb-4 inline-flex items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm whitespace-nowrap">
+                {/* Meta info - single row on desktop, wrap on mobile */}
+                <div className="mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm md:whitespace-nowrap">
                   <div className="flex items-center gap-2">
                     <Image
                       src="/logonew.png"
@@ -368,6 +418,7 @@ export default function BlogAISDRvsHumanSDRPage() {
                       width={140}
                       height={40}
                       className="h-10 w-auto object-contain"
+                      priority={false}
                     />
                   </div>
                   <span>•360AIRO Team</span>
@@ -1172,26 +1223,26 @@ export default function BlogAISDRvsHumanSDRPage() {
                   tag: 'AI Prospecting',
                   href: '/blogs/ai-prospecting-tools-2026',
                   description: 'Discover the top AI platforms for outbound sales.',
-                  image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80',
+                  image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80&fm=webp',
                 },
                 {
                   title: 'Best Practices to Keep Email Bounce Rates Below the 3% Target',
                   tag: 'Bounce Rate',
                   href: '/blogs/best-practices-email-bounce-rates',
                   description: 'Keep bounce rates low with verified data and proper authentication.',
-                  image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80',
+                  image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80&fm=webp',
                 },
                 {
                   title: 'What Factors Influence the 95–99% Email Deliverability Rate Benchmark?',
                   tag: 'Deliverability',
                   href: '/blogs/email-deliverability-rate-benchmark',
                   description: 'Understand the metrics that drive inbox placement.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80',
+                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
                 },
               ].map((post) => (
                 <a key={post.href} href={post.href} className="group overflow-hidden rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
-                  <div className="relative h-[200px] w-full overflow-hidden">
-                    <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+                  <div className="relative w-full aspect-[16/9] overflow-hidden">
+                    <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
                   </div>
                   <div className="p-5">
                     <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-2">{post.tag}</p>
