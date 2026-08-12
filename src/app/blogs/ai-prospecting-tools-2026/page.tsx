@@ -126,7 +126,8 @@ function ContentBlock({
 
 function SectionImage({ id }: { id: string }) {
   const image = {
-    src: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1400&q=80',
+    // Use WebP format for faster loading
+    src: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1400&q=80&fm=webp',
     alt: 'AI prospecting dashboard',
     label: 'AI Prospecting',
   };
@@ -333,13 +334,28 @@ export default function BlogAIProspectingToolsPage() {
           .scrollbar-hide::-webkit-scrollbar {
             display: none;
           }
+
+          /* Font-display swap to prevent invisible text during font loading */
+          @font-face {
+            font-family: 'Barlow Condensed';
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'DM Sans';
+            font-display: swap;
+          }
+          @font-face {
+            font-family: 'Outfit';
+            font-display: swap;
+          }
         `}</style>
 
+        {/* LCP FIX: Preload hero image with WebP and high priority */}
         <link
           rel="preload"
           fetchPriority="high"
           as="image"
-          href="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80"
+          href="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80&fm=webp"
           type="image/webp"
         />
 
@@ -368,13 +384,15 @@ export default function BlogAIProspectingToolsPage() {
                 transition={{ duration: 0.6 }}
                 className="relative"
               >
+                {/* CLS FIX + LCP FIX: aspect-ratio container and priority image */}
                 <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[28px] overflow-hidden bg-gradient-to-br from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] shadow-xl">
                   <Image
-                    src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80"
+                    src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80&fm=webp"
                     alt="AI prospecting tools hero"
                     fill
                     priority
                     fetchPriority="high"
+                    decoding="sync"  // Forces synchronous decoding to paint faster
                     className="object-cover mix-blend-overlay opacity-35"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
                   />
@@ -389,7 +407,7 @@ export default function BlogAIProspectingToolsPage() {
                     </p>
                     <div className="absolute bottom-0 right-0 w-[48%] h-[92%] hidden md:block">
                       <Image
-                        src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80"
+                        src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80&fm=webp"
                         alt="AI team"
                         fill
                         className="object-contain object-bottom"
@@ -1857,21 +1875,21 @@ export default function BlogAIProspectingToolsPage() {
                   tag: 'Warmup',
                   href: '/blogs/email-warmup-tools-guide',
                   description: 'Learn how warmup tools protect sender reputation.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80',
+                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
                 },
                 {
                   title: 'Best Practices to Keep Email Bounce Rates Below the 3% Target',
                   tag: 'Bounce Rate',
                   href: '/blogs/best-practices-email-bounce-rates',
                   description: 'Keep bounce rates low with verified data and proper authentication.',
-                  image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80',
+                  image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80&fm=webp',
                 },
                 {
                   title: 'What Factors Influence the 95–99% Email Deliverability Rate Benchmark?',
                   tag: 'Deliverability',
                   href: '/blogs/email-deliverability-rate-benchmark',
                   description: 'Understand the metrics that drive inbox placement.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80',
+                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
                 },
               ].map((post) => (
                 <a key={post.href} href={post.href} className="group overflow-hidden rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
