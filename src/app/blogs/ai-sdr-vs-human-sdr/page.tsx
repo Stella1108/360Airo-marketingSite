@@ -59,17 +59,17 @@ function MiniInfographic({
   bullets?: string[];
 }) {
   return (
-    <div className="rounded-[20px] border border-[#dbe3f4] bg-[#f8f9ff] p-6 md:p-7">
-      <h3 className="text-[18px] md:text-[22px] font-bold text-[#111827] leading-tight mb-4">
+    <div className="rounded-[20px] border border-[#dbe3f4] bg-[#f8f9ff] p-4 md:p-7">
+      <h3 className="text-[17px] md:text-[22px] font-bold text-[#111827] leading-tight mb-3 md:mb-4">
         {title}
       </h3>
-      <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
+      <div className="space-y-3 md:space-y-4 text-[#4f5668] text-[15px] md:text-[17px] leading-7 text-justify">
         {paragraphs.map((text, index) => (
           <p key={index}>{text}</p>
         ))}
       </div>
       {bullets && bullets.length > 0 ? (
-        <ul className="mt-4 space-y-4 text-[#4f5668] text-[17px] leading-7 list-disc pl-5 text-justify">
+        <ul className="mt-3 md:mt-4 space-y-3 md:space-y-4 text-[#4f5668] text-[15px] md:text-[17px] leading-7 list-disc pl-5 text-justify">
           {bullets.map((item, index) => (
             <li key={index}>{item}</li>
           ))}
@@ -88,10 +88,10 @@ function ContentBlock({
 }) {
   return (
     <div>
-      <h3 className="text-[17px] md:text-[19px] font-bold text-[#111827] mb-4">
+      <h3 className="text-[16px] md:text-[19px] font-bold text-[#111827] mb-2 md:mb-4">
         {subtitle}
       </h3>
-      <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
+      <div className="space-y-3 md:space-y-4 text-[#4f5668] text-[15px] md:text-[17px] leading-7 text-justify">
         {paragraphs.map((text, index) => (
           <p key={index}>{text}</p>
         ))}
@@ -120,7 +120,7 @@ function SectionImage({ id }: { id: string }) {
           priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
-        <div className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#4f63ff] backdrop-blur">
+        <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
           {image.label}
         </div>
       </div>
@@ -149,12 +149,12 @@ function ArticleSection({
 }) {
   return (
     <section id={id} className="scroll-mt-28">
-      <h2 className="text-[24px] font-bold text-[#111827] mb-4">
+      <h2 className="text-[20px] md:text-[24px] font-bold text-[#111827] mb-3 md:mb-4">
         {title}
       </h2>
       <div className="space-y-4">
         {intro.length > 0 && (
-          <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
+          <div className="space-y-3 md:space-y-4 text-[#4f5668] text-[15px] md:text-[17px] leading-7 text-justify">
             {intro.map((text, index) => (
               <p key={index} dangerouslySetInnerHTML={{ __html: text }} />
             ))}
@@ -179,26 +179,26 @@ function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[]
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 md:space-y-4">
       {faqs.map((faq, index) => {
         const isOpen = openIndex === index;
         return (
           <div key={index} className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]">
             <button
               onClick={() => toggle(index)}
-              className="w-full flex items-center justify-between px-6 py-4 text-left text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
+              className="w-full flex items-center justify-between px-4 py-3 md:px-6 md:py-4 text-left text-[15px] md:text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
             >
               <span>{faq.subtitle}</span>
-              <span className="text-[#4f63ff] text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+              <span className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
                 {isOpen ? '−' : '+'}
               </span>
             </button>
             <div
-              className={`px-6 transition-all duration-300 ease-in-out ${
-                isOpen ? 'max-h-[1000px] pb-4 opacity-100' : 'max-h-0 pb-0 opacity-0'
+              className={`px-4 md:px-6 transition-all duration-300 ease-in-out ${
+                isOpen ? 'max-h-[1000px] pb-3 md:pb-4 opacity-100' : 'max-h-0 pb-0 opacity-0'
               } overflow-hidden`}
             >
-              <div className="space-y-4 text-[#4f5668] text-[17px] leading-7 text-justify">
+              <div className="space-y-3 md:space-y-4 text-[#4f5668] text-[15px] md:text-[17px] leading-7 text-justify">
                 {faq.paragraphs.map((text, idx) => (
                   <p key={idx}>{text}</p>
                 ))}
@@ -216,7 +216,7 @@ function RightPromoCards() {
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
         <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[200px] h-[130px] shrink-0">
+          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
             <Image
               src="/360aironewlog.png"
               alt="360Airo logo"
@@ -226,26 +226,26 @@ function RightPromoCards() {
             />
           </div>
         </div>
-        <h3 className="text-[16px] leading-[1.3] font-bold text-white text-center mt-[-30px] mb-4">
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
           AI SDR
           <br />
           vs Human SDR
         </h3>
-        <p className="text-[12px] leading-5 text-white text-center mb-4">
+        <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Discover the cost, performance, and ROI of AI-powered sales development vs traditional SDR teams.
         </p>
-        <button className="w-full rounded-[12px] border border-white bg-transparent px-4 py-3 text-white text-[13px] font-bold hover:opacity-95 transition">
+        <button className="w-full rounded-[12px] border border-white bg-transparent px-3 py-2.5 md:px-4 md:py-3 text-white text-[12px] md:text-[13px] font-bold hover:opacity-95 transition">
           Try For FREE!
         </button>
       </div>
-      <div className="rounded-[18px] border border-[#dbe3f4] bg-white p-4 shadow-[0_8px_24px_rgba(17,24,39,0.05)]">
-        <p className="text-[10px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-2">
+      <div className="rounded-[18px] border border-[#dbe3f4] bg-white p-3 md:p-4 shadow-[0_8px_24px_rgba(17,24,39,0.05)]">
+        <p className="text-[9px] md:text-[10px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">
           Quick Tip
         </p>
-        <h4 className="text-[13px] leading-5 font-bold text-[#111827] mb-2">
+        <h4 className="text-[12px] md:text-[13px] leading-5 font-bold text-[#111827] mb-1 md:mb-2">
           Hybrid is the future
         </h4>
-        <p className="text-[11px] leading-5 text-[#5f6472]">
+        <p className="text-[10px] md:text-[11px] leading-5 text-[#5f6472]">
           The best sales teams combine AI efficiency with human expertise. Let AI handle repetitive tasks while SDRs focus on building relationships.
         </p>
       </div>
@@ -336,10 +336,10 @@ export default function BlogAISDRvsHumanSDRPage() {
         />
 
         {/* Hero Section */}
-        <section className="pt-8 md:pt-10 pb-8 px-4 border-b border-[#ddd9ef]">
+        <section className="pt-6 md:pt-10 pb-6 md:pb-8 px-3 md:px-4 border-b border-[#ddd9ef]">
           <div className="max-w-7xl mx-auto">
             {/* Breadcrumb */}
-            <div className="flex flex-wrap items-center gap-2 text-xs md:text-sm text-[#6b7280] mb-4">
+            <div className="flex flex-wrap items-center gap-1 md:gap-2 text-[10px] md:text-sm text-[#6b7280] mb-2 md:mb-4">
               <Link href="/blogs" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
                 Blog
               </Link>
@@ -348,12 +348,13 @@ export default function BlogAISDRvsHumanSDRPage() {
                 AI SDR
               </Link>
               <span>›</span>
-              <Link href="./" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
-                AI SDR vs Human SDR: Cost, Performance & ROI Comparison
+              <Link href="./" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors break-words">
+                <span className="hidden sm:inline">AI SDR vs Human SDR: Cost, Performance & ROI Comparison</span>
+                <span className="sm:hidden">AI SDR vs Human SDR</span>
               </Link>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            <div className="grid lg:grid-cols-2 gap-6 md:gap-10 lg:gap-14 items-center">
               <motion.div
                 initial={{ opacity: 0, x: -24 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -361,7 +362,7 @@ export default function BlogAISDRvsHumanSDRPage() {
                 className="relative"
               >
                 {/* CLS FIX + LCP FIX: aspect-ratio container and priority image */}
-                <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[28px] overflow-hidden bg-gradient-to-br from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] shadow-xl">
+                <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden bg-gradient-to-br from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] shadow-xl">
                   <Image
                     src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80&fm=webp"
                     alt="AI SDR vs Human SDR hero"
@@ -373,8 +374,8 @@ export default function BlogAISDRvsHumanSDRPage() {
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#072f63]/95 via-[#0b4f96]/70 to-transparent" />
-                  <div className="relative z-10 h-full p-8 md:p-10 flex flex-col justify-between">
-                    <p className="text-white text-[26px] md:text-[36px] lg:text-[42px] font-bold leading-tight max-w-[420px]">
+                  <div className="relative z-10 h-full p-5 md:p-10 flex flex-col justify-between">
+                    <p className="text-white text-[20px] md:text-[36px] lg:text-[42px] font-bold leading-tight max-w-[420px]">
                       AI SDR
                       <br />
                       vs Human SDR
@@ -400,40 +401,39 @@ export default function BlogAISDRvsHumanSDRPage() {
                 transition={{ duration: 0.6, delay: 0.08 }}
                 className="max-w-2xl"
               >
-                <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[11px] md:text-[12px] mb-3">
+                <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">
                   AI Sales Guide
                 </p>
-                <h1 className="text-[#111827] text-[28px] md:text-[36px] lg:text-[42px] font-bold leading-[1.08] tracking-[-0.02em] mb-4">
+                <h1 className="text-[#111827] text-[22px] md:text-[36px] lg:text-[42px] font-bold leading-[1.08] tracking-[-0.02em] mb-3 md:mb-4">
                   AI SDR vs Human SDR: Cost, Performance & ROI Comparison
                 </h1>
-                <p className="text-[17px] text-[#5f6472] max-w-2xl mb-4 leading-relaxed text-justify">
+                <p className="text-[15px] md:text-[17px] text-[#5f6472] max-w-2xl mb-3 md:mb-4 leading-relaxed text-justify">
                   Outbound sales has always been a numbers game. But should you invest in an AI SDR, continue hiring human SDRs, or combine both? Compare cost, performance, scalability, and ROI to find the right answer for your business.
                 </p>
-                {/* Meta info - single row on desktop, wrap on mobile */}
-                <div className="mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-4 py-3 text-white text-xs md:text-sm md:whitespace-nowrap">
+
+                {/* Meta info – single row on desktop, wrap on mobile */}
+                <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
                   <div className="flex items-center gap-2">
                     <Image
                       src="/logonew.png"
                       alt="360Airo Team"
                       width={140}
                       height={40}
-                      className="h-10 w-auto object-contain"
+                      className="h-7 md:h-10 w-auto object-contain"
                       priority={false}
                     />
                   </div>
-                  <span>•360AIRO Team</span>
-                  <span>•</span>
-                  <span>Updated: Jun 2026</span>
-                  <span>•</span>
-                  <span>15 min read</span>
-                  <span>•</span>
-                  <span>1.8K reads</span>
+                  <span>• 360AIRO Team</span>
+                  <span>• Updated: Jun 2026</span>
+                  <span>• 15 min read</span>
+                  <span>• 1.8K reads</span>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <button className="px-7 py-3.5 rounded-xl bg-[#4f63ff] text-white font-semibold text-base shadow-md hover:bg-[#4154f5] transition-all">
+
+                <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                  <button className="px-5 py-2.5 md:px-7 md:py-3.5 rounded-xl bg-[#4f63ff] text-white font-semibold text-sm md:text-base shadow-md hover:bg-[#4154f5] transition-all">
                     Start Reading
                   </button>
-                  <button className="px-7 py-3.5 rounded-xl border border-[#6b8cff] text-[#4f63ff] bg-transparent font-semibold text-base hover:bg-white/60 transition-all">
+                  <button className="px-5 py-2.5 md:px-7 md:py-3.5 rounded-xl border border-[#6b8cff] text-[#4f63ff] bg-transparent font-semibold text-sm md:text-base hover:bg-white/60 transition-all">
                     Schedule a Demo
                   </button>
                 </div>
@@ -443,10 +443,10 @@ export default function BlogAISDRvsHumanSDRPage() {
         </section>
 
         {/* Main Content */}
-        <section className="px-4 py-8">
-          <div className="max-w-[1440px] mx-auto grid xl:grid-cols-[250px_minmax(0,1fr)_250px] lg:grid-cols-[250px_minmax(0,1fr)] gap-8">
+        <section className="px-3 md:px-4 py-4 md:py-8">
+          <div className="max-w-[1440px] mx-auto grid xl:grid-cols-[250px_minmax(0,1fr)_250px] lg:grid-cols-[250px_minmax(0,1fr)] gap-6 md:gap-8">
             {/* TOC */}
-            <aside className="sticky top-20 self-start hidden lg:block mb-10">
+            <aside className="sticky top-20 self-start hidden lg:block mb-6 md:mb-10">
               <h2 className="text-[16px] font-bold text-[#20242c] mb-4">Table of Contents</h2>
               <nav className="space-y-1.5 border-l border-[#d9dfef] pl-3">
                 {tocItems.map((item) => {
@@ -1169,7 +1169,7 @@ export default function BlogAISDRvsHumanSDRPage() {
 
               {/* FAQ Section */}
               <section id="faqs" className="scroll-mt-28">
-                <h2 className="text-[24px] font-bold text-[#111827] mb-4">
+                <h2 className="text-[20px] md:text-[24px] font-bold text-[#111827] mb-3 md:mb-4">
                   12. Frequently Asked Questions
                 </h2>
                 <div className="space-y-4">
@@ -1210,13 +1210,13 @@ export default function BlogAISDRvsHumanSDRPage() {
         </section>
 
         {/* Recent Posts */}
-        <section className="px-4 pb-8">
+        <section className="px-3 md:px-4 pb-4 md:pb-8">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-[20px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
-              <a href="/blogs" className="text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
+            <div className="flex items-center justify-between mb-3 md:mb-4">
+              <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
+              <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
               {[
                 {
                   title: 'Best AI Tools for Outbound Prospecting in 2026',
@@ -1240,14 +1240,14 @@ export default function BlogAISDRvsHumanSDRPage() {
                   image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
                 },
               ].map((post) => (
-                <a key={post.href} href={post.href} className="group overflow-hidden rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
+                <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
                   <div className="relative w-full aspect-[16/9] overflow-hidden">
                     <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
                   </div>
-                  <div className="p-5">
-                    <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-2">{post.tag}</p>
-                    <h3 className="text-[16px] font-bold text-[#111827] leading-snug mb-3 group-hover:text-[#4f63ff] transition-colors">{post.title}</h3>
-                    <p className="text-[13px] text-[#6b7280]">{post.description}</p>
+                  <div className="p-3 md:p-5">
+                    <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
+                    <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
+                    <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
                   </div>
                 </a>
               ))}

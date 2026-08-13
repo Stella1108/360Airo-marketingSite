@@ -17,23 +17,33 @@ type TocItem = {
 
 const tocItems: TocItem[] = [
   { id: 'introduction', label: 'Introduction', arrow: false },
-  { id: 'what-is-email-deliverability', label: '1. What Is Email Deliverability?', arrow: true },
-  { id: 'why-95-99-benchmark', label: '1.1 Why Is 95–99% Deliverability Considered a Benchmark?', arrow: true, indent: true },
-  { id: 'sender-reputation-and-domain-reputation', label: '2. Sender Reputation and Domain Reputation', arrow: true },
-  { id: 'what-is-an-email-sender-score', label: '2.1 What Is an Email Sender Score?', arrow: true, indent: true },
-  { id: 'email-authentication-spf-dkim-dmarc', label: '3. Email Authentication: SPF, DKIM, and DMARC', arrow: true },
-  { id: 'spf-record', label: '3.1 SPF Record', arrow: true, indent: true },
-  { id: 'dkim-authentication', label: '3.2 DKIM Authentication', arrow: true, indent: true },
-  { id: 'dmarc-policy', label: '3.3 DMARC Policy', arrow: true, indent: true },
-  { id: 'email-list-quality-and-hygiene', label: '4. Email List Quality and Hygiene', arrow: true },
-  { id: 'why-list-verification-matters', label: '4.1 Why List Verification Matters', arrow: true, indent: true },
-  { id: 'bounce-rate-management', label: '5. Bounce Rate Management', arrow: true },
-  { id: 'spam-complaint-rates', label: '6. Spam Complaint Rates', arrow: true },
-  { id: 'email-engagement-metrics', label: '7. Email Engagement Metrics', arrow: true },
-  { id: 'the-role-of-email-warmup', label: '8. The Role of Email Warmup', arrow: true },
-  { id: 'how-to-improve-email-deliverability', label: '9. How to Improve Email Deliverability', arrow: true },
-  { id: 'faqs', label: '10. Frequently Asked Questions', arrow: true },
-  { id: 'conclusion', label: '11. Build Better Deliverability From the Start', arrow: true },
+  { id: 'what-is-the-difference', label: '1. SMS vs Email Marketing: What\'s the Difference?', arrow: true },
+  { id: 'email-outreach', label: '1.1 Email Outreach', arrow: true, indent: true },
+  { id: 'sms-sales-outreach', label: '1.2 SMS Sales Outreach', arrow: true, indent: true },
+  { id: 'comparing-conversion-benchmarks', label: '2. Comparing Conversion Benchmarks', arrow: true },
+  { id: 'open-rates', label: '2.1 Open Rates', arrow: true, indent: true },
+  { id: 'response-rates', label: '2.2 Response Rates', arrow: true, indent: true },
+  { id: 'click-through-rates', label: '2.3 Click‑Through Rates', arrow: true, indent: true },
+  { id: 'conversion-rates', label: '2.4 Conversion Rates', arrow: true, indent: true },
+  { id: 'when-to-use-email', label: '3. When Should Revenue Teams Use Email?', arrow: true },
+  { id: 'lead-nurturing', label: '3.1 Lead Nurturing', arrow: true, indent: true },
+  { id: 'content-sharing', label: '3.2 Content Sharing', arrow: true, indent: true },
+  { id: 'relationship-building', label: '3.3 Relationship Building', arrow: true, indent: true },
+  { id: 'when-to-use-sms', label: '4. When Should Revenue Teams Use SMS?', arrow: true },
+  { id: 'following-up-quickly', label: '4.1 Following Up Quickly', arrow: true, indent: true },
+  { id: 'confirming-meetings', label: '4.2 Confirming Meetings', arrow: true, indent: true },
+  { id: 'driving-immediate-action', label: '4.3 Driving Immediate Action', arrow: true, indent: true },
+  { id: 'supporting-conversations', label: '4.4 Supporting Existing Conversations', arrow: true, indent: true },
+  { id: 'choose-email-or-sms', label: '5. Should You Choose Email or SMS?', arrow: true },
+  { id: 'email-builds-context', label: '5.1 Email Builds Context', arrow: true, indent: true },
+  { id: 'sms-creates-momentum', label: '5.2 SMS Creates Momentum', arrow: true, indent: true },
+  { id: 'best-practices-combining', label: '6. Best Practices for Combining Email and SMS', arrow: true },
+  { id: 'keep-messaging-consistent', label: '6.1 Keep Messaging Consistent', arrow: true, indent: true },
+  { id: 'personalize-interactions', label: '6.2 Personalize Every Interaction', arrow: true, indent: true },
+  { id: 'respect-preferences', label: '6.3 Respect Customer Preferences', arrow: true, indent: true },
+  { id: 'measure-performance', label: '6.4 Measure Performance Across Channels', arrow: true, indent: true },
+  { id: 'smarter-strategy', label: '7. Build a Smarter Multichannel Outreach Strategy', arrow: true },
+  { id: 'faqs', label: '8. Frequently Asked Questions', arrow: true },
 ];
 
 function MiniInfographic({
@@ -89,9 +99,9 @@ function ContentBlock({
 
 function SectionImage({ id }: { id: string }) {
   const image = {
-    src: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1400&q=80&fm=webp',
-    alt: 'Email deliverability dashboard',
-    label: 'Deliverability',
+    src: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1400&q=80&fm=webp',
+    alt: 'Email and SMS communication dashboard',
+    label: 'Multichannel',
   };
   if (!image) return null;
 
@@ -214,12 +224,12 @@ function RightPromoCards() {
           </div>
         </div>
         <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          Deliverability
+          Multichannel
           <br />
-          Benchmark Guide
+          Outreach
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
-          Reach the 95–99% deliverability rate with better authentication, warmup, and list hygiene.
+          Combine email and SMS for higher engagement. Automate both from one platform.
         </p>
         <button className="w-full rounded-[12px] border border-white bg-transparent px-3 py-2.5 md:px-4 md:py-3 text-white text-[12px] md:text-[13px] font-bold hover:opacity-95 transition">
           Try For FREE!
@@ -230,17 +240,17 @@ function RightPromoCards() {
           Quick Tip
         </p>
         <h4 className="text-[12px] md:text-[13px] leading-5 font-bold text-[#111827] mb-1 md:mb-2">
-          Delivery ≠ Inbox
+          Use both channels
         </h4>
         <p className="text-[10px] md:text-[11px] leading-5 text-[#5f6472]">
-          A 99% delivery rate doesn't guarantee 99% inbox placement. Monitor both metrics.
+          Email builds trust with detailed information; SMS drives immediate action. Together they outperform either alone.
         </p>
       </div>
     </aside>
   );
 }
 
-export default function BlogDeliverabilityPage() {
+export default function BlogEmailVsSmsPage() {
   const [activeId, setActiveId] = useState('introduction');
   const [searchQuery, setSearchQuery] = useState('');
   const categoryScrollRef = useRef<HTMLDivElement | null>(null);
@@ -298,7 +308,6 @@ export default function BlogDeliverabilityPage() {
             display: none;
           }
 
-          /* Font-display swap to prevent invisible text during font loading */
           @font-face {
             font-family: 'Barlow Condensed';
             font-display: swap;
@@ -331,13 +340,13 @@ export default function BlogDeliverabilityPage() {
                 Blog
               </Link>
               <span>›</span>
-              <Link href="/blogs?category=deliverability" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
-                Deliverability
+              <Link href="/blogs?category=email-marketing" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
+                Email Marketing
               </Link>
               <span>›</span>
               <Link href="./" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors break-words">
-                <span className="hidden sm:inline">What Factors Influence the 95–99% Email Deliverability Rate Benchmark?</span>
-                <span className="sm:hidden">Email Deliverability Rate Benchmark</span>
+                <span className="hidden sm:inline">Email vs SMS Outreach: Conversion Benchmarks</span>
+                <span className="sm:hidden">Email vs SMS Benchmarks</span>
               </Link>
             </div>
 
@@ -348,11 +357,10 @@ export default function BlogDeliverabilityPage() {
                 transition={{ duration: 0.6 }}
                 className="relative"
               >
-                {/* CLS FIX + LCP FIX: aspect-ratio container and priority image */}
                 <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden bg-gradient-to-br from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] shadow-xl">
                   <Image
                     src="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp"
-                    alt="Email deliverability hero"
+                    alt="Email and SMS outreach hero"
                     fill
                     priority
                     fetchPriority="high"
@@ -363,16 +371,16 @@ export default function BlogDeliverabilityPage() {
                   <div className="absolute inset-0 bg-gradient-to-r from-[#072f63]/95 via-[#0b4f96]/70 to-transparent" />
                   <div className="relative z-10 h-full p-5 md:p-10 flex flex-col justify-between">
                     <p className="text-white text-[20px] md:text-[36px] lg:text-[42px] font-bold leading-tight max-w-[420px]">
-                      Email Deliverability
+                      Email vs SMS
                       <br />
-                      Benchmark
+                      Outreach
                       <br />
-                      2026
+                      Benchmarks
                     </p>
                     <div className="absolute bottom-0 right-0 w-[48%] h-[92%] hidden md:block">
                       <Image
                         src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80&fm=webp"
-                        alt="Deliverability team"
+                        alt="Outreach team"
                         fill
                         className="object-contain object-bottom"
                         priority={false}
@@ -389,16 +397,16 @@ export default function BlogDeliverabilityPage() {
                 className="max-w-2xl"
               >
                 <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">
-                  Deliverability Guide
+                  Multichannel Guide
                 </p>
                 <h1 className="text-[#111827] text-[22px] md:text-[36px] lg:text-[42px] font-bold leading-[1.08] tracking-[-0.02em] mb-3 md:mb-4">
-                  What Factors Influence the 95–99% Email Deliverability Rate Benchmark?
+                  Email vs SMS Outreach: Conversion Benchmarks
                 </h1>
                 <p className="text-[15px] md:text-[17px] text-[#5f6472] max-w-2xl mb-3 md:mb-4 leading-relaxed text-justify">
-                  You send 1,000 emails. How many actually get delivered? A 95–99% rate is the benchmark, but reaching it takes more than just good content.
+                  Your buyers aren't ignoring your outreach because they're uninterested—they're busy. Learn when to use email, when to use SMS, and how to combine them for maximum conversions.
                 </p>
 
-                {/* Meta info – single row on desktop, wrap on mobile */}
+                {/* Meta info */}
                 <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
                   <div className="flex items-center gap-2">
                     <Image
@@ -411,9 +419,9 @@ export default function BlogDeliverabilityPage() {
                     />
                   </div>
                   <span>• 360AIRO Team</span>
-                  <span>• Updated: Jun 2026</span>
-                  <span>• 14 min read</span>
-                  <span>• 1.4K reads</span>
+                  <span>• Updated: Aug 2026</span>
+                  <span>• 10 min read</span>
+                  <span>• 2.3K reads</span>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
@@ -471,361 +479,394 @@ export default function BlogDeliverabilityPage() {
                 title="Introduction"
                 showImage={false}
                 intro={[
-                  'You send 1,000 emails.',
-                  'How many actually get delivered?',
-                  'For a healthy email program, the answer should be most of them. A 95–99% Email Deliverability Rate is often treated as a strong benchmark for email campaigns. But reaching that range isn\'t automatic.',
-                  'Your sending history, domain reputation, authentication, email list quality, bounce rates, and recipient engagement all influence whether mailbox providers accept your emails.',
-                  'And even a high delivery rate doesn\'t necessarily mean every message reached the inbox.',
-                  'That\'s why understanding Email Deliverability requires looking beyond a single percentage.',
-                  'Let\'s explore what influences the 95–99% benchmark and the factors revenue teams should monitor to improve email performance.',
+                  'Your buyers aren\'t ignoring your outreach because they\'re uninterested.',
+                  'They\'re ignoring it because they\'re busy.',
+                  'Every day, prospects receive dozens of emails, LinkedIn requests, phone calls, and marketing messages competing for their attention. As a result, revenue teams are asking an important question: Should you prioritize email or SMS?',
+                  'The answer isn\'t as simple as choosing one over the other.',
+                  'Email and SMS serve different purposes throughout the buyer journey. While email is ideal for sharing detailed information and nurturing leads, SMS excels at creating timely, high-engagement conversations.',
+                  'Understanding the strengths of each channel—and knowing when to use them—can help revenue teams improve response rates, increase conversions, and build a more effective multichannel outreach strategy.',
                 ]}
                 infographic={{
-                  title: 'What you\'ll learn',
-                  paragraphs: ['The factors that separate a 95% delivery rate from a 99% rate, and how to build a sustainable deliverability strategy.'],
+                  title: 'The core insight',
+                  paragraphs: ['Email educates; SMS activates. The best results come from using both intentionally.'],
                 }}
                 blocks={[]}
               />
 
               <ArticleSection
-                key="what-is-email-deliverability"
-                id="what-is-email-deliverability"
-                title="1. What Is Email Deliverability?"
+                key="what-is-the-difference"
+                id="what-is-the-difference"
+                title="1. SMS vs Email Marketing: What's the Difference?"
                 showImage={false}
                 intro={[
-                  'Email Deliverability is the ability of an email to successfully reach the recipient\'s inbox rather than being rejected, blocked, or filtered into spam.',
-                  'It\'s important to distinguish between email delivery and inbox placement.',
-                  'An email may be accepted by the recipient\'s mail server but still land in the spam folder. Technically, it was delivered. But from a campaign perspective, the prospect may never see it.',
-                  'That\'s why teams should monitor both the Email Deliverability Rate and Email Inbox Placement.',
+                  'Both email and SMS are powerful communication channels, but they solve different problems.',
+                  'Email gives you room to educate prospects, tell a story, and share detailed resources. SMS, on the other hand, is designed for short, immediate communication that encourages quick responses.',
+                  'Instead of asking which channel is better, ask which channel is better for the moment.',
                 ]}
                 infographic={{
-                  title: 'Delivery vs. Inbox Placement',
-                  paragraphs: ['Delivery means the email was accepted by the server. Inbox placement means it landed in the primary tab – and that\'s what truly matters for outreach.'],
+                  title: 'Channel comparison',
+                  paragraphs: ['Email = depth and storytelling. SMS = speed and convenience.'],
                 }}
                 blocks={[]}
               />
 
               <ArticleSection
-                key="why-95-99-benchmark"
-                id="why-95-99-benchmark"
-                title="1.1 Why Is 95–99% Deliverability Considered a Benchmark?"
+                key="email-outreach"
+                id="email-outreach"
+                title="1.1 Email Outreach"
                 showImage={false}
                 intro={[
-                  'A 95–99% Email Deliverability Benchmark generally indicates that the majority of messages are being accepted by recipient mail servers.',
-                  'Falling below this range may signal problems such as:',
+                  'Email is one of the most widely used channels for prospecting and lead nurturing.',
+                  'It works well for:',
                 ]}
                 infographic={{
-                  title: 'Warning signs below 95%',
-                  paragraphs: ['If your delivery rate drops below 95%, investigate these areas.'],
+                  title: 'Best uses for email',
+                  paragraphs: ['Email gives buyers flexibility to review information on their own time.'],
                   bullets: [
-                    'Poor list quality',
-                    'Invalid email addresses',
-                    'Authentication problems',
-                    'Reputation issues',
-                    'High bounce rates',
-                    'Spam complaints',
+                    'Sharing proposals and presentations',
+                    'Sending product information',
+                    'Long-form educational content',
+                    'Lead nurturing campaigns',
+                    'Follow-up sequences',
                   ],
                 }}
                 blocks={[
                   {
-                    subtitle: 'Important',
-                    paragraphs: ['However, a 99% delivery rate doesn\'t guarantee a 99% inbox placement rate. Deliverability should always be evaluated alongside inbox placement, bounce rates, engagement, and complaint rates.'],
+                    subtitle: 'The trade‑off',
+                    paragraphs: ['Busy inboxes make it harder to capture attention.'],
                   },
                 ]}
               />
 
               <ArticleSection
-                key="sender-reputation-and-domain-reputation"
-                id="sender-reputation-and-domain-reputation"
-                title="2. Sender Reputation and Domain Reputation"
+                key="sms-sales-outreach"
+                id="sms-sales-outreach"
+                title="1.2 SMS Sales Outreach"
+                showImage={false}
+                intro={[
+                  'SMS sales outreach focuses on speed and convenience.',
+                  'Instead of delivering large amounts of information, SMS encourages quick interactions that move conversations forward.',
+                  'Revenue teams commonly use SMS for:',
+                ]}
+                infographic={{
+                  title: 'Best uses for SMS',
+                  paragraphs: ['Text messages are short, direct, and often viewed much sooner than emails.'],
+                  bullets: [
+                    'Demo confirmations',
+                    'Meeting reminders',
+                    'Follow-ups',
+                    'Appointment scheduling',
+                    'Quick customer updates',
+                  ],
+                }}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="comparing-conversion-benchmarks"
+                id="comparing-conversion-benchmarks"
+                title="2. Comparing Conversion Benchmarks"
                 showImage={true}
                 intro={[
-                  'Mailbox providers evaluate your sending history before deciding how to handle incoming messages.',
-                  'This is where Sender Reputation and Domain Reputation become important.',
-                  'Sender reputation is influenced by factors such as:',
+                  'When evaluating SMS vs email marketing, conversion isn\'t determined by one metric alone.',
+                  'Revenue teams should look at engagement throughout the customer journey.',
                 ]}
                 infographic={{
-                  title: 'What builds reputation',
-                  paragraphs: ['A strong reputation increases trust. A poor reputation leads to filtering, throttling, or rejection.'],
-                  bullets: [
-                    'Sending consistency',
-                    'Bounce history',
-                    'Spam complaints',
-                    'Recipient engagement',
-                    'Authentication',
-                    'Previous sending behavior',
-                  ],
+                  title: 'Key metrics',
+                  paragraphs: ['Open rates, response rates, click‑throughs, and conversions—each tells a different story.'],
                 }}
                 blocks={[]}
               />
 
               <ArticleSection
-                key="what-is-an-email-sender-score"
-                id="what-is-an-email-sender-score"
-                title="2.1 What Is an Email Sender Score?"
+                key="open-rates"
+                id="open-rates"
+                title="2.1 Open Rates"
                 showImage={false}
                 intro={[
-                  'An Email Sender Score is a numerical indicator designed to represent aspects of sender reputation.',
-                  'While sender scores can provide useful insights, no single score determines deliverability across every mailbox provider.',
-                  'Different providers evaluate different signals.',
-                  'Revenue teams should therefore monitor reputation alongside broader Email Deliverability Metrics rather than relying on one number alone.',
+                  'SMS consistently achieves higher visibility than email because messages appear directly on a recipient\'s mobile device.',
+                  'Email remains effective, but inbox competition means even well-crafted campaigns can go unnoticed.',
+                  'Higher visibility often makes SMS an excellent channel for time-sensitive communication.',
                 ]}
-                infographic={{
-                  title: 'Use with caution',
-                  paragraphs: ['Sender scores are directional, not definitive. Use them as one input among many.'],
-                }}
                 blocks={[]}
               />
 
               <ArticleSection
-                key="email-authentication-spf-dkim-dmarc"
-                id="email-authentication-spf-dkim-dmarc"
-                title="3. Email Authentication: SPF, DKIM, and DMARC"
-                showImage={true}
-                intro={[
-                  'Email Authentication helps mailbox providers verify that messages are legitimately associated with the sending domain.',
-                  'Three important authentication standards are SPF, DKIM, and DMARC.',
-                ]}
-                infographic={{
-                  title: 'The authentication triad',
-                  paragraphs: ['Together, SPF, DKIM, and DMARC form the foundation of email infrastructure health.'],
-                }}
-                blocks={[]}
-              />
-
-              <ArticleSection
-                key="spf-record"
-                id="spf-record"
-                title="3.1 SPF Record"
+                key="response-rates"
+                id="response-rates"
+                title="2.2 Response Rates"
                 showImage={false}
                 intro={[
-                  'An SPF Record identifies the mail servers authorized to send email on behalf of a domain.',
-                  'Correct SPF configuration helps recipient servers verify whether a message originated from an approved sending source.',
+                  'SMS encourages conversational engagement.',
+                  'A prospect can confirm a meeting, ask a question, or respond within seconds.',
+                  'Email responses often take longer because recipients typically process emails in batches throughout the day.',
+                  'For follow-ups that require immediate action, SMS often creates less friction.',
                 ]}
-                infographic={{
-                  title: 'SPF in brief',
-                  paragraphs: ['Tells providers which servers are allowed to send from your domain.'],
-                }}
                 blocks={[]}
               />
 
               <ArticleSection
-                key="dkim-authentication"
-                id="dkim-authentication"
-                title="3.2 DKIM Authentication"
+                key="click-through-rates"
+                id="click-through-rates"
+                title="2.3 Click‑Through Rates"
                 showImage={false}
                 intro={[
-                  'DKIM Authentication adds a digital signature to outgoing messages.',
-                  'The recipient\'s mail server can verify this signature to confirm that the message wasn\'t altered during transit and is associated with the expected domain.',
+                  'Email gives marketers more space to explain offers before asking recipients to click.',
+                  'SMS relies on concise messaging and a single call to action.',
+                  'When messages are relevant and timely, both channels can drive meaningful engagement—but they do so in different ways.',
                 ]}
-                infographic={{
-                  title: 'DKIM in brief',
-                  paragraphs: ['Adds a cryptographic signature that proves the email came from your domain and wasn\'t tampered with.'],
-                }}
                 blocks={[]}
               />
 
               <ArticleSection
-                key="dmarc-policy"
-                id="dmarc-policy"
-                title="3.3 DMARC Policy"
+                key="conversion-rates"
+                id="conversion-rates"
+                title="2.4 Conversion Rates"
                 showImage={false}
                 intro={[
-                  'A DMARC Policy builds on SPF and DKIM.',
-                  'It tells receiving servers how to handle messages that fail authentication checks and provides reporting that can help domain owners identify authentication problems or unauthorized sending.',
+                  'Conversion depends on more than the communication channel.',
+                  'Audience quality, timing, personalization, and messaging all influence results.',
+                  'Revenue teams often see the strongest outcomes when SMS supports an existing email strategy rather than replacing it.',
                 ]}
-                infographic={{
-                  title: 'DMARC in brief',
-                  paragraphs: ['Tells providers what to do when SPF or DKIM fails — and gives you visibility into who is sending on your behalf.'],
-                }}
                 blocks={[]}
               />
 
               <ArticleSection
-                key="email-list-quality-and-hygiene"
-                id="email-list-quality-and-hygiene"
-                title="4. Email List Quality and Hygiene"
-                showImage={true}
-                intro={[
-                  'One of the fastest ways to damage deliverability is sending emails to poor-quality data.',
-                  'Email List Hygiene is the process of maintaining accurate, current, and relevant contact information.',
-                  'A healthy list reduces the likelihood of sending to:',
-                ]}
-                infographic={{
-                  title: 'What a healthy list avoids',
-                  paragraphs: ['Better data quality supports lower bounce rates and healthier sender reputation.'],
-                  bullets: [
-                    'Invalid email addresses',
-                    'Abandoned mailboxes',
-                    'Duplicate contacts',
-                    'Incorrect addresses',
-                    'Irrelevant prospects',
-                  ],
-                }}
-                blocks={[]}
-              />
-
-              <ArticleSection
-                key="why-list-verification-matters"
-                id="why-list-verification-matters"
-                title="4.1 Why List Verification Matters"
+                key="when-to-use-email"
+                id="when-to-use-email"
+                title="3. When Should Revenue Teams Use Email?"
                 showImage={false}
                 intro={[
-                  'Cold email databases can become outdated quickly.',
-                  'People change roles, move companies, and stop using old email addresses.',
-                  'Regular verification helps protect Cold Email Deliverability by identifying invalid addresses before campaigns begin.',
-                  'List size matters less than list quality.',
-                  'Sending 1,000 emails to verified, relevant prospects is generally more valuable than sending 10,000 emails to an outdated database.',
+                  'Email remains essential throughout the buying journey.',
                 ]}
                 infographic={{
-                  title: 'Quality over quantity',
-                  paragraphs: ['A smaller, verified list outperforms a large, dirty list every time.'],
+                  title: 'Email strengths',
+                  paragraphs: ['Use email when you need to educate, share resources, and build relationships over time.'],
                 }}
                 blocks={[]}
               />
 
               <ArticleSection
-                key="bounce-rate-management"
-                id="bounce-rate-management"
-                title="5. Bounce Rate Management"
+                key="lead-nurturing"
+                id="lead-nurturing"
+                title="3.1 Lead Nurturing"
                 showImage={false}
                 intro={[
-                  'The Email Bounce Rate measures how many messages couldn\'t be successfully delivered.',
-                  'Bounces generally fall into two categories.',
-                  'A hard bounce usually indicates a permanent delivery issue, such as an invalid or non-existent address.',
-                  'A soft bounce is typically temporary and may result from a full mailbox or temporary server issue.',
-                  'Consistently high bounce rates can signal poor list quality and negatively affect sender reputation.',
+                  'Complex buying decisions require education.',
+                  'Email gives teams enough space to explain products, answer objections, and build trust over time.',
+                ]}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="content-sharing"
+                id="content-sharing"
+                title="3.2 Content Sharing"
+                showImage={false}
+                intro={[
+                  'Whitepapers, case studies, proposals, and product guides are better suited for email than text messages.',
+                ]}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="relationship-building"
+                id="relationship-building"
+                title="3.3 Relationship Building"
+                showImage={false}
+                intro={[
+                  'Not every conversation needs immediate action.',
+                  'Email works well for maintaining ongoing communication without interrupting recipients.',
+                ]}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="when-to-use-sms"
+                id="when-to-use-sms"
+                title="4. When Should Revenue Teams Use SMS?"
+                showImage={false}
+                intro={[
+                  'SMS performs best when speed matters.',
                 ]}
                 infographic={{
-                  title: 'Bounce management tips',
-                  paragraphs: ['Keep bounce rates low to protect your reputation.'],
-                  bullets: [
-                    'Verify contact data',
-                    'Remove invalid addresses',
-                    'Monitor campaign performance',
-                    'Investigate sudden increases',
-                    'Maintain clean prospect databases',
-                  ],
+                  title: 'SMS strengths',
+                  paragraphs: ['Use SMS for follow‑ups, meeting confirmations, and driving immediate action.'],
                 }}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="following-up-quickly"
+                id="following-up-quickly"
+                title="4.1 Following Up Quickly"
+                showImage={false}
+                intro={[
+                  'Responding soon after a prospect expresses interest can significantly improve engagement.',
+                  'SMS provides an immediate way to continue the conversation.',
+                ]}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="confirming-meetings"
+                id="confirming-meetings"
+                title="4.2 Confirming Meetings"
+                showImage={false}
+                intro={[
+                  'Meeting reminders reduce no-shows and help prospects stay engaged throughout the sales process.',
+                ]}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="driving-immediate-action"
+                id="driving-immediate-action"
+                title="4.3 Driving Immediate Action"
+                showImage={false}
+                intro={[
+                  'Need someone to confirm a call, complete a form, or reply to a question?',
+                  'SMS creates less friction than many other channels.',
+                ]}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="supporting-conversations"
+                id="supporting-conversations"
+                title="4.4 Supporting Existing Conversations"
+                showImage={false}
+                intro={[
+                  'The most effective SMS sales outreach builds on an existing relationship rather than introducing one.',
+                  'Prospects are more likely to respond when the conversation already has context.',
+                ]}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="choose-email-or-sms"
+                id="choose-email-or-sms"
+                title="5. Should You Choose Email or SMS?"
+                showImage={false}
+                intro={[
+                  'The short answer? No.',
+                  'The highest‑performing revenue teams don\'t choose one channel over the other—they combine both.',
+                ]}
+                infographic={{
+                  title: 'The winning combination',
+                  paragraphs: ['Email explains and nurtures. SMS reminds and confirms. Together they create momentum.'],
+                }}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="email-builds-context"
+                id="email-builds-context"
+                title="5.1 Email Builds Context"
+                showImage={false}
+                intro={[
+                  'Email explains. It educates. It nurtures.',
+                ]}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="sms-creates-momentum"
+                id="sms-creates-momentum"
+                title="5.2 SMS Creates Momentum"
+                showImage={false}
+                intro={[
+                  'SMS reminds. It confirms. It encourages quick responses.',
+                ]}
                 blocks={[
                   {
-                    subtitle: 'Best practice',
-                    paragraphs: ['Bounce management is one of the most important Email Deliverability Best Practices for outbound teams.'],
+                    subtitle: 'Example workflow',
+                    paragraphs: [
+                      'A prospect might receive:',
+                      '• An introductory email',
+                      '• A follow‑up email with helpful resources',
+                      '• A text reminder before a scheduled meeting',
+                      '• A post‑meeting SMS thanking them and sharing the next step',
+                      'Each channel plays a different role while supporting the same buyer journey.',
+                    ],
                   },
                 ]}
               />
 
               <ArticleSection
-                key="spam-complaint-rates"
-                id="spam-complaint-rates"
-                title="6. Spam Complaint Rates"
+                key="best-practices-combining"
+                id="best-practices-combining"
+                title="6. Best Practices for Combining Email and SMS"
                 showImage={false}
                 intro={[
-                  'A spam complaint occurs when a recipient marks an email as spam.',
-                  'The Spam Complaint Rate is a strong negative signal because it indicates that recipients don\'t want or trust the messages they\'re receiving.',
-                  'Complaint rates may increase when:',
+                  'Using multiple channels doesn\'t mean sending more messages—it means creating better experiences.',
                 ]}
                 infographic={{
-                  title: 'What drives complaints',
-                  paragraphs: ['The most effective way to reduce complaints is to improve relevance.'],
-                  bullets: [
-                    'Targeting is too broad',
-                    'Messaging is irrelevant',
-                    'Sending frequency is excessive',
-                    'Sender identity is unclear',
-                    'Opt-out options are difficult to find',
-                  ],
+                  title: 'Core principles',
+                  paragraphs: ['Consistency, personalization, respect preferences, and measure everything.'],
                 }}
-                blocks={[
-                  {
-                    subtitle: 'Solution',
-                    paragraphs: ['Better targeting and personalization help ensure that outreach reaches people who are more likely to find the message useful.'],
-                  },
-                ]}
+                blocks={[]}
               />
 
               <ArticleSection
-                key="email-engagement-metrics"
-                id="email-engagement-metrics"
-                title="7. Email Engagement Metrics"
+                key="keep-messaging-consistent"
+                id="keep-messaging-consistent"
+                title="6.1 Keep Messaging Consistent"
                 showImage={false}
                 intro={[
-                  'Mailbox providers may consider recipient behavior when evaluating future messages.',
-                  'That\'s why Email Engagement Metrics are connected to deliverability.',
-                  'Useful engagement signals include:',
+                  'Whether someone receives an email or a text message, the conversation should feel connected.',
                 ]}
-                infographic={{
-                  title: 'Positive signals',
-                  paragraphs: ['For cold email campaigns, replies and positive engagement are particularly valuable.'],
-                  bullets: [
-                    'Replies',
-                    'Clicks',
-                    'Opens',
-                    'Forwarding',
-                    'Deletions',
-                    'Spam complaints',
-                  ],
-                }}
-                blocks={[
-                  {
-                    subtitle: 'Strategy',
-                    paragraphs: ['Strong engagement starts with better targeting. Sending fewer, more relevant emails can often support healthier long-term performance than maximizing volume alone.'],
-                  },
-                ]}
+                blocks={[]}
               />
 
               <ArticleSection
-                key="the-role-of-email-warmup"
-                id="the-role-of-email-warmup"
-                title="8. The Role of Email Warmup"
+                key="personalize-interactions"
+                id="personalize-interactions"
+                title="6.2 Personalize Every Interaction"
                 showImage={false}
                 intro={[
-                  'Email Warmup is the process of gradually increasing sending activity from a new or inactive mailbox.',
-                  'A new email account with little sending history shouldn\'t immediately begin sending large volumes of outreach.',
-                  'Gradual warmup helps establish consistent sending patterns before volume increases.',
-                  'A structured warmup process may include:',
+                  'Use CRM data to tailor communication based on customer behavior, buying stage, and previous interactions.',
                 ]}
-                infographic={{
-                  title: 'Warmup steps',
-                  paragraphs: ['Warmup should be combined with authentication, clean data, and responsible sending practices.'],
-                  bullets: [
-                    'Starting with lower sending volumes',
-                    'Increasing activity gradually',
-                    'Monitoring mailbox performance',
-                    'Tracking reputation signals',
-                    'Adjusting volume when problems appear',
-                  ],
-                }}
-                blocks={[
-                  {
-                    subtitle: 'Important',
-                    paragraphs: ['Warmup isn\'t a substitute for authentication or list hygiene. It\'s one part of a broader strategy.'],
-                  },
-                ]}
+                blocks={[]}
               />
 
               <ArticleSection
-                key="how-to-improve-email-deliverability"
-                id="how-to-improve-email-deliverability"
-                title="9. How to Improve Email Deliverability"
-                showImage={true}
+                key="respect-preferences"
+                id="respect-preferences"
+                title="6.3 Respect Customer Preferences"
+                showImage={false}
                 intro={[
-                  'There is no single action that guarantees a 95–99% Email Deliverability Rate.',
-                  'Deliverability is the result of multiple factors working together.',
-                  'To Improve Email Deliverability, revenue teams should:',
+                  'Some buyers prefer email. Others respond faster to text messages. Providing communication choices helps build trust.',
+                ]}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="measure-performance"
+                id="measure-performance"
+                title="6.4 Measure Performance Across Channels"
+                showImage={false}
+                intro={[
+                  'Monitor open rates, reply rates, meeting bookings, conversions, and revenue influence to understand how each channel contributes to pipeline generation.',
+                ]}
+                blocks={[]}
+              />
+
+              <ArticleSection
+                key="smarter-strategy"
+                id="smarter-strategy"
+                title="7. Build a Smarter Multichannel Outreach Strategy"
+                showImage={false}
+                intro={[
+                  'The debate isn\'t really SMS vs email marketing. It\'s about knowing when each channel creates the greatest impact.',
+                  'Email remains the foundation for education and relationship building. SMS excels at creating timely, high-engagement conversations that keep deals moving forward.',
+                  'When combined thoughtfully, they create a stronger buyer experience and help revenue teams communicate more effectively throughout the sales cycle.',
+                  'Instead of choosing one channel, build a strategy where each supports the other. That\'s how modern revenue teams increase engagement, improve conversions, and create more meaningful customer relationships.',
                 ]}
                 infographic={{
-                  title: 'Action checklist',
-                  paragraphs: ['The strongest email programs treat deliverability as an ongoing process rather than a one-time technical setup.'],
-                  bullets: [
-                    'Authenticate domains with SPF, DKIM, and DMARC',
-                    'Warm up new mailboxes gradually',
-                    'Verify prospect data before outreach',
-                    'Maintain email list hygiene',
-                    'Monitor bounce rates',
-                    'Keep spam complaints low',
-                    'Track sender and domain reputation',
-                    'Personalize outreach',
-                    'Monitor inbox placement continuously',
+                  title: '360Airo',
+                  paragraphs: [
+                    '360Airo unifies email and SMS outreach in one AI‑powered platform, helping you orchestrate multichannel campaigns that drive conversions.',
                   ],
                 }}
                 blocks={[]}
@@ -834,57 +875,39 @@ export default function BlogDeliverabilityPage() {
               {/* FAQ Section */}
               <section id="faqs" className="scroll-mt-28">
                 <h2 className="text-[20px] md:text-[24px] font-bold text-[#111827] mb-3 md:mb-4">
-                  10. Frequently Asked Questions
+                  8. Frequently Asked Questions
                 </h2>
                 <div className="space-y-4">
                   <MiniInfographic
                     title="Quick answers"
-                    paragraphs={['Clear up common questions about deliverability.']}
+                    paragraphs={['Common questions about email vs SMS outreach.']}
                   />
                   <FaqAccordion
                     faqs={[
                       {
-                        subtitle: '10.1 What is email deliverability?',
-                        paragraphs: ['Email deliverability is the ability of an email to reach the recipient\'s inbox rather than being rejected, blocked, or filtered into spam.'],
+                        subtitle: '8.1 Is SMS more effective than email?',
+                        paragraphs: ['SMS often generates faster engagement, while email provides more space for detailed communication. The best results usually come from using both together.'],
                       },
                       {
-                        subtitle: '10.2 Why is 95–99% deliverability considered a benchmark?',
-                        paragraphs: ['A 95–99% delivery rate indicates that most messages are being accepted by recipient mail servers. However, delivery rate should be evaluated alongside inbox placement, bounce rates, and spam complaints.'],
+                        subtitle: '8.2 What is SMS sales outreach?',
+                        paragraphs: ['SMS sales outreach is the use of business text messaging to engage prospects and customers throughout the sales process, including follow‑ups, reminders, and appointment confirmations.'],
                       },
                       {
-                        subtitle: '10.3 How does sender reputation affect email deliverability?',
-                        paragraphs: ['Sender reputation helps mailbox providers evaluate the trustworthiness of sending activity. Poor reputation may increase the likelihood of filtering, throttling, or rejection.'],
+                        subtitle: '8.3 Should I replace email with SMS?',
+                        paragraphs: ['No. Email and SMS serve different purposes. Combining both channels creates a more balanced and effective outreach strategy.'],
                       },
                       {
-                        subtitle: '10.4 Why are SPF, DKIM, and DMARC important?',
-                        paragraphs: ['These authentication standards help recipient servers verify that messages are legitimately associated with the sending domain and haven\'t been altered during transit.'],
+                        subtitle: '8.4 When should I send an SMS instead of an email?',
+                        paragraphs: ['Use SMS for time‑sensitive communication, meeting reminders, follow‑ups, and quick confirmations. Use email when you need to share detailed information or educational content.'],
                       },
                       {
-                        subtitle: '10.5 How does email list hygiene improve deliverability?',
-                        paragraphs: ['Maintaining clean and verified contact data reduces hard bounces and helps protect sender reputation.'],
+                        subtitle: '8.5 Which channel converts better?',
+                        paragraphs: ['The answer depends on your audience, message, and stage of the buyer journey. Revenue teams typically achieve the best conversion benchmarks by integrating email and SMS into a coordinated outreach strategy.'],
                       },
                     ]}
                   />
                 </div>
               </section>
-
-              <ArticleSection
-                key="conclusion"
-                id="conclusion"
-                title="11. Build Better Deliverability From the Start"
-                showImage={false}
-                intro={[
-                  'A strong Email Deliverability Rate isn\'t created by one tool or one setting.',
-                  'It comes from healthy sending infrastructure, authenticated domains, accurate prospect data, controlled sending patterns, and continuous monitoring.',
-                ]}
-                infographic={{
-                  title: '360Airo',
-                  paragraphs: [
-                    '360Airo helps revenue teams connect email warmup, deliverability intelligence, prospect data, and AI-powered outreach within one workflow. Improve inbox performance, protect sender reputation, and scale cold email outreach with greater confidence using 360Airo.',
-                  ],
-                }}
-                blocks={[]}
-              />
             </div>
 
             <RightPromoCards />
@@ -901,13 +924,6 @@ export default function BlogDeliverabilityPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
               {[
                 {
-                  title: 'What Are Email Warmup Tools and How Do They Work?',
-                  tag: 'Warmup',
-                  href: '/blogs/email-warmup-tools-guide',
-                  description: 'Learn how warmup tools protect sender reputation.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-                {
                   title: '10 Cheapest Cold Email Software Tools for Startups & Agencies',
                   tag: 'Cold Email',
                   href: '/blogs/10-cheapest-cold-email-software',
@@ -915,11 +931,18 @@ export default function BlogDeliverabilityPage() {
                   image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80&fm=webp',
                 },
                 {
-                  title: 'How AI Prospecting Improves Sales Efficiency',
-                  tag: 'AI Sales',
-                  href: '/blogs/ai-prospecting-sales-efficiency',
-                  description: 'Read this next to go deeper into modern sales workflows.',
-                  image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80&fm=webp',
+                  title: 'What Are Email Warmup Tools and How Do They Work?',
+                  tag: 'Deliverability',
+                  href: '/blogs/email-warmup-tools-guide',
+                  description: 'Learn how warmup tools protect sender reputation.',
+                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+                },
+                {
+                  title: 'AI SDR vs Human SDR: Cost, Performance & ROI Comparison',
+                  tag: 'AI SDR',
+                  href: '/blogs/ai-sdr-vs-human-sdr',
+                  description: 'Compare cost, performance, and ROI of AI vs human SDRs.',
+                  image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80&fm=webp',
                 },
               ].map((post) => (
                 <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
