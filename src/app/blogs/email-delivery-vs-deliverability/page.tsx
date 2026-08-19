@@ -338,37 +338,18 @@ export default function BlogEmailDeliveryVsDeliverabilityPage() {
                 transition={{ duration: 0.6 }}
                 className="relative"
               >
-                <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden bg-gradient-to-br from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] shadow-xl">
-                  <Image
-                    src="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp"
-                    alt="Email delivery vs deliverability hero"
-                    fill
-                    priority
-                    fetchPriority="high"
-                    decoding="sync"
-                    className="object-cover mix-blend-overlay opacity-35"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#072f63]/95 via-[#0b4f96]/70 to-transparent" />
-                  <div className="relative z-10 h-full p-5 md:p-10 flex flex-col justify-between">
-                    <p className="text-white text-[20px] md:text-[36px] lg:text-[42px] font-bold leading-tight max-w-[420px]">
-                      Email Delivery
-                      <br />
-                      vs
-                      <br />
-                      Deliverability
-                    </p>
-                    <div className="absolute bottom-0 right-0 w-[48%] h-[92%] hidden md:block">
-                      <Image
-                        src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80&fm=webp"
-                        alt="Email team"
-                        fill
-                        className="object-contain object-bottom"
-                        priority={false}
-                      />
-                    </div>
-                  </div>
-                </div>
+        <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
+  <Image
+    src="/email-delivery-vs-deliverability.png"
+    alt="Email delivery vs deliverability hero"
+    fill
+    priority
+    fetchPriority="high"
+    decoding="sync"
+    className="object-cover"
+    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+  />
+</div>
               </motion.div>
 
               <motion.div

@@ -32,141 +32,6 @@ const itemVariants = {
 const blogPosts = [
   {
     id: 1,
-    title: 'A Complete Guide for Modern Sales Teams',
-    excerpt: 'Sales prospecting has always been one of the most challenging parts of the sales process.',
-    slug: 'Transforming-Sales-Prospecting',
-    author: '360Airo Team',
-    date: 'December 3, 2025',
-    readTime: '6 min read',
-    category: 'Email Tools',
-    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: true,
-    isNew: true,
-    views: '2.8K',
-    tags: ['Email Calculator', 'Deliverability', 'Cold Email'],
-  },
-  {
-    id: 2,
-    title: '10 Cheapest Cold Email Software Tools for Startups & Agencies (2026 Guide)',
-    excerpt: 'Cold email remains one of the most cost-effective growth channels for startups and agencies. Discover the 10 most affordable tools.',
-    slug: '10-cheapest-cold-email-software',
-    author: '360Airo Team',
-    date: 'November 15, 2025',
-    readTime: '10 min read',
-    category: 'Cold Email',
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: true,
-    isNew: false,
-    views: '4.1K',
-    tags: ['Cold Email', 'Software Tools'],
-  },
-  {
-    id: 3,
-    title: 'Free Email Verification: How to Verify Email Addresses for Free with 360Airo',
-    excerpt: 'Clean your email lists, protect sender reputation, and improve outreach results before sending a single email.',
-    slug: 'Inbound-Sales-Automation',
-    author: '360Airo Team',
-    date: 'October 25, 2025',
-    readTime: '8 min read',
-    category: 'Email Marketing',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: true,
-    isNew: false,
-    views: '3.2K',
-    tags: ['Email Verification', 'Deliverability'],
-  },
-  {
-    id: 4,
-    title: 'LinkedIn Outreach Strategy That Converts: Step-by-Step Playbook for 2025',
-    excerpt: 'LinkedIn is now one of the strongest B2B sales channels. Learn the exact playbook generating more meetings.',
-    slug: '10-Best-Outreachio-Alternatives',
-    author: 'Mike Rodriguez',
-    date: 'October 20, 2025',
-    readTime: '7 min read',
-    category: 'LinkedIn',
-    image: 'https://images.unsplash.com/photo-1611944212129-29977ae1398c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: true,
-    isNew: false,
-    views: '1.8K',
-    tags: ['LinkedIn', 'Outreach'],
-  },
-  {
-    id: 5,
-    title: 'Top Cold Email Tools in 2025: Which One Actually Delivers Replies?',
-    excerpt: 'Cold outreach today is about precision, personalization, and performance. Discover the tools that actually get responses.',
-    slug: 'SDR-Workflow-Automation-Guide',
-    author: 'Sarah Chen',
-    date: 'October 23, 2025',
-    readTime: '8 min read',
-    category: 'Cold Email',
-    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: true,
-    isNew: false,
-    views: '2.4K',
-    tags: ['Cold Email', 'Sales Tools'],
-  },
-  {
-    id: 6,
-    title: 'Top Cold Email Tools in 2025: Which One Actually Delivers Replies?',
-    excerpt: 'Cold outreach today is about precision, personalization, and performance. Discover the tools that actually get responses.',
-    slug: 'Free-Email-Verification',
-    author: 'Sarah Chen',
-    date: 'October 23, 2025',
-    readTime: '8 min read',
-    category: 'Cold Email',
-    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: true,
-    isNew: false,
-    views: '2.4K',
-    tags: ['Cold Email', 'Sales Tools'],
-  },
-  {
-    id: 8,
-    title: 'Top Cold Email Tools in 2025: Which One Actually Delivers Replies?',
-    excerpt: 'Cold outreach today is about precision, personalization, and performance. Discover the tools that actually get responses.',
-    slug: 'Free-Email-Mailbox-Calculator',
-    author: 'Sarah Chen',
-    date: 'October 23, 2025',
-    readTime: '8 min read',
-    category: 'Cold Email',
-    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: true,
-    isNew: false,
-    views: '2.4K',
-    tags: ['Cold Email', 'Sales Tools'],
-  },
-  {
-    id: 9,
-    title: 'Top Cold Email Tools in 2025: Which One Actually Delivers Replies?',
-    excerpt: 'Cold outreach today is about precision, personalization, and performance. Discover the tools that actually get responses.',
-    slug: 'Free-Email-Deliverability-Test',
-    author: 'Sarah Chen',
-    date: 'October 23, 2025',
-    readTime: '8 min read',
-    category: 'Cold Email',
-    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: true,
-    isNew: false,
-    views: '2.4K',
-    tags: ['Cold Email', 'Sales Tools'],
-  },
-  {
-    id: 10,
-    title: 'Top Cold Email Tools in 2025: Which One Actually Delivers Replies?',
-    excerpt: 'Cold outreach today is about precision, personalization, and performance. Discover the tools that actually get responses.',
-    slug: '10-Cheapest-Cold-Email-Software',
-    author: 'Sarah Chen',
-    date: 'October 23, 2025',
-    readTime: '8 min read',
-    category: 'Cold Email',
-    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: true,
-    isNew: false,
-    views: '2.4K',
-    tags: ['Cold Email', 'Sales Tools'],
-  },
-  {
-    id: 11,
     title: 'What Are Email Warmup Tools and How Do They Work?',
     excerpt: 'You’ve created a new email address. Sending hundreds of emails immediately could damage your sender reputation. Here’s how warmup tools help you scale safely.',
     slug: 'email-warmup-tools-guide',
@@ -174,14 +39,14 @@ const blogPosts = [
     date: 'June 10, 2026',
     readTime: '12 min read',
     category: 'Deliverability',
-    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1000&q=80',
+    image: '/email-warmup-tools1.png',
     featured: true,
     isNew: true,
     views: '1.2K',
     tags: ['Warmup', 'Deliverability', 'Sender Reputation'],
   },
   {
-    id: 12,
+    id: 2,
     title: 'What Factors Influence the 95–99% Email Deliverability Rate Benchmark?',
     excerpt: 'You send 1,000 emails. How many actually get delivered? A 95–99% rate is the benchmark, but reaching it takes more than just good content.',
     slug: 'email-deliverability-rate-benchmark',
@@ -189,14 +54,14 @@ const blogPosts = [
     date: 'June 15, 2026',
     readTime: '14 min read',
     category: 'Deliverability',
-    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1000&q=80',
+    image: '/email-deliverability1.png',
     featured: true,
     isNew: true,
     views: '980',
     tags: ['Deliverability', 'Authentication', 'SPF', 'DKIM', 'DMARC'],
   },
   {
-    id: 13,
+    id: 3,
     title: 'Best Practices to Keep Email Bounce Rates Below the 3% Target',
     excerpt: 'You launch an email campaign to 1,000 prospects. Some emails fail to deliver. Those bounces aren\'t just missed opportunities — they can damage your sender reputation. Learn how to keep bounce rates below 3%.',
     slug: 'best-practices-email-bounce-rates',
@@ -204,15 +69,14 @@ const blogPosts = [
     date: 'June 20, 2026',
     readTime: '10 min read',
     category: 'Deliverability',
-    image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1000&q=80',
+    image: '/email-bounce-rate1.png',
     featured: true,
     isNew: true,
     views: '1.1K',
     tags: ['Bounce Rate', 'Deliverability', 'Email Verification', 'List Hygiene'],
   },
-  // ✅ NEW: AI Prospecting article
   {
-    id: 14,
+    id: 4,
     title: 'Best AI Tools for Outbound Prospecting in 2026',
     excerpt: 'Artificial intelligence has fundamentally changed the way businesses identify, engage, and convert prospects. Discover the top AI-powered platforms that can supercharge your outbound sales in 2026.',
     slug: 'ai-prospecting-tools-2026',
@@ -220,14 +84,14 @@ const blogPosts = [
     date: 'June 25, 2026',
     readTime: '18 min read',
     category: 'AI Prospecting',
-    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1000&q=80',
+    image: '/ai-tool-prospecting1.png',
     featured: true,
     isNew: true,
     views: '2.1K',
     tags: ['AI', 'Prospecting', 'Sales Tools', 'Automation'],
   },
-    {
-    id: 15, // Increment based on existing IDs
+  {
+    id: 5,
     title: 'AI SDR vs Human SDR: Cost, Performance & ROI Comparison',
     excerpt: 'Should you invest in an AI SDR, continue hiring human SDRs, or combine both? Compare cost, performance, scalability, and ROI to find the right answer for your business.',
     slug: 'ai-sdr-vs-human-sdr',
@@ -235,14 +99,14 @@ const blogPosts = [
     date: 'June 28, 2026',
     readTime: '15 min read',
     category: 'AI SDR',
-    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1000&q=80',
+    image: '/ai-sdr-vs-human1.png',
     featured: true,
     isNew: true,
     views: '1.8K',
     tags: ['AI SDR', 'Sales Development', 'Outbound', 'ROI'],
   },
   {
-    id: 16,
+    id: 6,
     title: 'Key Metrics Used to Measure Cold Email Outreach Success',
     excerpt: 'You send 1,000 cold emails. Seven hundred are opened. Fifty prospects reply. Ten book a meeting. Was the campaign successful? Learn which metrics truly measure cold email performance.',
     slug: 'cold-email-metrics-kpis',
@@ -250,14 +114,14 @@ const blogPosts = [
     date: 'July 1, 2026',
     readTime: '10 min read',
     category: 'Cold Email',
-    image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1000&q=80',
+    image: "/kpi's-meassure-outreach-success1.png",
     featured: true,
     isNew: true,
     views: '1.3K',
     tags: ['Cold Email', 'KPIs', 'Metrics', 'Deliverability'],
   },
-    {
-    id: 17,
+  {
+    id: 7,
     title: 'Email vs SMS Outreach: Conversion Benchmarks',
     excerpt: 'Your buyers aren\'t ignoring your outreach because they\'re uninterested—they\'re busy. Learn when to use email, when to use SMS, and how to combine them for maximum conversions.',
     slug: 'email-vs-sms-outreach-conversion-benchmarks',
@@ -265,72 +129,72 @@ const blogPosts = [
     date: 'August 13, 2026',
     readTime: '10 min read',
     category: 'Email Marketing',
-    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1000&q=80',
+    image: '/email-vs-sms-outreach1.png',
     featured: true,
     isNew: true,
     views: '2.3K',
     tags: ['Email Marketing', 'SMS', 'Multichannel', 'Outreach'],
   },
   {
-  id: 18, // or next available
-  title: 'Email Delivery vs Email Deliverability: What\'s the Difference?',
-  excerpt: 'You send 1,000 emails. Your dashboard says 980 were delivered. But are they actually reaching the inbox? Learn the critical difference between delivery and deliverability.',
-  slug: 'email-delivery-vs-deliverability',
-  author: '360Airo Team',
-  date: 'August 18, 2026',
-  readTime: '9 min read',
-  category: 'Deliverability',
-  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1000&q=80',
-  featured: true,
-  isNew: true,
-  views: '1.8K',
-  tags: ['Deliverability', 'Authentication', 'SPF', 'DKIM', 'DMARC'],
-},
-{
-  id: 19,
-  title: 'Multi‑Channel Outreach Explained: Why One Channel Is No Longer Enough in B2B Sales',
-  excerpt: 'Today\'s buyers don\'t make decisions after a single email. Learn how to combine email, LinkedIn, calls, and SMS into a coordinated outreach strategy that drives 287% higher purchase rates.',
-  slug: 'multi-channel-outreach-explained',
-  author: '360Airo Team',
-  date: 'August 20, 2026',
-  readTime: '12 min read',
-  category: 'Multichannel',
-  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1000&q=80',
-  featured: true,
-  isNew: true,
-  views: '3.1K',
-  tags: ['Multichannel', 'Outreach', 'LinkedIn', 'Sales Development'],
-},
-{
-  id: 20,
-  title: 'Why Your Cold Emails Go to Spam (And How to Keep Them Out)',
-  excerpt: 'You\'ve spent hours building a prospect list and personalizing emails – but days later, barely any replies. Learn why spam filters block cold emails and how to fix it.',
-  slug: 'why-cold-emails-go-to-spam',
-  author: '360Airo Team',
-  date: 'August 25, 2026',
-  readTime: '11 min read',
-  category: 'Deliverability',
-  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1000&q=80',
-  featured: true,
-  isNew: true,
-  views: '2.5K',
-  tags: ['Spam', 'Deliverability', 'Authentication', 'Cold Email'],
-},
-{
-  id: 21, // next available
-  title: 'AI for Sales: A Beginner\'s Guide to Working Smarter',
-  excerpt: 'Sales has never been short on tools – but salespeople still spend too much time on administrative work. Discover how AI can help you work smarter, not harder.',
-  slug: 'ai-for-sales-beginners-guide',
-  author: '360Airo Team',
-  date: 'August 28, 2026',
-  readTime: '12 min read',
-  category: 'AI',
-  image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1000&q=80',
-  featured: true,
-  isNew: true,
-  views: '3.4K',
-  tags: ['AI', 'Sales', 'Automation', 'Prospecting'],
-},
+    id: 8,
+    title: 'Email Delivery vs Email Deliverability: What\'s the Difference?',
+    excerpt: 'You send 1,000 emails. Your dashboard says 980 were delivered. But are they actually reaching the inbox? Learn the critical difference between delivery and deliverability.',
+    slug: 'email-delivery-vs-deliverability',
+    author: '360Airo Team',
+    date: 'August 18, 2026',
+    readTime: '9 min read',
+    category: 'Deliverability',
+    image: '/email-delivery-vs-deliverability.png',
+    featured: true,
+    isNew: true,
+    views: '1.8K',
+    tags: ['Deliverability', 'Authentication', 'SPF', 'DKIM', 'DMARC'],
+  },
+  {
+    id: 9,
+    title: 'Multi‑Channel Outreach Explained: Why One Channel Is No Longer Enough in B2B Sales',
+    excerpt: 'Today\'s buyers don\'t make decisions after a single email. Learn how to combine email, LinkedIn, calls, and SMS into a coordinated outreach strategy that drives 287% higher purchase rates.',
+    slug: 'multi-channel-outreach-explained',
+    author: '360Airo Team',
+    date: 'August 20, 2026',
+    readTime: '12 min read',
+    category: 'Multichannel',
+    image: '/multichannel-outreach1.png',
+    featured: true,
+    isNew: true,
+    views: '3.1K',
+    tags: ['Multichannel', 'Outreach', 'LinkedIn', 'Sales Development'],
+  },
+  {
+    id: 10,
+    title: 'Why Your Cold Emails Go to Spam (And How to Keep Them Out)',
+    excerpt: 'You\'ve spent hours building a prospect list and personalizing emails – but days later, barely any replies. Learn why spam filters block cold emails and how to fix it.',
+    slug: 'why-cold-emails-go-to-spam',
+    author: '360Airo Team',
+    date: 'August 25, 2026',
+    readTime: '11 min read',
+    category: 'Deliverability',
+    image: '/why-email-goes-to-spam1.png',
+    featured: true,
+    isNew: true,
+    views: '2.5K',
+    tags: ['Spam', 'Deliverability', 'Authentication', 'Cold Email'],
+  },
+  {
+    id: 11,
+    title: 'AI for Sales: A Beginner\'s Guide to Working Smarter',
+    excerpt: 'Sales has never been short on tools – but salespeople still spend too much time on administrative work. Discover how AI can help you work smarter, not harder.',
+    slug: 'ai-for-sales-beginners-guide',
+    author: '360Airo Team',
+    date: 'August 28, 2026',
+    readTime: '12 min read',
+    category: 'AI',
+    image: '/ai-for-sales1.png',
+    featured: true,
+    isNew: true,
+    views: '3.4K',
+    tags: ['AI', 'Sales', 'Automation', 'Prospecting'],
+  },
 ];
 
 export default function BlogsPage() {
@@ -352,7 +216,6 @@ export default function BlogsPage() {
         return haystack.includes(query);
       });
     }
-    // Sort by date descending so the newest appears first
     return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [selectedCategory, searchQuery]);
 
@@ -379,11 +242,11 @@ export default function BlogsPage() {
       <Navbar activeTab="resources" />
       <main className="blog-light-main pt-28 pb-16">
         {/* Header */}
-        <div className="mx-auto max-w-7xl px-6 mb-12 text-center md:text-left">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900" style={{ fontFamily: "'Barlow Condensed', sans-serif", textTransform: 'uppercase', fontWeight: 900 }}>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 mb-10 md:mb-12 text-center md:text-left">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900" style={{ fontFamily: "'Barlow Condensed', sans-serif", textTransform: 'uppercase', fontWeight: 900 }}>
             Insights & Resources
           </h1>
-          <p className="mt-3 text-sm md:text-base text-gray-500 max-w-2xl leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          <p className="mt-2 text-sm md:text-base text-gray-500 max-w-2xl mx-auto md:mx-0 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>
             Expert guides, product updates, and growth strategies for modern outreach teams.
           </p>
         </div>
@@ -391,23 +254,56 @@ export default function BlogsPage() {
         {/* Featured Post */}
         <section className="px-4 pb-12">
           <div className="mx-auto max-w-7xl">
-            <motion.div initial="hidden" animate="visible" variants={containerVariants} className="grid gap-8 rounded-[24px] premium-featured-card p-6 md:grid-cols-2 md:p-8">
-              <motion.div variants={itemVariants} className="overflow-hidden rounded-xl h-[320px] relative shadow-md">
-                <img src={featuredPost.image} alt={featuredPost.title} className="h-full w-full rounded-xl object-cover hover:scale-105 transition-transform duration-500" />
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={containerVariants}
+              className="grid gap-6 md:gap-8 rounded-[24px] premium-featured-card p-4 sm:p-6 md:p-8 md:grid-cols-2"
+            >
+              <motion.div variants={itemVariants} className="overflow-hidden rounded-xl h-[220px] sm:h-[260px] md:h-[320px] relative shadow-md">
+                <img
+                  src={featuredPost.image}
+                  alt={featuredPost.title}
+                  className="h-full w-full rounded-xl object-cover hover:scale-105 transition-transform duration-500"
+                />
               </motion.div>
               <motion.div variants={itemVariants} className="flex flex-col justify-center">
-                <div><span className="premium-badge mb-4" style={{ fontFamily: "'DM Sans', sans-serif" }}>{featuredPost.category}</span></div>
-                <h1 className="max-w-xl text-2xl font-bold leading-tight text-white md:text-3xl tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>{featuredPost.title}</h1>
-                <p className="mt-4 max-w-lg text-[13px] leading-relaxed text-gray-300 line-clamp-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>{featuredPost.excerpt}</p>
-                <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-gray-400">
-                  <div className="flex items-center gap-1.5"><User className="h-3.5 w-3.5 text-blue-400" /><span>{featuredPost.author}</span></div>
-                  <div className="flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5 text-blue-400" /><span>{featuredPost.date}</span></div>
-                  <div className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-blue-400" /><span>{featuredPost.readTime}</span></div>
+                <div>
+                  <span className="premium-badge mb-3 inline-block" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                    {featuredPost.category}
+                  </span>
                 </div>
-                <div className="mt-6">
+                <h1
+                  className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight text-white tracking-tight"
+                  style={{ fontFamily: "'Outfit', sans-serif" }}
+                >
+                  {featuredPost.title}
+                </h1>
+                <p className="mt-3 max-w-lg text-[13px] leading-relaxed text-gray-300 line-clamp-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                  {featuredPost.excerpt}
+                </p>
+                <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-gray-400">
+                  <div className="flex items-center gap-1.5">
+                    <User className="h-3.5 w-3.5 text-blue-400" />
+                    <span>{featuredPost.author}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5 text-blue-400" />
+                    <span>{featuredPost.date}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5 text-blue-400" />
+                    <span>{featuredPost.readTime}</span>
+                  </div>
+                </div>
+                <div className="mt-5">
                   <Link href={`/blogs/${featuredPost.slug}`}>
-                    <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="premium-button">
-                      Read article <ArrowRight className="h-3.5 w-3.5" />
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="premium-button text-sm"
+                    >
+                      Read article <ArrowRight className="h-3.5 w-3.5 inline ml-1" />
                     </motion.button>
                   </Link>
                 </div>
@@ -421,26 +317,42 @@ export default function BlogsPage() {
           <div className="blog-sticky-container">
             <div className="flex min-w-0 flex-1 items-center">
               <div className="min-w-0 flex-1 overflow-hidden">
-                <div ref={categoriesRef} className="scrollbar-hide flex items-center gap-6 overflow-x-auto whitespace-nowrap">
+                <div ref={categoriesRef} className="scrollbar-hide flex items-center gap-4 sm:gap-6 overflow-x-auto whitespace-nowrap py-1">
                   {categories.map((cat) => (
-                    <button key={cat} type="button" onClick={() => setSelectedCategory(cat)} className={`minimal-tab-btn-light ${selectedCategory === cat ? 'active' : ''}`}>
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`minimal-tab-btn-light text-sm sm:text-base ${selectedCategory === cat ? 'active' : ''}`}
+                    >
                       {cat}
                     </button>
                   ))}
                 </div>
               </div>
             </div>
-            <div className="relative hidden min-w-[260px] md:block">
+            <div className="relative hidden min-w-[200px] md:block ml-4">
               <div className="minimal-search-box-light">
                 <Search className="h-4 w-4 text-blue-400" />
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search Blog" className="w-full bg-transparent outline-none placeholder:text-gray-500 text-xs text-gray-800" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search Blog"
+                  className="w-full bg-transparent outline-none placeholder:text-gray-500 text-xs text-gray-800"
+                />
               </div>
               {searchQuery.trim() && (
                 <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-[0_12px_32px_rgba(15,23,42,0.12)]">
                   {filteredResults.length > 0 ? (
                     <div className="max-h-[320px] overflow-y-auto py-2">
                       {filteredResults.map((post) => (
-                        <Link key={post.id} href={`/blogs/${post.slug}`} onClick={() => setSearchQuery('')} className="block px-4 py-3 transition-colors hover:bg-gray-50">
+                        <Link
+                          key={post.id}
+                          href={`/blogs/${post.slug}`}
+                          onClick={() => setSearchQuery('')}
+                          className="block px-4 py-3 transition-colors hover:bg-gray-50"
+                        >
                           <p className="text-[13px] font-semibold text-gray-900">{post.title}</p>
                           <p className="mt-1 line-clamp-2 text-[11px] text-gray-500">{post.excerpt}</p>
                         </Link>
@@ -458,28 +370,51 @@ export default function BlogsPage() {
         {/* Blog Grid */}
         <section className="px-4 pb-16">
           <div className="mx-auto max-w-7xl">
-            <div className="blog-grid">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {gridPosts.map((post) => (
-                <div key={post.id} className="w-full flex">
-                  <Link className="blog-light-card" href={`/blogs/${post.slug}`} style={{ width: '100%' }}>
-                    <div className="blog-light-card-image-wrapper">
-                      <img src={post.image} alt={post.title} className="blog-light-card-img" width="800" height="533" loading="lazy" decoding="async" />
-                    </div>
-                    <div className="blog-light-card-content">
-                      <h2 className="blog-light-card-title">{post.title}</h2>
-                      <p className="blog-light-card-excerpt">{post.excerpt}</p>
-                      <div className="blog-light-card-footer">
-                        <div className="blog-light-card-tags">
-                          <span className="blog-light-card-tag">{post.category}</span>
-                          <span className="blog-light-card-tag">{post.readTime}</span>
-                        </div>
-                        <span className="blog-light-card-read-more">Read More →</span>
+                <Link
+                  key={post.id}
+                  className="blog-light-card flex flex-col h-full transition-shadow hover:shadow-lg rounded-xl overflow-hidden border border-gray-200 bg-white"
+                  href={`/blogs/${post.slug}`}
+                >
+                  <div className="relative w-full aspect-[16/9] overflow-hidden bg-gray-100">
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      className="h-full w-full object-cover hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <div className="flex flex-col p-4 sm:p-5 flex-1">
+                    <h2 className="text-base sm:text-lg font-bold text-gray-900 leading-snug line-clamp-2">
+                      {post.title}
+                    </h2>
+                    <p className="mt-2 text-sm text-gray-600 line-clamp-3 flex-1">
+                      {post.excerpt}
+                    </p>
+                    <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-block px-2 py-1 rounded-full bg-blue-50 text-blue-700 font-medium text-[10px] sm:text-xs">
+                          {post.category}
+                        </span>
+                        <span className="text-[10px] sm:text-xs">{post.readTime}</span>
                       </div>
+                      <span className="text-blue-600 font-medium text-[12px] sm:text-sm hover:underline">
+                        Read More →
+                      </span>
                     </div>
-                  </Link>
-                </div>
+                  </div>
+                </Link>
               ))}
             </div>
+
+            {/* Empty state */}
+            {gridPosts.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-sm">No blog posts found for the selected category or search.</p>
+              </div>
+            )}
           </div>
         </section>
       </main>
@@ -487,11 +422,13 @@ export default function BlogsPage() {
       {/* CTA */}
       <section className="cs-cta-modern">
         <div className="cs-cta-bg"><div className="cs-cta-pattern"></div></div>
-        <div className="cs-cta-content" style={{ width: '100%' }}>
-          <h2>Put multichannel outbound on autopilot<br/>with 360Airo</h2>
-          <div className="cs-cta-buttons">
-            <button className="btn-primary-purple">Start free &rarr;</button>
-            <button className="btn-secondary-white">Book a demo &rarr;</button>
+        <div className="cs-cta-content w-full px-4 sm:px-6">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white text-center">
+            Put multichannel outbound on autopilot<br className="hidden sm:block" /> with 360Airo
+          </h2>
+          <div className="cs-cta-buttons flex flex-col sm:flex-row justify-center gap-3 mt-6">
+            <button className="btn-primary-purple w-full sm:w-auto">Start free &rarr;</button>
+            <button className="btn-secondary-white w-full sm:w-auto">Book a demo &rarr;</button>
           </div>
           <FeatureMarquee />
         </div>

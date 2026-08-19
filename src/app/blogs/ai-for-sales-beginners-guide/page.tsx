@@ -296,42 +296,18 @@ export default function BlogAISalesBeginnersGuidePage() {
             </div>
 
             <div className="grid lg:grid-cols-2 gap-6 md:gap-10 lg:gap-14 items-center">
-              <div className="relative">
-                <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden bg-gradient-to-br from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] shadow-xl">
-                  <Image
-                    src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=800&q=75&fm=webp"
-                    alt="AI for sales hero"
-                    fill
-                    priority
-                    fetchPriority="high"
-                    decoding="sync"
-                    className="object-cover mix-blend-overlay opacity-35"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-                    quality={75}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#072f63]/95 via-[#0b4f96]/70 to-transparent" />
-                  <div className="relative z-10 h-full p-5 md:p-10 flex flex-col justify-between">
-                    <p className="text-white text-[20px] md:text-[36px] lg:text-[42px] font-bold leading-tight max-w-[420px]">
-                      AI for Sales
-                      <br />
-                      Beginner's
-                      <br />
-                      Guide
-                    </p>
-                    <div className="absolute bottom-0 right-0 w-[48%] h-[92%] hidden md:block">
-                      <Image
-                        src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=600&q=75&fm=webp"
-                        alt="Sales team"
-                        fill
-                        className="object-contain object-bottom"
-                        priority={false}
-                        loading="lazy"
-                        quality={75}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+<div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
+  <Image
+    src="/ai-for-sales.png"
+    alt="AI for sales hero"
+    fill
+    priority
+    fetchPriority="high"
+    decoding="sync"
+    className="object-cover"
+    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+  />
+</div>
 
               <div className="max-w-2xl">
                 <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">AI Guide</p>
