@@ -195,10 +195,72 @@ const blogPosts = [
     views: '3.4K',
     tags: ['AI', 'Sales', 'Automation', 'Prospecting'],
   },
+  {
+    id: 12,
+    title: 'How Does Email Deliverability Work? A Step‑by‑Step Guide to Reaching the Inbox',
+    excerpt: 'You spend hours crafting the perfect email. But if it never reaches the inbox, your efforts are wasted. Learn how email deliverability works and how to keep your messages out of spam.',
+    slug: 'how-email-deliverability-works',
+    author: '360Airo Team',
+    date: 'September 1, 2026',
+    readTime: '11 min read',
+    category: 'Deliverability',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1000&q=80&fm=webp',
+    featured: true,
+    isNew: true,
+    views: '1.5K',
+    tags: ['Deliverability', 'Authentication', 'SPF', 'DKIM', 'DMARC', 'Inbox Placement'],
+  },
+  {
+    id: 13,
+    title: 'How to Build Your First Cold Email Campaign: A Step‑by‑Step Guide That Gets Replies',
+    excerpt: 'You don\'t need a massive sales team to generate pipeline. Learn how to build your first cold email campaign that actually gets replies – from targeting the right prospects to writing emails that start meaningful conversations.',
+    slug: 'how-to-build-first-cold-email-campaign',
+    author: '360Airo Team',
+    date: 'September 5, 2026',
+    readTime: '10 min read',
+    category: 'Cold Email',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1000&q=80&fm=webp',
+    featured: true,
+    isNew: true,
+    views: '1.6K',
+    tags: ['Cold Email', 'Campaign', 'Prospecting', 'Outreach'],
+  },
+  // ✅ NEW: How to Find B2B Leads
+  {
+    id: 14,
+    title: 'How to Find B2B Leads: A Complete Guide to Building a High-Quality Sales Pipeline',
+    excerpt: 'Finding B2B leads has never been easier—or more difficult. Learn how to find the right leads, use intent data, qualify prospects, and build a sales pipeline that drives predictable revenue.',
+    slug: 'how-to-find-b2b-leads',
+    author: '360Airo Team',
+    date: 'September 8, 2026',
+    readTime: '12 min read',
+    category: 'Lead Generation',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1000&q=80&fm=webp',
+    featured: true,
+    isNew: true,
+    views: '2.1K',
+    tags: ['Lead Generation', 'B2B', 'Prospecting', 'Intent Data'],
+  },
+  {
+  id: 15,
+  title: 'How to Improve Cold Email Reply Rates: 7 Proven Strategies That Generate More Conversations',
+  excerpt: 'You spent hours building a prospect list. The opens start coming in – but the replies never follow. Learn 7 proven strategies to turn more opens into meaningful conversations.',
+  slug: 'how-to-improve-cold-email-reply-rates',
+  author: '360Airo Team',
+  date: 'September 12, 2026',
+  readTime: '10 min read',
+  category: 'Cold Email',
+  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1000&q=80&fm=webp',
+  featured: true,
+  isNew: true,
+  views: '1.9K',
+  tags: ['Cold Email', 'Reply Rate', 'Prospecting', 'Outreach'],
+},
 ];
 
 export default function BlogsPage() {
-  const categories = ['All', 'Cold Email', 'Email Marketing', 'LinkedIn', 'Email Tools', 'Deliverability', 'AI Prospecting', 'AI SDR'];
+  // Added 'Lead Generation' to categories
+  const categories = ['All', 'Cold Email', 'Email Marketing', 'LinkedIn', 'Email Tools', 'Deliverability', 'AI Prospecting', 'AI SDR', 'AI', 'Lead Generation'];
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
