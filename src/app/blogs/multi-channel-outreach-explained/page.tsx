@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import Head from 'next/head';               // <-- added
+import Head from 'next/head';
 import '../../../styles/blogs.css';
 
 type TocItem = {
@@ -233,6 +233,45 @@ function RightPromoCards() {
   );
 }
 
+// --- Cadence Table Component (matches reference styling) ---
+function CadenceTable() {
+  const rows = [
+    { day: 'Day 1', channel: 'Email', objective: 'Send a personalized cold email introducing the business problem you solve.' },
+    { day: 'Day 2', channel: 'LinkedIn', objective: "View the prospect's profile and engage with a recent post if relevant." },
+    { day: 'Day 3', channel: 'LinkedIn', objective: 'Send a personalized connection request referencing your email.' },
+    { day: 'Day 5', channel: 'Email', objective: 'Follow up with a useful insight, customer story, or industry statistic.' },
+    { day: 'Day 6', channel: 'Phone', objective: 'Place a short call. If unanswered, leave a concise voicemail.' },
+    { day: 'Day 8', channel: 'LinkedIn', objective: 'Like or comment on a recent post to remain visible without selling.' },
+    { day: 'Day 10', channel: 'Email', objective: 'Send another follow‑up focused on business outcomes rather than product features.' },
+    { day: 'Day 11', channel: 'Phone', objective: 'Make a second call if the account is high priority.' },
+    { day: 'Day 12', channel: 'LinkedIn', objective: 'Share a relevant article or continue engaging naturally.' },
+    { day: 'Day 14', channel: 'Email', objective: 'Send a final follow‑up asking whether the timing is right for a conversation.' },
+  ];
+
+  return (
+    <div className="my-4 overflow-x-auto rounded-[16px] border border-[#dbe3f4] bg-white shadow-sm">
+      <table className="w-full text-left text-sm md:text-base">
+        <thead>
+          <tr className="bg-[#f8f9ff] border-b border-[#dbe3f4]">
+            <th className="px-4 py-3 md:px-6 md:py-4 font-semibold text-[#111827]">Day</th>
+            <th className="px-4 py-3 md:px-6 md:py-4 font-semibold text-[#111827]">Channel</th>
+            <th className="px-4 py-3 md:px-6 md:py-4 font-semibold text-[#111827]">Objective</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, idx) => (
+            <tr key={idx} className="border-b border-[#f0f2f8] last:border-b-0">
+              <td className="px-4 py-3 md:px-6 md:py-4 font-medium text-[#111827]" data-label="Day">{row.day}</td>
+              <td className="px-4 py-3 md:px-6 md:py-4 text-[#4f5668]" data-label="Channel">{row.channel}</td>
+              <td className="px-4 py-3 md:px-6 md:py-4 text-[#4f5668]" data-label="Objective">{row.objective}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function BlogMultiChannelOutreachPage() {
   const [activeId, setActiveId] = useState('introduction');
   const ticking = useRef(false);
@@ -276,7 +315,6 @@ export default function BlogMultiChannelOutreachPage() {
     };
   }, []);
 
-  // Featured image URL (replace with actual if needed)
   const featuredImageUrl = 'https://360airo.com/og-images/multi-channel-outreach.jpg';
 
   return (
@@ -521,66 +559,47 @@ export default function BlogMultiChannelOutreachPage() {
             font-display: swap;
           }
 
-          /* Responsive table styling */
-          .cadence-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px rgba(17,24,39,0.06);
-          }
-          .cadence-table th {
-            background: #f8f9ff;
-            color: #111827;
-            font-weight: 600;
-            padding: 12px 16px;
-            text-align: left;
-            border-bottom: 2px solid #dbe3f4;
-          }
-          .cadence-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #ebf0f8;
-            color: #4f5668;
-          }
-          .cadence-table tr:last-child td {
-            border-bottom: none;
-          }
+          /* Mobile responsive: stack table cells as cards */
           @media (max-width: 640px) {
-            .cadence-table,
-            .cadence-table thead,
-            .cadence-table tbody,
-            .cadence-table tr,
-            .cadence-table th,
-            .cadence-table td {
+            table,
+            thead,
+            tbody,
+            tr,
+            th,
+            td {
               display: block;
             }
-            .cadence-table thead {
+            thead {
               display: none;
             }
-            .cadence-table tr {
+            tr {
               border-bottom: 2px solid #dbe3f4;
               margin-bottom: 12px;
-              padding: 8px 0;
+              padding: 4px 0;
+              border-radius: 8px;
+              background: white;
+              border: 1px solid #dbe3f4;
             }
-            .cadence-table td {
+            td {
               display: flex;
               justify-content: space-between;
               align-items: center;
-              padding: 8px 12px;
-              border-bottom: none;
+              padding: 10px 16px;
+              border: none;
               border-bottom: 1px solid #ebf0f8;
               font-size: 14px;
+              gap: 16px;
+              background: transparent;
+              border-radius: 0;
             }
-            .cadence-table td::before {
+            td::before {
               content: attr(data-label);
               font-weight: 600;
               color: #111827;
-              margin-right: 16px;
               flex-shrink: 0;
+              min-width: 80px;
             }
-            .cadence-table td:last-child {
+            td:last-child {
               border-bottom: none;
             }
           }
@@ -868,30 +887,8 @@ export default function BlogMultiChannelOutreachPage() {
                   ]}
                 />
 
-                {/* Cadence Table - rendered separately */}
-                <div className="my-4 overflow-x-auto rounded-[16px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(17,24,39,0.04)]">
-                  <table className="cadence-table">
-                    <thead>
-                      <tr>
-                        <th>Day</th>
-                        <th>Channel</th>
-                        <th>Objective</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr><td data-label="Day">Day 1</td><td data-label="Channel">Email</td><td data-label="Objective">Send a personalized cold email introducing the business problem you solve.</td></tr>
-                      <tr><td data-label="Day">Day 2</td><td data-label="Channel">LinkedIn</td><td data-label="Objective">View the prospect's profile and engage with a recent post if relevant.</td></tr>
-                      <tr><td data-label="Day">Day 3</td><td data-label="Channel">LinkedIn</td><td data-label="Objective">Send a personalized connection request referencing your email.</td></tr>
-                      <tr><td data-label="Day">Day 5</td><td data-label="Channel">Email</td><td data-label="Objective">Follow up with a useful insight, customer story, or industry statistic.</td></tr>
-                      <tr><td data-label="Day">Day 6</td><td data-label="Channel">Phone</td><td data-label="Objective">Place a short call. If unanswered, leave a concise voicemail.</td></tr>
-                      <tr><td data-label="Day">Day 8</td><td data-label="Channel">LinkedIn</td><td data-label="Objective">Like or comment on a recent post to remain visible without selling.</td></tr>
-                      <tr><td data-label="Day">Day 10</td><td data-label="Channel">Email</td><td data-label="Objective">Send another follow‑up focused on business outcomes rather than product features.</td></tr>
-                      <tr><td data-label="Day">Day 11</td><td data-label="Channel">Phone</td><td data-label="Objective">Make a second call if the account is high priority.</td></tr>
-                      <tr><td data-label="Day">Day 12</td><td data-label="Channel">LinkedIn</td><td data-label="Objective">Share a relevant article or continue engaging naturally.</td></tr>
-                      <tr><td data-label="Day">Day 14</td><td data-label="Channel">Email</td><td data-label="Objective">Send a final follow‑up asking whether the timing is right for a conversation.</td></tr>
-                    </tbody>
-                  </table>
-                </div>
+                {/* ✅ Cadence Table with reference styling */}
+                <CadenceTable />
 
                 <div className="space-y-3 md:space-y-4 text-[#4f5668] text-[15px] md:text-[17px] leading-7 text-justify">
                   <p>Notice how every touchpoint has a different purpose.</p>
