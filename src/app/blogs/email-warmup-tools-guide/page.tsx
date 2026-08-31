@@ -98,7 +98,7 @@ function SectionImage({
 }) {
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
-      <div className="relative w-full aspect-[16/9] md:aspect-[16/7] h-auto md:h-[340px]">
+      <div className="relative w-full aspect-[16/9]">
         <Image
           src={src}
           alt={alt}
@@ -116,6 +116,7 @@ function SectionImage({
   );
 }
 
+// --- Updated ArticleSection: image is now placed after intro and before infographic ---
 function ArticleSection({
   id,
   title,
@@ -152,11 +153,11 @@ function ArticleSection({
             ))}
           </div>
         )}
+        {image && <SectionImage src={image.src} alt={image.alt} label={image.label} />}
         {infographic && <MiniInfographic {...infographic} />}
         {blocks.map((block) => (
           <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {image && <SectionImage src={image.src} alt={image.alt} label={image.label} />}
       </div>
     </section>
   );
@@ -714,9 +715,9 @@ export default function BlogEmailWarmupPage() {
                     },
                   ]}
                   image={{
-                    src: '/email-warmup-tools.png',
+                    src: '/email warmup tools.png',
                     alt: 'Email warmup tools features and platform scope',
-                    label: 'Warmup Features',
+                  
                   }}
                 />
 
@@ -790,7 +791,7 @@ export default function BlogEmailWarmupPage() {
                   ]}
                 />
 
-                {/* Section 4: How Sender Reputation Affects Warmup with image */}
+                {/* Section 4: How Sender Reputation Affects Warmup with image after intro */}
                 <ArticleSection
                   key="how-sender-reputation-affects-warmup"
                   id="how-sender-reputation-affects-warmup"
