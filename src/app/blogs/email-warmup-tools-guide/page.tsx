@@ -459,7 +459,7 @@ export default function BlogEmailWarmupPage() {
           rel="preload"
           fetchPriority="high"
           as="image"
-          href="/email warmup tools.png"
+          href="/email warmup-tools.png"
           type="image/webp"
         />
 
@@ -518,7 +518,7 @@ export default function BlogEmailWarmupPage() {
                 >
                   <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
                     <Image
-                      src="/email warmup tools.png"
+                      src="/email-warmup-tools.png"
                       alt="Email warmup tools hero"
                       fill
                       priority
