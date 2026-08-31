@@ -87,6 +87,7 @@ function ContentBlock({
   );
 }
 
+// --- SectionImage with optional label ---
 function SectionImage({
   src,
   alt,
@@ -94,7 +95,7 @@ function SectionImage({
 }: {
   src: string;
   alt: string;
-  label: string;
+  label?: string;
 }) {
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
@@ -108,15 +109,17 @@ function SectionImage({
           priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
-        <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
-          {label}
-        </div>
+        {label && (
+          <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
+            {label}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-// --- Updated ArticleSection: image is now placed after intro and before infographic ---
+// --- ArticleSection: image after intro, before infographic ---
 function ArticleSection({
   id,
   title,
@@ -137,7 +140,7 @@ function ArticleSection({
   image?: {
     src: string;
     alt: string;
-    label: string;
+    label?: string;
   };
 }) {
   return (
@@ -456,7 +459,7 @@ export default function BlogEmailWarmupPage() {
           rel="preload"
           fetchPriority="high"
           as="image"
-          href="/email-warmup-tools.png"
+          href="/email warmup tools.png"
           type="image/webp"
         />
 
@@ -515,7 +518,7 @@ export default function BlogEmailWarmupPage() {
                 >
                   <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
                     <Image
-                      src="/email-warmup-tools.png"
+                      src="/email warmup tools.png"
                       alt="Email warmup tools hero"
                       fill
                       priority
@@ -685,7 +688,7 @@ export default function BlogEmailWarmupPage() {
                   blocks={[]}
                 />
 
-                {/* Section 2 with the requested image */}
+                {/* Section 2: What Are Email Warmup Tools? */}
                 <ArticleSection
                   key="what-are-email-warmup-tools"
                   id="what-are-email-warmup-tools"
@@ -717,7 +720,6 @@ export default function BlogEmailWarmupPage() {
                   image={{
                     src: '/email warmup tools.png',
                     alt: 'Email warmup tools features and platform scope',
-                  
                   }}
                 />
 
@@ -791,7 +793,7 @@ export default function BlogEmailWarmupPage() {
                   ]}
                 />
 
-                {/* Section 4: How Sender Reputation Affects Warmup with image after intro */}
+                {/* Section 4: How Sender Reputation Affects Warmup */}
                 <ArticleSection
                   key="how-sender-reputation-affects-warmup"
                   id="how-sender-reputation-affects-warmup"
@@ -813,7 +815,6 @@ export default function BlogEmailWarmupPage() {
                   image={{
                     src: '/how sender reputation affects the email warmup.png',
                     alt: 'How sender reputation affects email warmup',
-                    label: 'Sender Reputation',
                   }}
                 />
 
@@ -998,7 +999,6 @@ export default function BlogEmailWarmupPage() {
                   image={{
                     src: '/360Airo for SMBs.png',
                     alt: '360Airo for SMBs - email warmup and deliverability',
-                    label: '360Airo',
                   }}
                 />
 
