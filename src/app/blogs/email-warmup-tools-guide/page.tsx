@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import Head from 'next/head';               // <-- added
+import Head from 'next/head';
 import '../../../styles/blogs.css';
 
 type TocItem = {
@@ -87,20 +87,21 @@ function ContentBlock({
   );
 }
 
-function SectionImage({ id }: { id: string }) {
-  const image = {
-    src: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1400&q=80&fm=webp',
-    alt: 'Email warmup dashboard',
-    label: 'Warmup',
-  };
-  if (!image) return null;
-
+function SectionImage({
+  src,
+  alt,
+  label,
+}: {
+  src: string;
+  alt: string;
+  label: string;
+}) {
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
       <div className="relative w-full aspect-[16/9] md:aspect-[16/7] h-auto md:h-[340px]">
         <Image
-          src={image.src}
-          alt={image.alt}
+          src={src}
+          alt={alt}
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
@@ -108,7 +109,7 @@ function SectionImage({ id }: { id: string }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
-          {image.label}
+          {label}
         </div>
       </div>
     </div>
@@ -121,7 +122,7 @@ function ArticleSection({
   intro,
   blocks,
   infographic,
-  showImage = true,
+  image,
 }: {
   id: string;
   title: string;
@@ -132,7 +133,11 @@ function ArticleSection({
     paragraphs: string[];
     bullets?: string[];
   };
-  showImage?: boolean;
+  image?: {
+    src: string;
+    alt: string;
+    label: string;
+  };
 }) {
   return (
     <section id={id} className="scroll-mt-28">
@@ -151,7 +156,7 @@ function ArticleSection({
         {blocks.map((block) => (
           <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {showImage && <SectionImage id={id} />}
+        {image && <SectionImage src={image.src} alt={image.alt} label={image.label} />}
       </div>
     </section>
   );
@@ -242,8 +247,6 @@ function RightPromoCards() {
 
 export default function BlogEmailWarmupPage() {
   const [activeId, setActiveId] = useState('introduction');
-  const [searchQuery, setSearchQuery] = useState('');
-  const categoryScrollRef = useRef<HTMLDivElement | null>(null);
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
@@ -337,7 +340,7 @@ export default function BlogEmailWarmupPage() {
         <meta name="author" content="360Airo" />
         <meta name="theme-color" content="#08124A" />
 
-        {/* JSON‑LD (as provided) */}
+        {/* JSON‑LD */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -452,7 +455,7 @@ export default function BlogEmailWarmupPage() {
           rel="preload"
           fetchPriority="high"
           as="image"
-          href="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp"
+          href="/email-warmup-tools.png"
           type="image/webp"
         />
 
@@ -486,7 +489,7 @@ export default function BlogEmailWarmupPage() {
           {/* Hero Section */}
           <section className="pt-6 md:pt-10 pb-6 md:pb-8 px-3 md:px-4 border-b border-[#ddd9ef]">
             <div className="max-w-7xl mx-auto">
-              {/* Breadcrumb – all three parts are now clickable links */}
+              {/* Breadcrumb */}
               <div className="flex flex-wrap items-center gap-1 md:gap-2 text-[10px] md:text-sm text-[#6b7280] mb-2 md:mb-4">
                 <Link href="/blogs" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
                   Blog
@@ -610,7 +613,6 @@ export default function BlogEmailWarmupPage() {
                   key="introduction"
                   id="introduction"
                   title="Introduction"
-                  showImage={false}
                   intro={[
                     "You've created a new email address.",
                     "Your prospect list is ready, your campaign is written, and your sales team is ready to begin outreach. But sending hundreds of emails immediately could damage your sender reputation before the campaign has a chance to perform.",
@@ -630,7 +632,6 @@ export default function BlogEmailWarmupPage() {
                   key="what-is-email-warmup"
                   id="what-is-email-warmup"
                   title="1. What Is Email Warmup?"
-                  showImage={false}
                   intro={[
                     'Email warmup is the process of gradually increasing activity from a new, inactive, or low-volume email account.',
                     'The goal is to establish consistent sending behavior before scaling email outreach.',
@@ -647,7 +648,6 @@ export default function BlogEmailWarmupPage() {
                   key="what-is-email-warming"
                   id="what-is-email-warming"
                   title="1.1 What Is Email Warming?"
-                  showImage={false}
                   intro={[
                     'Email warming and email warmup refer to the same basic process.',
                     'A typical warmup process may include:',
@@ -676,7 +676,6 @@ export default function BlogEmailWarmupPage() {
                   key="what-is-email-domain-warmup"
                   id="what-is-email-domain-warmup"
                   title="1.2 What Is Email Domain Warmup?"
-                  showImage={false}
                   intro={[
                     'Email address warmup focuses on an individual mailbox. Email domain warmup focuses on establishing a healthy sending history for the domain.',
                     'This distinction matters because mailbox providers evaluate signals associated with both individual senders and domains.',
@@ -685,11 +684,11 @@ export default function BlogEmailWarmupPage() {
                   blocks={[]}
                 />
 
+                {/* Section 2 with the requested image */}
                 <ArticleSection
                   key="what-are-email-warmup-tools"
                   id="what-are-email-warmup-tools"
                   title="2. What Are Email Warmup Tools?"
-                  showImage={true}
                   intro={[
                     'Email warmup tools are software platforms designed to automate the email warming process.',
                     'Without automation, someone would need to send emails manually, generate conversations, monitor responses, and increase activity over time. This becomes difficult when an organization manages multiple domains and sender accounts.',
@@ -714,13 +713,17 @@ export default function BlogEmailWarmupPage() {
                       paragraphs: ['Some platforms focus exclusively on warmup, while others combine it with deliverability monitoring and outreach automation.'],
                     },
                   ]}
+                  image={{
+                    src: '/email-warmup-tools.png',
+                    alt: 'Email warmup tools features and platform scope',
+                    label: 'Warmup Features',
+                  }}
                 />
 
                 <ArticleSection
                   key="manual-vs-automated-warmup"
                   id="manual-vs-automated-warmup"
                   title="2.1 Manual vs Automated Email Warmup"
-                  showImage={false}
                   intro={[
                     'Manual warmup may be manageable for one email address.',
                     'It becomes much harder to scale across dozens of mailboxes.',
@@ -738,7 +741,6 @@ export default function BlogEmailWarmupPage() {
                   key="what-is-an-email-warmup-api"
                   id="what-is-an-email-warmup-api"
                   title="2.2 What Is an Email Warmup API?"
-                  showImage={false}
                   intro={[
                     'An email warmup API allows organizations to connect warmup functionality with existing sales or email infrastructure.',
                     'Businesses may use an API to add new mailboxes to warmup workflows, monitor progress, retrieve mailbox health information, or connect warmup data with internal reporting systems.',
@@ -755,7 +757,6 @@ export default function BlogEmailWarmupPage() {
                   key="how-do-email-warmup-tools-work"
                   id="how-do-email-warmup-tools-work"
                   title="3. How Do Email Warmup Tools Work?"
-                  showImage={false}
                   intro={[
                     'Most email warmup tools follow a gradual process rather than immediately increasing sending volume.',
                   ]}
@@ -789,11 +790,11 @@ export default function BlogEmailWarmupPage() {
                   ]}
                 />
 
+                {/* Section 4: How Sender Reputation Affects Warmup with image */}
                 <ArticleSection
                   key="how-sender-reputation-affects-warmup"
                   id="how-sender-reputation-affects-warmup"
                   title="4. How Sender Reputation Affects Email Warmup"
-                  showImage={false}
                   intro={[
                     'Email warmup and email sender reputation are closely connected.',
                     'Sender reputation represents how trustworthy your sending activity appears to mailbox providers. Stronger reputation can support better inbox placement, while poor reputation may increase filtering or rejection.',
@@ -802,14 +803,23 @@ export default function BlogEmailWarmupPage() {
                     title: 'The connection',
                     paragraphs: ['Warmup builds reputation. Reputation determines inbox placement.'],
                   }}
-                  blocks={[]}
+                  blocks={[
+                    {
+                      subtitle: 'Why reputation matters for warmup',
+                      paragraphs: ['A mailbox with a poor reputation will struggle to achieve good inbox placement regardless of how carefully it is warmed up. That is why warmup should be part of a larger strategy that includes authentication, list quality, and consistent sending practices.'],
+                    },
+                  ]}
+                  image={{
+                    src: '/how sender reputation affects the email warmup.png',
+                    alt: 'How sender reputation affects email warmup',
+                    label: 'Sender Reputation',
+                  }}
                 />
 
                 <ArticleSection
                   key="what-can-damage-sender-reputation"
                   id="what-can-damage-sender-reputation"
                   title="4.1 What Can Damage Sender Reputation?"
-                  showImage={false}
                   intro={[
                     'Several factors can negatively affect email sender reputation:',
                   ]}
@@ -838,7 +848,6 @@ export default function BlogEmailWarmupPage() {
                   key="how-to-improve-sender-reputation"
                   id="how-to-improve-sender-reputation"
                   title="4.2 How to Improve Email Sender Reputation"
-                  showImage={false}
                   intro={[
                     'If you want to improve or fix email sender reputation, start with the fundamentals:',
                   ]}
@@ -867,7 +876,6 @@ export default function BlogEmailWarmupPage() {
                   key="how-to-choose-an-email-warmup-tool"
                   id="how-to-choose-an-email-warmup-tool"
                   title="5. How to Choose an Email Warmup Tool"
-                  showImage={false}
                   intro={[
                     'Not every email warmup tool offers the same capabilities.',
                     'Some focus on basic warmup, while others combine warmup with deliverability analytics, reputation monitoring, and sales automation.',
@@ -898,7 +906,6 @@ export default function BlogEmailWarmupPage() {
                   key="free-vs-paid-email-warmup-tools"
                   id="free-vs-paid-email-warmup-tools"
                   title="6. Free vs Paid Email Warmup Tools"
-                  showImage={false}
                   intro={[
                     'Free email warmup tools may be useful for individuals testing a new mailbox or running limited outreach.',
                     'They can help teams understand the basic warmup process without committing to a larger platform.',
@@ -928,7 +935,6 @@ export default function BlogEmailWarmupPage() {
                   key="does-email-warmup-actually-work"
                   id="does-email-warmup-actually-work"
                   title="7. Does Email Warmup Actually Work?"
-                  showImage={false}
                   intro={[
                     'A structured warmup process can help establish consistent sending patterns for new or inactive mailboxes.',
                     'But email warmup isn\'t a shortcut to guaranteed inbox placement.',
@@ -954,11 +960,11 @@ export default function BlogEmailWarmupPage() {
                   ]}
                 />
 
+                {/* Section 8: Best Practices with 360Airo image */}
                 <ArticleSection
                   key="best-practices-for-email-warmup"
                   id="best-practices-for-email-warmup"
                   title="8. Best Practices for Email Warmup"
-                  showImage={false}
                   intro={[
                     'Following best practices ensures your warmup efforts translate into long-term deliverability gains.',
                   ]}
@@ -988,6 +994,11 @@ export default function BlogEmailWarmupPage() {
                       paragraphs: ['Warmup isn\'t a one-time fix. Sender reputation can change as volume, engagement, and list quality change. Continuous monitoring is essential.'],
                     },
                   ]}
+                  image={{
+                    src: '/360Airo for SMBs.png',
+                    alt: '360Airo for SMBs - email warmup and deliverability',
+                    label: '360Airo',
+                  }}
                 />
 
                 {/* FAQ Section */}
@@ -1035,7 +1046,6 @@ export default function BlogEmailWarmupPage() {
                   key="conclusion"
                   id="conclusion"
                   title="10. Build a Stronger Foundation for Email Outreach"
-                  showImage={false}
                   intro={[
                     'Successful email outreach starts before the first campaign is launched.',
                     'Email warmup tools help teams gradually prepare new or inactive mailboxes, establish consistent sending behavior, and reduce the manual effort involved in managing warmup.',
