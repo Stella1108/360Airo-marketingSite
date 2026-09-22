@@ -146,6 +146,7 @@ function SectionImage({ id }: { id: string }) {
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
           priority={false}
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -198,7 +199,7 @@ function ArticleSection({
   );
 }
 
-// ========== COMPARISON TABLE (new) ==========
+// ========== COMPARISON TABLE ==========
 function ComparisonTable() {
   const rows = [
     { tool: '360 Airo', bestFor: 'AI-powered outbound teams & agencies', aiStrength: 'Autonomous multichannel outreach, AI prospect research, personalized email generation, and intelligent follow-ups' },
@@ -238,7 +239,7 @@ function ComparisonTable() {
   );
 }
 
-// ========== FAQ ACCORDION (using new Q&A) ==========
+// ========== FAQ ACCORDION ==========
 function FaqAccordion() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -330,25 +331,12 @@ function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          AI Prospecting
-          <br />
-          Tools Guide
+        {/* Removed the broken Image wrapper here */}
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4">
+          AI Prospecting Tools Guide
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
-          Discover the best AI-powered prospecting platforms to supercharge your
-          outbound sales in 2026.
+          Discover the best AI-powered prospecting platforms to supercharge your outbound sales in 2026.
         </p>
         <button className="w-full rounded-[12px] border border-white bg-transparent px-3 py-2.5 md:px-4 md:py-3 text-white text-[12px] md:text-[13px] font-bold hover:opacity-95 transition">
           Try For FREE!
@@ -362,8 +350,7 @@ function RightPromoCards() {
           AI augments, doesn't replace
         </h4>
         <p className="text-[10px] md:text-[11px] leading-5 text-[#5f6472]">
-          The best results come from combining AI-driven insights with human
-          relationship-building and strategic selling.
+          The best results come from combining AI-driven insights with human relationship-building and strategic selling.
         </p>
       </div>
     </aside>
@@ -373,32 +360,29 @@ function RightPromoCards() {
 // ========== MAIN PAGE COMPONENT ==========
 export default function BlogAIProspectingToolsPage() {
   const [activeId, setActiveId] = useState('introduction');
-  const [searchQuery, setSearchQuery] = useState('');
-  const categoryScrollRef = useRef<HTMLDivElement | null>(null);
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!ticking.current) {
-        rafId.current = requestAnimationFrame(() => {
-          const sections = tocItems
-            .map((item) => document.getElementById(item.id))
-            .filter(Boolean) as HTMLElement[];
+      if (ticking.current) return;
+      ticking.current = true;
+      rafId.current = requestAnimationFrame(() => {
+        const offset = 180;
+        let currentSectionId = 'introduction';
 
-          const scrollPosition = window.scrollY + 180;
-          let currentSectionId = sections[0]?.id || 'introduction';
-
-          for (const section of sections) {
-            if (scrollPosition >= section.offsetTop) {
-              currentSectionId = section.id;
-            }
+        for (const item of tocItems) {
+          const el = document.getElementById(item.id);
+          if (!el) continue;
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= offset) {
+            currentSectionId = item.id;
           }
-          setActiveId(currentSectionId);
-          ticking.current = false;
-        });
-        ticking.current = true;
-      }
+        }
+
+        setActiveId((prev) => (prev === currentSectionId ? prev : currentSectionId));
+        ticking.current = false;
+      });
     };
 
     handleScroll();
@@ -418,7 +402,6 @@ export default function BlogAIProspectingToolsPage() {
   return (
     <>
       <Head>
-        {/* ===== PRIMARY META TAGS ===== */}
         <title>Best AI Tools for Outbound Prospecting in 2026</title>
         <meta
           name="description"
@@ -429,13 +412,11 @@ export default function BlogAIProspectingToolsPage() {
           href="https://360airo.com/blog/best-ai-tools-for-outbound-prospecting-in-2026"
         />
 
-        {/* ===== ROBOTS ===== */}
         <meta
           name="robots"
           content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
         />
 
-        {/* ===== OPEN GRAPH ===== */}
         <meta property="og:type" content="article" />
         <meta
           property="og:title"
@@ -458,7 +439,6 @@ export default function BlogAIProspectingToolsPage() {
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="en_US" />
 
-        {/* ===== TWITTER CARD ===== */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
@@ -473,7 +453,6 @@ export default function BlogAIProspectingToolsPage() {
           content="https://360airo.com/og-images/best-ai-tools-for-outbound-prospecting-in-2026.jpg"
         />
 
-        {/* ===== JSON‑LD: ARTICLE ===== */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -519,7 +498,6 @@ export default function BlogAIProspectingToolsPage() {
           }}
         />
 
-        {/* ===== JSON‑LD: WEBPAGE ===== */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -539,7 +517,6 @@ export default function BlogAIProspectingToolsPage() {
           }}
         />
 
-        {/* ===== JSON‑LD: FAQ PAGE (new Q&A) ===== */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -592,7 +569,6 @@ export default function BlogAIProspectingToolsPage() {
           }}
         />
 
-        {/* ===== PRELOAD HERO IMAGE (performance) ===== */}
         <link
           rel="preload"
           fetchPriority="high"
@@ -601,7 +577,6 @@ export default function BlogAIProspectingToolsPage() {
           type="image/webp"
         />
 
-        {/* ===== GLOBAL STYLES ===== */}
         <style jsx global>{`
           .scrollbar-hide {
             -ms-overflow-style: none;
@@ -701,16 +676,6 @@ export default function BlogAIProspectingToolsPage() {
                   </p>
 
                   <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="/logonew.png"
-                        alt="360Airo Team"
-                        width={140}
-                        height={40}
-                        className="h-7 md:h-10 w-auto object-contain"
-                        priority={false}
-                      />
-                    </div>
                     <span>• 360AIRO Team</span>
                     <span>• Updated: Jun 2026</span>
                     <span>• 18 min read</span>
@@ -2411,6 +2376,7 @@ export default function BlogAIProspectingToolsPage() {
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                         priority={false}
+                        loading="lazy"
                       />
                     </div>
                     <div className="p-3 md:p-5">

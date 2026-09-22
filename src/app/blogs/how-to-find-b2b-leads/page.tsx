@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import '../../../styles/blogs.css';
@@ -33,7 +33,7 @@ const tocItems: TocItem[] = [
   { id: 'conclusion', label: '7. Build a Smarter B2B Lead Generation Process', arrow: true },
 ];
 
-function MiniInfographic({
+const MiniInfographic = memo(function MiniInfographic({
   title,
   paragraphs,
   bullets,
@@ -61,9 +61,9 @@ function MiniInfographic({
       ) : null}
     </div>
   );
-}
+});
 
-function ContentBlock({
+const ContentBlock = memo(function ContentBlock({
   subtitle,
   paragraphs,
 }: {
@@ -82,15 +82,14 @@ function ContentBlock({
       </div>
     </div>
   );
-}
+});
 
-function SectionImage({ id }: { id: string }) {
+const SectionImage = memo(function SectionImage() {
   const image = {
     src: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1400&q=80&fm=webp',
     alt: 'B2B lead generation strategy',
     label: 'Lead Generation',
   };
-  if (!image) return null;
 
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
@@ -99,9 +98,10 @@ function SectionImage({ id }: { id: string }) {
           src={image.src}
           alt={image.alt}
           fill
+          loading="lazy"
+          decoding="async"
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -110,9 +110,9 @@ function SectionImage({ id }: { id: string }) {
       </div>
     </div>
   );
-}
+});
 
-function ArticleSection({
+const ArticleSection = memo(function ArticleSection({
   id,
   title,
   intro,
@@ -148,32 +148,43 @@ function ArticleSection({
         {blocks.map((block) => (
           <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {showImage && <SectionImage id={id} />}
+        {showImage && <SectionImage />}
       </div>
     </section>
   );
-}
+});
 
 // --- FAQ Accordion Component ---
-function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[] }[] }) {
+const FaqAccordion = memo(function FaqAccordion({
+  faqs,
+}: {
+  faqs: { subtitle: string; paragraphs: string[] }[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const toggle = useCallback((index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  }, []);
 
   return (
     <div className="space-y-3 md:space-y-4">
       {faqs.map((faq, index) => {
         const isOpen = openIndex === index;
         return (
-          <div key={index} className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]">
+          <div
+            key={index}
+            className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]"
+          >
             <button
               onClick={() => toggle(index)}
+              aria-expanded={isOpen}
               className="w-full flex items-center justify-between px-4 py-3 md:px-6 md:py-4 text-left text-[15px] md:text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
             >
               <span>{faq.subtitle}</span>
-              <span className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+              <span
+                className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300"
+                style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              >
                 {isOpen ? '−' : '+'}
               </span>
             </button>
@@ -193,27 +204,14 @@ function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[]
       })}
     </div>
   );
-}
+});
 
-function RightPromoCards() {
+const RightPromoCards = memo(function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          B2B Lead Gen
-          <br />
-          Complete Guide
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4 pt-2">
+          B2B Lead Gen Complete Guide
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Find qualified B2B leads, prioritize high-intent accounts, and build a sales pipeline that drives predictable revenue.
@@ -235,13 +233,13 @@ function RightPromoCards() {
       </div>
     </aside>
   );
-}
+});
 
 // --- Demo CTA Component ---
-function DemoCTA() {
+const DemoCTA = memo(function DemoCTA() {
   return (
     <div className="mt-8 rounded-[24px] bg-gradient-to-r from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] p-6 md:p-10 shadow-xl overflow-hidden relative text-center">
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/20"></div>
         <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-white/10"></div>
       </div>
@@ -261,16 +259,80 @@ function DemoCTA() {
       </div>
     </div>
   );
-}
+});
+
+// --- Hoisted static recent posts data ---
+const RECENT_POSTS = [
+  {
+    title: 'How to Build Your First Cold Email Campaign: A Step‑by‑Step Guide',
+    tag: 'Cold Email',
+    href: '/blogs/how-to-build-first-cold-email-campaign',
+    description: 'Build your first cold email campaign that actually gets replies.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'How Does Email Deliverability Work? A Step‑by‑Step Guide',
+    tag: 'Deliverability',
+    href: '/blogs/how-email-deliverability-works',
+    description: 'Learn how email deliverability works and how to keep your messages out of spam.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: "Email Delivery vs Email Deliverability: What's the Difference?",
+    tag: 'Deliverability',
+    href: '/blogs/email-delivery-vs-deliverability',
+    description: 'Learn the critical difference between delivery and inbox placement.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+];
+
+const RecentPosts = memo(function RecentPosts() {
+  return (
+    <section className="px-3 md:px-4 pb-4 md:pb-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
+          <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {RECENT_POSTS.map((post) => (
+            <a
+              key={post.href}
+              href={post.href}
+              className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow"
+            >
+              <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  loading="lazy"
+                  decoding="async"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                />
+              </div>
+              <div className="p-3 md:p-5">
+                <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
+                <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
 
 export default function BlogHowToFindB2BLeadsPage() {
   const [activeId, setActiveId] = useState('introduction');
-  const [searchQuery, setSearchQuery] = useState('');
-  const categoryScrollRef = useRef<HTMLDivElement | null>(null);
+  const activeIdRef = useRef('introduction');
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
   // INP FIX: Throttle scroll handler with requestAnimationFrame
+  // PERF: Only update state when active section actually changes
   useEffect(() => {
     const handleScroll = () => {
       if (!ticking.current) {
@@ -287,7 +349,11 @@ export default function BlogHowToFindB2BLeadsPage() {
               currentSectionId = section.id;
             }
           }
-          setActiveId(currentSectionId);
+
+          if (currentSectionId !== activeIdRef.current) {
+            activeIdRef.current = currentSectionId;
+            setActiveId(currentSectionId);
+          }
           ticking.current = false;
         });
         ticking.current = true;
@@ -368,7 +434,7 @@ export default function BlogHowToFindB2BLeadsPage() {
                 initial={{ opacity: 0, x: -24 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
-                className="relative"
+                className="relative transform-gpu"
               >
                 <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
                   <Image
@@ -388,7 +454,7 @@ export default function BlogHowToFindB2BLeadsPage() {
                 initial={{ opacity: 0, x: 24 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.08 }}
-                className="max-w-2xl"
+                className="max-w-2xl transform-gpu"
               >
                 <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">
                   Lead Generation Guide
@@ -400,18 +466,8 @@ export default function BlogHowToFindB2BLeadsPage() {
                   Finding B2B leads has never been easier—or more difficult. Learn how to find the right leads, use intent data, qualify prospects, and build a sales pipeline that drives predictable revenue.
                 </p>
 
-                {/* Meta info */}
+                {/* Meta info — broken 360Airo Team image removed */}
                 <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src="/logonew.png"
-                      alt="360Airo Team"
-                      width={140}
-                      height={40}
-                      className="h-7 md:h-10 w-auto object-contain"
-                      priority={false}
-                    />
-                  </div>
                   <span>• 360AIRO Team</span>
                   <span>• Updated: Sep 2026</span>
                   <span>• 12 min read</span>
@@ -450,7 +506,11 @@ export default function BlogHowToFindB2BLeadsPage() {
                           : 'text-[#4b5563] hover:text-[#2f66db] hover:bg-white/70'
                       } ${item.indent ? 'ml-3' : ''}`}
                     >
-                      <span className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${isActive ? 'bg-[#4f63ff]' : 'bg-transparent'}`} />
+                      <span
+                        className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${
+                          isActive ? 'bg-[#4f63ff]' : 'bg-transparent'
+                        }`}
+                      />
                       <span className="flex items-start gap-1.5">
                         {item.arrow ? (
                           <span className={`mt-[1px] text-sm ${isActive ? 'text-[#2f66db]' : 'text-[#94a3b8]'}`}>›</span>
@@ -476,8 +536,8 @@ export default function BlogHowToFindB2BLeadsPage() {
                   'Finding B2B leads has never been easier—or more difficult.',
                   'There are countless databases, AI prospecting tools, LinkedIn searches, directories, and intent data platforms promising thousands of qualified prospects. Yet, according to recent research, 61% of marketers say improving lead generation remains their biggest challenge.',
                   'Why?',
-                  'Because finding leads isn\'t the same as finding the right leads.',
-                  'A list filled with random contacts won\'t generate revenue. What sales teams need are qualified prospects who match their Ideal Customer Profile (ICP) and are likely to become customers.',
+                  "Because finding leads isn't the same as finding the right leads.",
+                  "A list filled with random contacts won't generate revenue. What sales teams need are qualified prospects who match their Ideal Customer Profile (ICP) and are likely to become customers.",
                   'Fortunately, modern technology is changing the game. Companies using intent data—signals that indicate a business is actively researching or considering a purchase—report up to a 20% increase in pipeline, proving that timing matters just as much as targeting.',
                   "In this guide, you'll learn how to find B2B leads, compare manual prospecting methods with automated tools, and discover a proven framework for qualifying leads before they enter your sales pipeline.",
                 ]}
@@ -511,7 +571,7 @@ export default function BlogHowToFindB2BLeadsPage() {
                 blocks={[
                   {
                     subtitle: 'The real objective',
-                    paragraphs: ['The objective isn\'t simply to collect contacts. It\'s to identify businesses that have both the need and the potential to buy.'],
+                    paragraphs: ["The objective isn't simply to collect contacts. It's to identify businesses that have both the need and the potential to buy."],
                   },
                 ]}
               />
@@ -539,7 +599,7 @@ export default function BlogHowToFindB2BLeadsPage() {
                 blocks={[
                   {
                     subtitle: 'Why intent data matters',
-                    paragraphs: ['Rather than contacting every business in your market, intent data helps you focus on companies already showing buying interest. That\'s why organizations using intent data often generate stronger pipeline and higher conversion rates.'],
+                    paragraphs: ["Rather than contacting every business in your market, intent data helps you focus on companies already showing buying interest. That's why organizations using intent data often generate stronger pipeline and higher conversion rates."],
                   },
                 ]}
               />
@@ -697,11 +757,11 @@ export default function BlogHowToFindB2BLeadsPage() {
                 showImage={false}
                 intro={[
                   'Manual prospecting produces high-quality leads.',
-                  'But it doesn\'t always scale.',
+                  "But it doesn't always scale.",
                   'Researching hundreds of companies individually requires significant time and effort.',
                   'Sales representatives can spend hours gathering information before sending a single email.',
                   'As outbound programs grow, maintaining that level of research becomes increasingly difficult.',
-                  'That\'s why many organizations now combine manual prospecting with AI-powered automation.',
+                  "That's why many organizations now combine manual prospecting with AI-powered automation.",
                   'Instead of replacing human judgment, automation accelerates the research process while allowing sales teams to focus on building relationships.',
                 ]}
                 blocks={[]}
@@ -714,7 +774,7 @@ export default function BlogHowToFindB2BLeadsPage() {
                 showImage={true}
                 intro={[
                   'Manual prospecting helps you find highly relevant leads, but it becomes difficult to maintain as your outreach grows.',
-                  'Researching hundreds of companies every week isn\'t sustainable for most sales teams.',
+                  "Researching hundreds of companies every week isn't sustainable for most sales teams.",
                   "That's where B2B prospecting tools make a significant difference.",
                   'Instead of replacing sales representatives, these tools automate repetitive research tasks so teams can spend more time building relationships and closing deals.',
                   'The best lead generation platforms combine data, AI, and automation to identify prospects who are most likely to convert.',
@@ -740,11 +800,11 @@ export default function BlogHowToFindB2BLeadsPage() {
                   },
                   {
                     subtitle: 'Intent Data Platforms',
-                    paragraphs: ['One of the biggest challenges in B2B sales isn\'t finding companies. It\'s finding companies that are ready to buy. Intent data identifies businesses actively researching products or services similar to yours. Examples include companies reading software comparison articles, visiting pricing pages, searching for specific solutions, downloading buying guides, or engaging with competitor content. These behaviors indicate buying interest before a prospect fills out a contact form. Instead of contacting every company in your market, your team focuses on organizations already showing purchase intent.'],
+                    paragraphs: ["One of the biggest challenges in B2B sales isn't finding companies. It's finding companies that are ready to buy. Intent data identifies businesses actively researching products or services similar to yours. Examples include companies reading software comparison articles, visiting pricing pages, searching for specific solutions, downloading buying guides, or engaging with competitor content. These behaviors indicate buying interest before a prospect fills out a contact form. Instead of contacting every company in your market, your team focuses on organizations already showing purchase intent."],
                   },
                   {
                     subtitle: 'CRM Integration',
-                    paragraphs: ['Lead generation shouldn\'t end when a prospect enters your CRM. The best sales teams connect their prospecting tools directly to platforms like Salesforce or HubSpot. This ensures that prospect information remains accurate and automatically updates when new data becomes available. A connected CRM also helps sales teams avoid duplicate outreach and maintain a complete history of every interaction.'],
+                    paragraphs: ["Lead generation shouldn't end when a prospect enters your CRM. The best sales teams connect their prospecting tools directly to platforms like Salesforce or HubSpot. This ensures that prospect information remains accurate and automatically updates when new data becomes available. A connected CRM also helps sales teams avoid duplicate outreach and maintain a complete history of every interaction."],
                   },
                 ]}
               />
@@ -756,7 +816,7 @@ export default function BlogHowToFindB2BLeadsPage() {
                 showImage={false}
                 intro={[
                   'Finding leads is only half the job.',
-                  'The next step is determining whether they\'re actually worth pursuing.',
+                  "The next step is determining whether they're actually worth pursuing.",
                   'Without qualification, sales teams spend valuable time speaking with businesses that may never become customers.',
                   'One of the most widely used qualification methods is BANT.',
                 ]}
@@ -824,14 +884,14 @@ export default function BlogHowToFindB2BLeadsPage() {
                 title="7. Build a Smarter B2B Lead Generation Process"
                 showImage={false}
                 intro={[
-                  'The best sales teams don\'t simply generate more leads.',
+                  "The best sales teams don't simply generate more leads.",
                   'They generate better ones.',
                   'By combining manual research with modern automation, businesses can identify decision-makers faster, personalize outreach more effectively, and prioritize prospects who are most likely to convert.',
                   'Manual prospecting remains valuable because it provides context and deeper understanding.',
                   'Automation adds speed, consistency, and scalability.',
-                  'Together, they create a lead generation strategy that\'s both efficient and effective.',
-                  'The goal isn\'t to fill your CRM with contacts.',
-                  'It\'s to build a pipeline of qualified opportunities that drive predictable revenue growth.',
+                  "Together, they create a lead generation strategy that's both efficient and effective.",
+                  "The goal isn't to fill your CRM with contacts.",
+                  "It's to build a pipeline of qualified opportunities that drive predictable revenue growth.",
                 ]}
                 infographic={{
                   title: '360Airo',
@@ -852,50 +912,7 @@ export default function BlogHowToFindB2BLeadsPage() {
         </section>
 
         {/* Recent Posts */}
-        <section className="px-3 md:px-4 pb-4 md:pb-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-3 md:mb-4">
-              <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
-              <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-              {[
-                {
-                  title: 'How to Build Your First Cold Email Campaign: A Step‑by‑Step Guide',
-                  tag: 'Cold Email',
-                  href: '/blogs/how-to-build-first-cold-email-campaign',
-                  description: 'Build your first cold email campaign that actually gets replies.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-                {
-                  title: 'How Does Email Deliverability Work? A Step‑by‑Step Guide',
-                  tag: 'Deliverability',
-                  href: '/blogs/how-email-deliverability-works',
-                  description: 'Learn how email deliverability works and how to keep your messages out of spam.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-                {
-                  title: 'Email Delivery vs Email Deliverability: What\'s the Difference?',
-                  tag: 'Deliverability',
-                  href: '/blogs/email-delivery-vs-deliverability',
-                  description: 'Learn the critical difference between delivery and inbox placement.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-              ].map((post) => (
-                <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
-                  <div className="relative w-full aspect-[16/9] overflow-hidden">
-                    <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
-                  </div>
-                  <div className="p-3 md:p-5">
-                    <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
-                    <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
-                    <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
+        <RecentPosts />
       </main>
       <Footer />
     </div>

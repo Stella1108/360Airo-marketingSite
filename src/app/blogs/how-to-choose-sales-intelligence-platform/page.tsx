@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import Head from 'next/head';
@@ -19,9 +19,9 @@ type TocItem = {
 const tocItems: TocItem[] = [
   { id: 'introduction', label: 'Introduction', arrow: false },
   { id: 'what-is-sales-intelligence', label: 'What Is a Sales Intelligence Platform?', arrow: true },
-  { id: 'start-with-problem', label: 'Start With Your Sales Team\'s Actual Problem', arrow: true },
+  { id: 'start-with-problem', label: "Start With Your Sales Team's Actual Problem", arrow: true },
   { id: 'buying-checklist', label: 'Sales Intelligence Platform Buying Checklist', arrow: true },
-  { id: 'dont-compare-on-features-alone', label: 'Don\'t Compare Platforms on Features Alone', arrow: true },
+  { id: 'dont-compare-on-features-alone', label: "Don't Compare Platforms on Features Alone", arrow: true },
   { id: 'check-total-cost', label: 'Check the Total Cost, Not Just the Subscription Price', arrow: true },
   { id: 'test-before-commit', label: 'Test Before You Commit', arrow: true },
   { id: 'decision-framework', label: 'A Simple Decision Framework', arrow: true },
@@ -31,7 +31,7 @@ const tocItems: TocItem[] = [
   { id: 'conclusion', label: 'Conclusion', arrow: true },
 ];
 
-function MiniInfographic({
+const MiniInfographic = memo(function MiniInfographic({
   title,
   paragraphs,
   bullets,
@@ -59,9 +59,9 @@ function MiniInfographic({
       ) : null}
     </div>
   );
-}
+});
 
-function ContentBlock({
+const ContentBlock = memo(function ContentBlock({
   subtitle,
   paragraphs,
 }: {
@@ -80,15 +80,14 @@ function ContentBlock({
       </div>
     </div>
   );
-}
+});
 
-function SectionImage({ id }: { id: string }) {
+const SectionImage = memo(function SectionImage() {
   const image = {
     src: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1400&q=80&fm=webp',
     alt: 'Choose sales intelligence platform',
     label: 'Sales Intelligence',
   };
-  if (!image) return null;
 
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
@@ -97,9 +96,10 @@ function SectionImage({ id }: { id: string }) {
           src={image.src}
           alt={image.alt}
           fill
+          loading="lazy"
+          decoding="async"
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -108,9 +108,9 @@ function SectionImage({ id }: { id: string }) {
       </div>
     </div>
   );
-}
+});
 
-function ArticleSection({
+const ArticleSection = memo(function ArticleSection({
   id,
   title,
   intro,
@@ -146,31 +146,18 @@ function ArticleSection({
         {blocks.map((block) => (
           <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {showImage && <SectionImage id={id} />}
+        {showImage && <SectionImage />}
       </div>
     </section>
   );
-}
+});
 
-function RightPromoCards() {
+const RightPromoCards = memo(function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          Platform
-          <br />
-          Selection Guide
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4 pt-2">
+          Platform Selection Guide
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Follow this practical framework to choose the right sales intelligence platform for your business.
@@ -192,13 +179,13 @@ function RightPromoCards() {
       </div>
     </aside>
   );
-}
+});
 
 // --- Demo CTA Component ---
-function DemoCTA() {
+const DemoCTA = memo(function DemoCTA() {
   return (
     <div className="mt-8 rounded-[24px] bg-gradient-to-r from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] p-6 md:p-10 shadow-xl overflow-hidden relative text-center">
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/20"></div>
         <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-white/10"></div>
       </div>
@@ -218,13 +205,79 @@ function DemoCTA() {
       </div>
     </div>
   );
-}
+});
+
+// --- Hoisted static recent posts data ---
+const RECENT_POSTS = [
+  {
+    title: '360 Airo vs ZoomInfo: Complete Comparison for B2B Sales Teams',
+    tag: 'Listicles',
+    href: '/blogs/360airo-vs-zoominfo-complete-comparison',
+    description: 'Compare 360 Airo and ZoomInfo side by side.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: '360 Airo vs Apollo: Which Sales Intelligence Platform Is Better?',
+    tag: 'Listicles',
+    href: '/blogs/360airo-vs-apollo-which-is-better',
+    description: 'Compare 360 Airo and Apollo to find the best fit for your team.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'Best Sales Intelligence Platform for SMBs in 2026',
+    tag: 'Listicles',
+    href: '/blogs/best-sales-intelligence-platform-smb-2026',
+    description: 'Discover the best sales intelligence platform for SMBs in 2026.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+];
+
+const RecentPosts = memo(function RecentPosts() {
+  return (
+    <section className="px-3 md:px-4 pb-4 md:pb-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
+          <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {RECENT_POSTS.map((post) => (
+            <a
+              key={post.href}
+              href={post.href}
+              className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow"
+            >
+              <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  loading="lazy"
+                  decoding="async"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                />
+              </div>
+              <div className="p-3 md:p-5">
+                <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
+                <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
 
 export default function BlogChooseSalesIntelligencePage() {
   const [activeId, setActiveId] = useState('introduction');
+  const activeIdRef = useRef('introduction');
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
+  // PERF: rAF-throttled scroll + only update state when active section changes
   useEffect(() => {
     const handleScroll = () => {
       if (!ticking.current) {
@@ -241,7 +294,11 @@ export default function BlogChooseSalesIntelligencePage() {
               currentSectionId = section.id;
             }
           }
-          setActiveId(currentSectionId);
+
+          if (currentSectionId !== activeIdRef.current) {
+            activeIdRef.current = currentSectionId;
+            setActiveId(currentSectionId);
+          }
           ticking.current = false;
         });
         ticking.current = true;
@@ -516,7 +573,7 @@ export default function BlogChooseSalesIntelligencePage() {
                   initial={{ opacity: 0, x: -24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6 }}
-                  className="relative"
+                  className="relative transform-gpu"
                 >
                   <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
                     <Image
@@ -536,7 +593,7 @@ export default function BlogChooseSalesIntelligencePage() {
                   initial={{ opacity: 0, x: 24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.08 }}
-                  className="max-w-2xl"
+                  className="max-w-2xl transform-gpu"
                 >
                   <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">
                     Sales Intelligence
@@ -548,18 +605,8 @@ export default function BlogChooseSalesIntelligencePage() {
                     Choosing a sales intelligence platform sounds simple until you start comparing them. Use this practical guide to evaluate data quality, lead enrichment, CRM integration, and more – and find the platform that fits your sales workflow.
                   </p>
 
-                  {/* Meta info */}
+                  {/* Meta info — broken 360Airo Team image removed */}
                   <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="/logonew.png"
-                        alt="360Airo Team"
-                        width={140}
-                        height={40}
-                        className="h-7 md:h-10 w-auto object-contain"
-                        priority={false}
-                      />
-                    </div>
                     <span>• 360AIRO Team</span>
                     <span>• Updated: Nov 2026</span>
                     <span>• 9 min read</span>
@@ -598,7 +645,11 @@ export default function BlogChooseSalesIntelligencePage() {
                             : 'text-[#4b5563] hover:text-[#2f66db] hover:bg-white/70'
                         } ${item.indent ? 'ml-3' : ''}`}
                       >
-                        <span className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${isActive ? 'bg-[#4f63ff]' : 'bg-transparent'}`} />
+                        <span
+                          className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${
+                            isActive ? 'bg-[#4f63ff]' : 'bg-transparent'
+                          }`}
+                        />
                         <span className="flex items-start gap-1.5">
                           {item.arrow ? (
                             <span className={`mt-[1px] text-sm ${isActive ? 'text-[#2f66db]' : 'text-[#94a3b8]'}`}>›</span>
@@ -621,12 +672,12 @@ export default function BlogChooseSalesIntelligencePage() {
                   title="Introduction"
                   showImage={false}
                   intro={[
-                    "Choosing a sales intelligence platform sounds simple until you start comparing them.",
-                    "One platform promises a massive contact database. Another focuses on AI-powered prospecting. A third offers CRM integration, lead enrichment, buying signals, and automated outreach. On paper, many tools can look almost identical.",
+                    'Choosing a sales intelligence platform sounds simple until you start comparing them.',
+                    'One platform promises a massive contact database. Another focuses on AI-powered prospecting. A third offers CRM integration, lead enrichment, buying signals, and automated outreach. On paper, many tools can look almost identical.',
                     "The real question is not, 'Which sales intelligence platform has the most features?'",
-                    "It is: Which platform fits the way your sales team actually finds, qualifies, and converts prospects?",
-                    "The right sales intelligence software should help your team spend less time searching for prospects and more time having useful conversations with the right people. It should also fit your CRM, sales process, budget, and team size without creating another complicated system your sales reps have to manage.",
-                    "Here is a practical way to evaluate your options before making a decision.",
+                    'It is: Which platform fits the way your sales team actually finds, qualifies, and converts prospects?',
+                    'The right sales intelligence software should help your team spend less time searching for prospects and more time having useful conversations with the right people. It should also fit your CRM, sales process, budget, and team size without creating another complicated system your sales reps have to manage.',
+                    'Here is a practical way to evaluate your options before making a decision.',
                   ]}
                   infographic={{
                     title: 'Start with fit, not features',
@@ -647,8 +698,8 @@ export default function BlogChooseSalesIntelligencePage() {
                   title="What Is a Sales Intelligence Platform?"
                   showImage={true}
                   intro={[
-                    "A Sales Intelligence platform enables sales teams to locate potential buyers, learn more about their profiles, discover relevant purchase triggers, and convert this data into leads.",
-                    "Rather than spending time scouring company websites, LinkedIn accounts, directories, and other similar resources for information on potential prospects, sales teams can now accomplish this through just one platform. Depending on the tool, this may include:",
+                    'A Sales Intelligence platform enables sales teams to locate potential buyers, learn more about their profiles, discover relevant purchase triggers, and convert this data into leads.',
+                    'Rather than spending time scouring company websites, LinkedIn accounts, directories, and other similar resources for information on potential prospects, sales teams can now accomplish this through just one platform. Depending on the tool, this may include:',
                   ]}
                   infographic={{
                     title: 'What sales intelligence includes',
@@ -668,7 +719,7 @@ export default function BlogChooseSalesIntelligencePage() {
                   }}
                   blocks={[
                     {
-                      subtitle: 'You don\'t need every feature',
+                      subtitle: "You don't need every feature",
                       paragraphs: [
                         'A small B2B sales team may care more about accurate contacts and easy CRM integration than an advanced enterprise analytics dashboard. A larger sales organization may need deeper intent data, automation, and account-level intelligence.',
                         'That is why choosing based only on the feature list can lead to the wrong purchase.',
@@ -683,9 +734,9 @@ export default function BlogChooseSalesIntelligencePage() {
                   title="Start With Your Sales Team's Actual Problem"
                   showImage={false}
                   intro={[
-                    "Before comparing platforms, identify what is slowing your sales team down today.",
-                    "For example, are your sales representatives spending hours finding contact details? Are they struggling to identify the right decision-makers? Are leads entering the CRM with incomplete information? Is your team contacting prospects without knowing whether they are actually interested in your product?",
-                    "These are very different problems. If contact discovery is the biggest issue, prioritize database quality and lead enrichment. If your team struggles with timing, look for buying signals and prospect intelligence. If sales representatives are spending too much time moving data between tools, CRM integration should be high on your list.",
+                    'Before comparing platforms, identify what is slowing your sales team down today.',
+                    'For example, are your sales representatives spending hours finding contact details? Are they struggling to identify the right decision-makers? Are leads entering the CRM with incomplete information? Is your team contacting prospects without knowing whether they are actually interested in your product?',
+                    'These are very different problems. If contact discovery is the biggest issue, prioritize database quality and lead enrichment. If your team struggles with timing, look for buying signals and prospect intelligence. If sales representatives are spending too much time moving data between tools, CRM integration should be high on your list.',
                     "A simple starting exercise is to ask your sales team: 'What takes up the most time before you actually speak to a prospect?' The answer can tell you more about what you need than a vendor's feature page.",
                   ]}
                   infographic={{
@@ -708,7 +759,7 @@ export default function BlogChooseSalesIntelligencePage() {
                   title="Sales Intelligence Platform Buying Checklist"
                   showImage={false}
                   intro={[
-                    "Once you understand your requirements, evaluate each platform against the same criteria.",
+                    'Once you understand your requirements, evaluate each platform against the same criteria.',
                   ]}
                   infographic={{
                     title: 'Evaluation checklist',
@@ -740,7 +791,7 @@ export default function BlogChooseSalesIntelligencePage() {
                     {
                       subtitle: '3. Buying Signals',
                       paragraphs: [
-                        'Having someone\'s contact information does not necessarily mean they are ready to buy. This is where buying signals can make a difference. Buying signals are indicators that a company or prospect may be showing interest in a particular product, category, or solution.',
+                        "Having someone's contact information does not necessarily mean they are ready to buy. This is where buying signals can make a difference. Buying signals are indicators that a company or prospect may be showing interest in a particular product, category, or solution.",
                         'Depending on the platform, these signals could include changes in company activity, hiring patterns, technology adoption, website activity, or other business events. The value is straightforward: your sales team can prioritize prospects based on what is happening now rather than treating every lead equally.',
                         'If timing is important to your sales process, this should be an important part of your evaluation.',
                       ],
@@ -770,10 +821,10 @@ export default function BlogChooseSalesIntelligencePage() {
                   title="Don't Compare Platforms on Features Alone"
                   showImage={false}
                   intro={[
-                    "When comparing sales intelligence tools, it is tempting to create a spreadsheet with dozens of features and award points to each vendor. That can be useful, but it should not be the final decision-making method.",
-                    "Consider three platforms. Platform A has 100 features but requires significant setup. Platform B has 60 features and fits your existing sales workflow. Platform C has 40 features but provides excellent data for your target market.",
+                    'When comparing sales intelligence tools, it is tempting to create a spreadsheet with dozens of features and award points to each vendor. That can be useful, but it should not be the final decision-making method.',
+                    'Consider three platforms. Platform A has 100 features but requires significant setup. Platform B has 60 features and fits your existing sales workflow. Platform C has 40 features but provides excellent data for your target market.',
                     "If your team needs Platform C's data and Platform B's workflow, Platform A being the 'most feature-rich' does not make it the best choice.",
-                    "Instead, separate features into three categories: Must-have (without these, the platform cannot solve your problem), Useful (could improve productivity but are not essential), and Nice-to-have (interesting features that are unlikely to influence your results significantly). This makes comparison much more practical.",
+                    'Instead, separate features into three categories: Must-have (without these, the platform cannot solve your problem), Useful (could improve productivity but are not essential), and Nice-to-have (interesting features that are unlikely to influence your results significantly). This makes comparison much more practical.',
                   ]}
                   infographic={{
                     title: 'Three feature categories',
@@ -793,9 +844,9 @@ export default function BlogChooseSalesIntelligencePage() {
                   title="Check the Total Cost, Not Just the Subscription Price"
                   showImage={false}
                   intro={[
-                    "Pricing is another area where businesses can make mistakes. Do not look only at the advertised monthly or annual subscription. Consider the full cost of using the platform.",
-                    "Ask: How many users are included? Are additional credits charged separately? Are premium data points available only on higher plans? Does CRM integration cost extra? Are there usage limits? Is onboarding included? Will you need additional software to make the platform useful?",
-                    "A cheaper platform is not necessarily cheaper if your team spends several hours every week cleaning or verifying its data. Think about the return on the investment instead. If a platform helps a sales representative save five hours every week and improves the quality of their prospect list, that productivity has a real business value.",
+                    'Pricing is another area where businesses can make mistakes. Do not look only at the advertised monthly or annual subscription. Consider the full cost of using the platform.',
+                    'Ask: How many users are included? Are additional credits charged separately? Are premium data points available only on higher plans? Does CRM integration cost extra? Are there usage limits? Is onboarding included? Will you need additional software to make the platform useful?',
+                    'A cheaper platform is not necessarily cheaper if your team spends several hours every week cleaning or verifying its data. Think about the return on the investment instead. If a platform helps a sales representative save five hours every week and improves the quality of their prospect list, that productivity has a real business value.',
                   ]}
                   infographic={{
                     title: 'Total cost checklist',
@@ -818,8 +869,8 @@ export default function BlogChooseSalesIntelligencePage() {
                   title="Test Before You Commit"
                   showImage={false}
                   intro={[
-                    "If a vendor offers a free trial, demo, or sample database, use it properly. Do not spend the entire trial period clicking through features.",
-                    "Give the platform a real sales task. Take 20 to 50 companies from your existing target account list and try to find the right decision-makers, their contact information, relevant company details, useful buying signals, and information that can help personalize outreach. Then measure how long the process takes. Compare the results with your current process.",
+                    'If a vendor offers a free trial, demo, or sample database, use it properly. Do not spend the entire trial period clicking through features.',
+                    'Give the platform a real sales task. Take 20 to 50 companies from your existing target account list and try to find the right decision-makers, their contact information, relevant company details, useful buying signals, and information that can help personalize outreach. Then measure how long the process takes. Compare the results with your current process.',
                     "This gives you a practical answer to a much more important question: Does this platform actually make my sales team's job easier?",
                   ]}
                   infographic={{
@@ -830,7 +881,7 @@ export default function BlogChooseSalesIntelligencePage() {
                       'Find decision-makers and contact info',
                       'Identify company details and buying signals',
                       'Measure time taken vs. current process',
-                      'Ask: does this make my team\'s job easier?',
+                      "Ask: does this make my team's job easier?",
                     ],
                   }}
                   blocks={[]}
@@ -842,7 +893,7 @@ export default function BlogChooseSalesIntelligencePage() {
                   title="A Simple Decision Framework"
                   showImage={false}
                   intro={[
-                    "You can use a four-step framework to narrow down your choices.",
+                    'You can use a four-step framework to narrow down your choices.',
                   ]}
                   infographic={{
                     title: '4-step decision framework',
@@ -880,9 +931,9 @@ export default function BlogChooseSalesIntelligencePage() {
                   title="When Should You Choose an AI Sales Platform?"
                   showImage={false}
                   intro={[
-                    "AI can make sales intelligence software more useful, but it should not be the only reason you choose a platform.",
-                    "Look at what the AI actually does. Does it help identify promising accounts? Can it summarize prospect information? Can it assist with lead qualification? Does it reduce repetitive research? Those practical applications matter more than simply having 'AI' mentioned on a product page.",
-                    "For B2B teams, the best AI sales platform is one where automation supports the sales process instead of making it more complicated.",
+                    'AI can make sales intelligence software more useful, but it should not be the only reason you choose a platform.',
+                    'Look at what the AI actually does. Does it help identify promising accounts? Can it summarize prospect information? Can it assist with lead qualification? Does it reduce repetitive research? Those practical applications matter more than simply having "AI" mentioned on a product page.',
+                    'For B2B teams, the best AI sales platform is one where automation supports the sales process instead of making it more complicated.',
                   ]}
                   infographic={{
                     title: 'Evaluate AI practically',
@@ -904,10 +955,10 @@ export default function BlogChooseSalesIntelligencePage() {
                   title="Why 360 Airo Can Be Worth Considering"
                   showImage={false}
                   intro={[
-                    "For businesses looking for a platform that brings prospect intelligence, lead enrichment, and sales workflows together, 360 Airo is one option to evaluate.",
-                    "Its value should be considered in the context of your specific sales process rather than simply comparing the number of features it offers with competing platforms.",
-                    "If your team wants to identify prospects, enrich lead information, understand accounts, and reduce the amount of manual research involved in prospecting, a unified sales intelligence approach can be useful.",
-                    "The best way to decide is still to test it against your own target accounts and sales workflow.",
+                    'For businesses looking for a platform that brings prospect intelligence, lead enrichment, and sales workflows together, 360 Airo is one option to evaluate.',
+                    'Its value should be considered in the context of your specific sales process rather than simply comparing the number of features it offers with competing platforms.',
+                    'If your team wants to identify prospects, enrich lead information, understand accounts, and reduce the amount of manual research involved in prospecting, a unified sales intelligence approach can be useful.',
+                    'The best way to decide is still to test it against your own target accounts and sales workflow.',
                   ]}
                   infographic={{
                     title: '360 Airo',
@@ -924,11 +975,11 @@ export default function BlogChooseSalesIntelligencePage() {
                   title="Questions to Ask Before Buying Sales Intelligence Software"
                   showImage={false}
                   intro={[
-                    "Before signing a contract, ask the vendor these questions:",
+                    'Before signing a contract, ask the vendor these questions:',
                   ]}
                   infographic={{
                     title: 'Key vendor questions',
-                    paragraphs: ['Ask these questions to understand what you\'re really getting.'],
+                    paragraphs: ["Ask these questions to understand what you're really getting."],
                     bullets: [
                       'How accurate is your contact data? – Ask how data is collected, verified, and updated.',
                       'How often is the database refreshed? – Outdated information quickly reduces value.',
@@ -949,10 +1000,10 @@ export default function BlogChooseSalesIntelligencePage() {
                   title="Conclusion"
                   showImage={false}
                   intro={[
-                    "The choice of a suitable sales intelligence platform is not based on the selection of software with the largest database or best features list.",
-                    "The task is to select a sales intelligence platform that resolves existing prospecting issues for your sales team without introducing additional complexities.",
-                    "Define the sales process. Describe your ideal customer profile. Identify the places where the most time is wasted. Then assess the data quality, lead enrichment, buying signals, CRM integration, usability, cost, and potential value that the sales intelligence platform can bring.",
-                    "And, most importantly, try before committing to anything. The software that looks great in a product demo might not be the right solution for your sales reps. The proper sales intelligence platform will seamlessly integrate into the existing sales workflow and will help your representatives to easily find, qualify, and reach out to the right prospects.",
+                    'The choice of a suitable sales intelligence platform is not based on the selection of software with the largest database or best features list.',
+                    'The task is to select a sales intelligence platform that resolves existing prospecting issues for your sales team without introducing additional complexities.',
+                    'Define the sales process. Describe your ideal customer profile. Identify the places where the most time is wasted. Then assess the data quality, lead enrichment, buying signals, CRM integration, usability, cost, and potential value that the sales intelligence platform can bring.',
+                    'And, most importantly, try before committing to anything. The software that looks great in a product demo might not be the right solution for your sales reps. The proper sales intelligence platform will seamlessly integrate into the existing sales workflow and will help your representatives to easily find, qualify, and reach out to the right prospects.',
                   ]}
                   infographic={{
                     title: 'Find the right fit',
@@ -970,50 +1021,7 @@ export default function BlogChooseSalesIntelligencePage() {
           </section>
 
           {/* Recent Posts */}
-          <section className="px-3 md:px-4 pb-4 md:pb-8">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex items-center justify-between mb-3 md:mb-4">
-                <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
-                <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                {[
-                  {
-                    title: '360 Airo vs ZoomInfo: Complete Comparison for B2B Sales Teams',
-                    tag: 'Listicles',
-                    href: '/blogs/360airo-vs-zoominfo-complete-comparison',
-                    description: 'Compare 360 Airo and ZoomInfo side by side.',
-                    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                  {
-                    title: '360 Airo vs Apollo: Which Sales Intelligence Platform Is Better?',
-                    tag: 'Listicles',
-                    href: '/blogs/360airo-vs-apollo-which-is-better',
-                    description: 'Compare 360 Airo and Apollo to find the best fit for your team.',
-                    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                  {
-                    title: 'Best Sales Intelligence Platform for SMBs in 2026',
-                    tag: 'Listicles',
-                    href: '/blogs/best-sales-intelligence-platform-smb-2026',
-                    description: 'Discover the best sales intelligence platform for SMBs in 2026.',
-                    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                ].map((post) => (
-                  <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
-                    <div className="relative w-full aspect-[16/9] overflow-hidden">
-                      <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
-                    </div>
-                    <div className="p-3 md:p-5">
-                      <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
-                      <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
-                      <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
+          <RecentPosts />
         </main>
         <Footer />
       </div>

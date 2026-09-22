@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import Head from 'next/head';
@@ -36,7 +36,7 @@ const tocItems: TocItem[] = [
   { id: 'conclusion', label: '10. Build a Stronger Foundation', arrow: true },
 ];
 
-function MiniInfographic({
+const MiniInfographic = memo(function MiniInfographic({
   title,
   paragraphs,
   bullets,
@@ -64,9 +64,9 @@ function MiniInfographic({
       ) : null}
     </div>
   );
-}
+});
 
-function ContentBlock({
+const ContentBlock = memo(function ContentBlock({
   subtitle,
   paragraphs,
 }: {
@@ -85,10 +85,10 @@ function ContentBlock({
       </div>
     </div>
   );
-}
+});
 
 // --- SectionImage with optional label ---
-function SectionImage({
+const SectionImage = memo(function SectionImage({
   src,
   alt,
   label,
@@ -104,9 +104,10 @@ function SectionImage({
           src={src}
           alt={alt}
           fill
+          loading="lazy"
+          decoding="async"
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         {label && (
@@ -117,10 +118,10 @@ function SectionImage({
       </div>
     </div>
   );
-}
+});
 
 // --- ArticleSection: image after intro, before infographic ---
-function ArticleSection({
+const ArticleSection = memo(function ArticleSection({
   id,
   title,
   intro,
@@ -164,28 +165,39 @@ function ArticleSection({
       </div>
     </section>
   );
-}
+});
 
 // --- FAQ Accordion Component ---
-function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[] }[] }) {
+const FaqAccordion = memo(function FaqAccordion({
+  faqs,
+}: {
+  faqs: { subtitle: string; paragraphs: string[] }[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const toggle = useCallback((index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  }, []);
 
   return (
     <div className="space-y-3 md:space-y-4">
       {faqs.map((faq, index) => {
         const isOpen = openIndex === index;
         return (
-          <div key={index} className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]">
+          <div
+            key={index}
+            className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]"
+          >
             <button
               onClick={() => toggle(index)}
+              aria-expanded={isOpen}
               className="w-full flex items-center justify-between px-4 py-3 md:px-6 md:py-4 text-left text-[15px] md:text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
             >
               <span>{faq.subtitle}</span>
-              <span className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+              <span
+                className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300"
+                style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              >
                 {isOpen ? '−' : '+'}
               </span>
             </button>
@@ -205,27 +217,14 @@ function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[]
       })}
     </div>
   );
-}
+});
 
-function RightPromoCards() {
+const RightPromoCards = memo(function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          Email Warmup
-          <br />
-          Made Simple
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4 pt-2">
+          Email Warmup Made Simple
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Automate warmup, monitor reputation, and improve deliverability from day one.
@@ -247,14 +246,108 @@ function RightPromoCards() {
       </div>
     </aside>
   );
-}
+});
+
+// --- Hoisted static FAQ data ---
+const FAQ_ITEMS = [
+  {
+    subtitle: '9.1 What is an email warmup tool?',
+    paragraphs: ['An email warmup tool is software that automates gradual sending activity and helps monitor mailbox performance before higher-volume outreach begins.'],
+  },
+  {
+    subtitle: '9.2 What are email warmup services?',
+    paragraphs: ['Email warmup services help establish consistent sending activity for new or inactive email accounts through gradual volume increases and performance monitoring.'],
+  },
+  {
+    subtitle: '9.3 Does email warmup actually work?',
+    paragraphs: ['Email warmup can support consistent sending behavior, but it works best alongside authentication, clean data, responsible sending practices, and deliverability monitoring.'],
+  },
+  {
+    subtitle: '9.4 What is the best email warmer?',
+    paragraphs: ['The best email warmer depends on your needs. Look for automated warmup, multiple mailbox management, deliverability visibility, reputation monitoring, and useful integrations.'],
+  },
+  {
+    subtitle: '9.5 What is Email Warmup Outlook?',
+    paragraphs: ["Email warmup for Outlook involves gradually establishing consistent sending activity while monitoring performance across Microsoft's email ecosystem. Sender reputation, authentication, engagement, and list quality remain important."],
+  },
+  {
+    subtitle: '9.6 Which factors can negatively impact email sender reputation?',
+    paragraphs: ['High bounce rates, spam complaints, poor list quality, missing authentication, sudden volume increases, and consistently low engagement can negatively affect sender reputation.'],
+  },
+];
+
+// --- Hoisted static recent posts data ---
+const RECENT_POSTS = [
+  {
+    title: '10 Cheapest Cold Email Software Tools for Startups & Agencies',
+    tag: 'Cold Email',
+    href: '/blogs/10-cheapest-cold-email-software',
+    description: 'Discover affordable cold email tools for 2026.',
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'How AI Prospecting Improves Sales Efficiency',
+    tag: 'AI Sales',
+    href: '/blogs/ai-prospecting-sales-efficiency',
+    description: 'Read this next to go deeper into modern sales workflows.',
+    image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'CRM Integration Best Practices for Outreach Teams',
+    tag: 'CRM Integration',
+    href: '/blogs/crm-integration-best-practices',
+    description: 'Read this next to go deeper into modern sales workflows.',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+];
+
+const RecentPosts = memo(function RecentPosts() {
+  return (
+    <section className="px-3 md:px-4 pb-4 md:pb-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
+          <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {RECENT_POSTS.map((post) => (
+            <a
+              key={post.href}
+              href={post.href}
+              className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow"
+            >
+              <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  loading="lazy"
+                  decoding="async"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                />
+              </div>
+              <div className="p-3 md:p-5">
+                <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
+                <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
 
 export default function BlogEmailWarmupPage() {
   const [activeId, setActiveId] = useState('introduction');
+  const activeIdRef = useRef('introduction');
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
   // INP FIX: Throttle scroll handler with requestAnimationFrame
+  // PERF: Only update state when active section actually changes
   useEffect(() => {
     const handleScroll = () => {
       if (!ticking.current) {
@@ -271,7 +364,11 @@ export default function BlogEmailWarmupPage() {
               currentSectionId = section.id;
             }
           }
-          setActiveId(currentSectionId);
+
+          if (currentSectionId !== activeIdRef.current) {
+            activeIdRef.current = currentSectionId;
+            setActiveId(currentSectionId);
+          }
           ticking.current = false;
         });
         ticking.current = true;
@@ -344,7 +441,7 @@ export default function BlogEmailWarmupPage() {
         <meta name="author" content="360Airo" />
         <meta name="theme-color" content="#08124A" />
 
-        {/* JSON‑LD */}
+        {/* JSON-LD */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -459,8 +556,7 @@ export default function BlogEmailWarmupPage() {
           rel="preload"
           fetchPriority="high"
           as="image"
-          href="/email warmup-tools.png"
-          type="image/webp"
+          href="/email-warmup-tools.png"
         />
 
         {/* GLOBAL STYLES */}
@@ -514,7 +610,7 @@ export default function BlogEmailWarmupPage() {
                   initial={{ opacity: 0, x: -24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6 }}
-                  className="relative"
+                  className="relative transform-gpu"
                 >
                   <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
                     <Image
@@ -534,7 +630,7 @@ export default function BlogEmailWarmupPage() {
                   initial={{ opacity: 0, x: 24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.08 }}
-                  className="max-w-2xl"
+                  className="max-w-2xl transform-gpu"
                 >
                   <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">
                     Deliverability Guide
@@ -546,18 +642,8 @@ export default function BlogEmailWarmupPage() {
                     You've created a new email address. Your prospect list is ready. But sending hundreds of emails immediately could damage your sender reputation. Here's how warmup tools help.
                   </p>
 
-                  {/* Meta info */}
+                  {/* Meta info — broken 360Airo Team image removed */}
                   <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="/logonew.png"
-                        alt="360Airo Team"
-                        width={140}
-                        height={40}
-                        className="h-7 md:h-10 w-auto object-contain"
-                        priority={false}
-                      />
-                    </div>
                     <span>• 360AIRO Team</span>
                     <span>• Updated: Jun 2026</span>
                     <span>• 12 min read</span>
@@ -596,7 +682,11 @@ export default function BlogEmailWarmupPage() {
                             : 'text-[#4b5563] hover:text-[#2f66db] hover:bg-white/70'
                         } ${item.indent ? 'ml-3' : ''}`}
                       >
-                        <span className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${isActive ? 'bg-[#4f63ff]' : 'bg-transparent'}`} />
+                        <span
+                          className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${
+                            isActive ? 'bg-[#4f63ff]' : 'bg-transparent'
+                          }`}
+                        />
                         <span className="flex items-start gap-1.5">
                           {item.arrow ? (
                             <span className={`mt-[1px] text-sm ${isActive ? 'text-[#2f66db]' : 'text-[#94a3b8]'}`}>›</span>
@@ -619,10 +709,10 @@ export default function BlogEmailWarmupPage() {
                   title="Introduction"
                   intro={[
                     "You've created a new email address.",
-                    "Your prospect list is ready, your campaign is written, and your sales team is ready to begin outreach. But sending hundreds of emails immediately could damage your sender reputation before the campaign has a chance to perform.",
-                    "Mailbox providers evaluate sending patterns, engagement, authentication, and reputation when deciding where an email belongs. A sudden increase in activity from a new or inactive account can appear suspicious.",
+                    'Your prospect list is ready, your campaign is written, and your sales team is ready to begin outreach. But sending hundreds of emails immediately could damage your sender reputation before the campaign has a chance to perform.',
+                    'Mailbox providers evaluate sending patterns, engagement, authentication, and reputation when deciding where an email belongs. A sudden increase in activity from a new or inactive account can appear suspicious.',
                     "That's where email warmup tools come in.",
-                    "An email warmup tool gradually increases sending activity and helps establish a consistent history before you scale outreach. Instead of managing the process manually, automated email warmup helps teams prepare multiple mailboxes while monitoring their performance.",
+                    'An email warmup tool gradually increases sending activity and helps establish a consistent history before you scale outreach. Instead of managing the process manually, automated email warmup helps teams prepare multiple mailboxes while monitoring their performance.',
                     "Let's explore what email warming is, how email warmup software works, and how it connects to sender reputation and deliverability.",
                   ]}
                   infographic={{
@@ -780,7 +870,7 @@ export default function BlogEmailWarmupPage() {
                     },
                     {
                       subtitle: 'Start With Lower Activity',
-                      paragraphs: ['A new mailbox shouldn\'t immediately begin high-volume outreach. The warmup tool starts with lower sending activity and gradually increases volume over time. The rate of increase may depend on mailbox age, domain history, engagement, and performance.'],
+                      paragraphs: ["A new mailbox shouldn't immediately begin high-volume outreach. The warmup tool starts with lower sending activity and gradually increases volume over time. The rate of increase may depend on mailbox age, domain history, engagement, and performance."],
                     },
                     {
                       subtitle: 'Generate Engagement Signals',
@@ -788,7 +878,7 @@ export default function BlogEmailWarmupPage() {
                     },
                     {
                       subtitle: 'Monitor and Adjust',
-                      paragraphs: ['Effective warmup shouldn\'t rely on a fixed schedule alone. Email warmup software may monitor bounce rates, delivery performance, spam placement, sending patterns, and reputation indicators. If performance declines, the warmup strategy may need to be adjusted rather than automatically increasing volume.'],
+                      paragraphs: ["Effective warmup shouldn't rely on a fixed schedule alone. Email warmup software may monitor bounce rates, delivery performance, spam placement, sending patterns, and reputation indicators. If performance declines, the warmup strategy may need to be adjusted rather than automatically increasing volume."],
                     },
                   ]}
                 />
@@ -928,7 +1018,7 @@ export default function BlogEmailWarmupPage() {
                   blocks={[
                     {
                       subtitle: 'Final thought',
-                      paragraphs: ['The best free email warmup tool isn\'t necessarily the best choice for a scaling sales organization. The right option depends on the number of mailboxes, campaign volume, and level of monitoring required.'],
+                      paragraphs: ["The best free email warmup tool isn't necessarily the best choice for a scaling sales organization. The right option depends on the number of mailboxes, campaign volume, and level of monitoring required."],
                     },
                   ]}
                 />
@@ -939,7 +1029,7 @@ export default function BlogEmailWarmupPage() {
                   title="7. Does Email Warmup Actually Work?"
                   intro={[
                     'A structured warmup process can help establish consistent sending patterns for new or inactive mailboxes.',
-                    'But email warmup isn\'t a shortcut to guaranteed inbox placement.',
+                    "But email warmup isn't a shortcut to guaranteed inbox placement.",
                     'It works best when combined with:',
                   ]}
                   infographic={{
@@ -985,7 +1075,7 @@ export default function BlogEmailWarmupPage() {
                     },
                     {
                       subtitle: '8.3 Monitor Sender Reputation',
-                      paragraphs: ['Use an email sender reputation check alongside bounce, complaint, authentication, and inbox placement data. A single sender score doesn\'t provide the complete picture.'],
+                      paragraphs: ["Use an email sender reputation check alongside bounce, complaint, authentication, and inbox placement data. A single sender score doesn't provide the complete picture."],
                     },
                     {
                       subtitle: '8.4 Maintain List Quality',
@@ -993,7 +1083,7 @@ export default function BlogEmailWarmupPage() {
                     },
                     {
                       subtitle: '8.5 Keep Monitoring After Warmup',
-                      paragraphs: ['Warmup isn\'t a one-time fix. Sender reputation can change as volume, engagement, and list quality change. Continuous monitoring is essential.'],
+                      paragraphs: ["Warmup isn't a one-time fix. Sender reputation can change as volume, engagement, and list quality change. Continuous monitoring is essential."],
                     },
                   ]}
                   image={{
@@ -1012,34 +1102,7 @@ export default function BlogEmailWarmupPage() {
                       title="Quick answers"
                       paragraphs={['Clarifying common questions about warmup.']}
                     />
-                    <FaqAccordion
-                      faqs={[
-                        {
-                          subtitle: '9.1 What is an email warmup tool?',
-                          paragraphs: ['An email warmup tool is software that automates gradual sending activity and helps monitor mailbox performance before higher-volume outreach begins.'],
-                        },
-                        {
-                          subtitle: '9.2 What are email warmup services?',
-                          paragraphs: ['Email warmup services help establish consistent sending activity for new or inactive email accounts through gradual volume increases and performance monitoring.'],
-                        },
-                        {
-                          subtitle: '9.3 Does email warmup actually work?',
-                          paragraphs: ['Email warmup can support consistent sending behavior, but it works best alongside authentication, clean data, responsible sending practices, and deliverability monitoring.'],
-                        },
-                        {
-                          subtitle: '9.4 What is the best email warmer?',
-                          paragraphs: ['The best email warmer depends on your needs. Look for automated warmup, multiple mailbox management, deliverability visibility, reputation monitoring, and useful integrations.'],
-                        },
-                        {
-                          subtitle: '9.5 What is Email Warmup Outlook?',
-                          paragraphs: ['Email warmup for Outlook involves gradually establishing consistent sending activity while monitoring performance across Microsoft\'s email ecosystem. Sender reputation, authentication, engagement, and list quality remain important.'],
-                        },
-                        {
-                          subtitle: '9.6 Which factors can negatively impact email sender reputation?',
-                          paragraphs: ['High bounce rates, spam complaints, poor list quality, missing authentication, sudden volume increases, and consistently low engagement can negatively affect sender reputation.'],
-                        },
-                      ]}
-                    />
+                    <FaqAccordion faqs={FAQ_ITEMS} />
                   </div>
                 </section>
 
@@ -1073,50 +1136,7 @@ export default function BlogEmailWarmupPage() {
           </section>
 
           {/* Recent Posts */}
-          <section className="px-3 md:px-4 pb-4 md:pb-8">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex items-center justify-between mb-3 md:mb-4">
-                <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
-                <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                {[
-                  {
-                    title: '10 Cheapest Cold Email Software Tools for Startups & Agencies',
-                    tag: 'Cold Email',
-                    href: '/blogs/10-cheapest-cold-email-software',
-                    description: 'Discover affordable cold email tools for 2026.',
-                    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                  {
-                    title: 'How AI Prospecting Improves Sales Efficiency',
-                    tag: 'AI Sales',
-                    href: '/blogs/ai-prospecting-sales-efficiency',
-                    description: 'Read this next to go deeper into modern sales workflows.',
-                    image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                  {
-                    title: 'CRM Integration Best Practices for Outreach Teams',
-                    tag: 'CRM Integration',
-                    href: '/blogs/crm-integration-best-practices',
-                    description: 'Read this next to go deeper into modern sales workflows.',
-                    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                ].map((post) => (
-                  <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
-                    <div className="relative w-full aspect-[16/9] overflow-hidden">
-                      <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
-                    </div>
-                    <div className="p-3 md:p-5">
-                      <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
-                      <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
-                      <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
+          <RecentPosts />
         </main>
         <Footer />
       </div>

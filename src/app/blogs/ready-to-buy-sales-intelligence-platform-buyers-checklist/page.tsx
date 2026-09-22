@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import Head from 'next/head';
@@ -36,7 +36,7 @@ const tocItems: TocItem[] = [
   { id: 'faqs', label: 'FAQs', arrow: true },
 ];
 
-function MiniInfographic({
+const MiniInfographic = memo(function MiniInfographic({
   title,
   paragraphs,
   bullets,
@@ -64,9 +64,9 @@ function MiniInfographic({
       ) : null}
     </div>
   );
-}
+});
 
-function ContentBlock({
+const ContentBlock = memo(function ContentBlock({
   subtitle,
   paragraphs,
 }: {
@@ -85,15 +85,14 @@ function ContentBlock({
       </div>
     </div>
   );
-}
+});
 
-function SectionImage({ id }: { id: string }) {
+const SectionImage = memo(function SectionImage() {
   const image = {
     src: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1400&q=80&fm=webp',
     alt: 'Sales intelligence platform buyer checklist',
     label: 'Sales Intelligence',
   };
-  if (!image) return null;
 
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
@@ -102,9 +101,10 @@ function SectionImage({ id }: { id: string }) {
           src={image.src}
           alt={image.alt}
           fill
+          loading="lazy"
+          decoding="async"
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -113,9 +113,9 @@ function SectionImage({ id }: { id: string }) {
       </div>
     </div>
   );
-}
+});
 
-function ArticleSection({
+const ArticleSection = memo(function ArticleSection({
   id,
   title,
   intro,
@@ -151,32 +151,43 @@ function ArticleSection({
         {blocks.map((block) => (
           <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {showImage && <SectionImage id={id} />}
+        {showImage && <SectionImage />}
       </div>
     </section>
   );
-}
+});
 
 // --- FAQ Accordion Component ---
-function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[] }[] }) {
+const FaqAccordion = memo(function FaqAccordion({
+  faqs,
+}: {
+  faqs: { subtitle: string; paragraphs: string[] }[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const toggle = useCallback((index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  }, []);
 
   return (
     <div className="space-y-3 md:space-y-4">
       {faqs.map((faq, index) => {
         const isOpen = openIndex === index;
         return (
-          <div key={index} className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]">
+          <div
+            key={index}
+            className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]"
+          >
             <button
               onClick={() => toggle(index)}
+              aria-expanded={isOpen}
               className="w-full flex items-center justify-between px-4 py-3 md:px-6 md:py-4 text-left text-[15px] md:text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
             >
               <span>{faq.subtitle}</span>
-              <span className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+              <span
+                className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300"
+                style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              >
                 {isOpen ? '−' : '+'}
               </span>
             </button>
@@ -196,27 +207,14 @@ function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[]
       })}
     </div>
   );
-}
+});
 
-function RightPromoCards() {
+const RightPromoCards = memo(function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          Buyer's
-          <br />
-          Checklist
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4 pt-2">
+          Buyer's Checklist
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Use this 10-step checklist to evaluate and choose the right sales intelligence platform for your team.
@@ -238,13 +236,13 @@ function RightPromoCards() {
       </div>
     </aside>
   );
-}
+});
 
 // --- Demo CTA Component ---
-function DemoCTA() {
+const DemoCTA = memo(function DemoCTA() {
   return (
     <div className="mt-8 rounded-[24px] bg-gradient-to-r from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] p-6 md:p-10 shadow-xl overflow-hidden relative text-center">
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/20"></div>
         <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-white/10"></div>
       </div>
@@ -264,13 +262,124 @@ function DemoCTA() {
       </div>
     </div>
   );
-}
+});
+
+// --- Hoisted static FAQ data ---
+const FAQ_ITEMS = [
+  {
+    subtitle: 'What should I evaluate before buying a sales intelligence platform?',
+    paragraphs: ['Start with data quality, prospecting, AI capabilities, outreach, deliverability, integrations, usability, analytics, support and total cost. Most importantly, make sure the platform addresses a specific problem in your existing sales process.'],
+  },
+  {
+    subtitle: 'How do I compare sales intelligence platforms?',
+    paragraphs: ['Use the same criteria for every vendor. A weighted scorecard covering data, prospecting, AI, outreach, integrations, usability and pricing can make the final decision much less subjective.'],
+  },
+  {
+    subtitle: 'Is a sales intelligence platform worth it for a small business?',
+    paragraphs: ['It can be, particularly when salespeople are spending a significant amount of time finding prospects, researching accounts or managing repetitive follow-ups. The software needs to save enough time or generate enough additional opportunity to justify its cost.'],
+  },
+  {
+    subtitle: 'What should I ask during a sales intelligence software demo?',
+    paragraphs: ['Ask about data sources, data freshness, verification, AI functionality, automation, integrations, deliverability, pricing limits, onboarding and support. Also ask the vendor to demonstrate a real workflow instead of only showing individual features.'],
+  },
+  {
+    subtitle: 'How much does 360Airo cost?',
+    paragraphs: ['360Airo offers a free plan and paid plans such as Starter and Pro, with Enterprise pricing available for larger requirements. Pricing varies depending on factors including contacts, users, mailboxes, AI credits and other platform usage.'],
+  },
+  {
+    subtitle: 'Is 360Airo good for SMBs?',
+    paragraphs: ['360Airo is designed to support sales teams that want prospect intelligence and outbound execution in the same platform. Its current capabilities include prospecting, enrichment, AI personalization, email and LinkedIn outreach, automation and deliverability features.'],
+  },
+  {
+    subtitle: 'Is a larger sales database always better?',
+    paragraphs: ['No. Database size does not guarantee better sales results. Freshness, accuracy, relevance and how easily your team can turn prospect data into actual outreach matter much more.'],
+  },
+  {
+    subtitle: 'Should I request a demo before buying?',
+    paragraphs: ['Yes. A demo gives you the chance to test the product against your actual sales process. Ideally, give the vendor a specific use case and ask them to show how they would find, enrich, personalize, contact and manage that prospect from beginning to end.'],
+  },
+  {
+    subtitle: 'What is the biggest mistake companies make when buying sales intelligence software?',
+    paragraphs: ['Choosing based on features instead of workflow fit. A platform can have every feature you can think of and still be a poor choice if your team finds it difficult to use or if it does not integrate with the way you already sell.'],
+  },
+  {
+    subtitle: 'What is the most important thing to check before signing up?',
+    paragraphs: ['Look at the total cost and the actual workflow. Make sure you know what happens when you increase users, contacts, AI usage or outreach volume. Then test the product with a real sales use case before committing.'],
+  },
+];
+
+// --- Hoisted static recent posts data ---
+const RECENT_POSTS = [
+  {
+    title: 'Why 360 Airo Is the Best Sales Intelligence Platform for SMB Growth',
+    tag: 'Listicles',
+    href: '/blogs/why-360airo-best-sales-intelligence-smb-growth',
+    description: 'Discover why 360 Airo is the best sales intelligence platform for SMB growth.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'Customer Success Story: How SMBs Increased Their Pipeline with 360 Airo',
+    tag: 'Listicles',
+    href: '/blogs/customer-success-story-smb-pipeline-growth',
+    description: 'Read real customer success stories of SMBs that increased their pipeline with 360 Airo.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'ZoomInfo Alternatives for Small Businesses: 8 Better Options That Deliver More Value in 2026',
+    tag: 'Listicles',
+    href: '/blogs/zoominfo-alternatives-small-businesses-2026',
+    description: 'Compare the top 8 ZoomInfo alternatives for small businesses in 2026.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+];
+
+const RecentPosts = memo(function RecentPosts() {
+  return (
+    <section className="px-3 md:px-4 pb-4 md:pb-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
+          <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {RECENT_POSTS.map((post) => (
+            <a
+              key={post.href}
+              href={post.href}
+              className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow"
+            >
+              <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  loading="lazy"
+                  decoding="async"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                />
+              </div>
+              <div className="p-3 md:p-5">
+                <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
+                <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
 
 export default function BlogSalesIntelligenceBuyersChecklistPage() {
   const [activeId, setActiveId] = useState('introduction');
+  const activeIdRef = useRef('introduction');
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
+  // INP FIX: Throttle scroll handler with requestAnimationFrame
+  // PERF: Only update state when active section actually changes
   useEffect(() => {
     const handleScroll = () => {
       if (!ticking.current) {
@@ -287,7 +396,11 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
               currentSectionId = section.id;
             }
           }
-          setActiveId(currentSectionId);
+
+          if (currentSectionId !== activeIdRef.current) {
+            activeIdRef.current = currentSectionId;
+            setActiveId(currentSectionId);
+          }
           ticking.current = false;
         });
         ticking.current = true;
@@ -391,8 +504,8 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   '@type': 'WebPage',
                   '@id': 'https://360airo.com/blogs/ready-to-buy-sales-intelligence-platform-buyers-checklist/#webpage',
                   'url': 'https://360airo.com/blogs/ready-to-buy-sales-intelligence-platform-buyers-checklist',
-                  'name': 'Ready to Buy? Complete Sales Intelligence Platform Buyer\'s Checklist',
-                  'description': 'Use this complete sales intelligence platform buyer\'s checklist to evaluate data quality, AI, deliverability, integrations, pricing, and more before making a purchase.',
+                  'name': "Ready to Buy? Complete Sales Intelligence Platform Buyer's Checklist",
+                  'description': "Use this complete sales intelligence platform buyer's checklist to evaluate data quality, AI, deliverability, integrations, pricing, and more before making a purchase.",
                   'isPartOf': {
                     '@id': 'https://360airo.com/#website',
                   },
@@ -403,8 +516,8 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                 {
                   '@type': 'Article',
                   '@id': 'https://360airo.com/blogs/ready-to-buy-sales-intelligence-platform-buyers-checklist/#article',
-                  'headline': 'Ready to Buy? Complete Sales Intelligence Platform Buyer\'s Checklist',
-                  'description': 'Use this complete sales intelligence platform buyer\'s checklist to evaluate data quality, AI, deliverability, integrations, pricing, and more before making a purchase.',
+                  'headline': "Ready to Buy? Complete Sales Intelligence Platform Buyer's Checklist",
+                  'description': "Use this complete sales intelligence platform buyer's checklist to evaluate data quality, AI, deliverability, integrations, pricing, and more before making a purchase.",
                   'url': 'https://360airo.com/blogs/ready-to-buy-sales-intelligence-platform-buyers-checklist',
                   'image': {
                     '@type': 'ImageObject',
@@ -449,7 +562,7 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                     {
                       '@type': 'ListItem',
                       'position': 3,
-                      'name': 'Sales Intelligence Buyer\'s Checklist',
+                      'name': "Sales Intelligence Buyer's Checklist",
                       'item': 'https://360airo.com/blogs/ready-to-buy-sales-intelligence-platform-buyers-checklist',
                     },
                   ],
@@ -561,7 +674,7 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   initial={{ opacity: 0, x: -24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6 }}
-                  className="relative"
+                  className="relative transform-gpu"
                 >
                   <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
                     <Image
@@ -581,7 +694,7 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   initial={{ opacity: 0, x: 24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.08 }}
-                  className="max-w-2xl"
+                  className="max-w-2xl transform-gpu"
                 >
                   <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">
                     Sales Intelligence
@@ -593,18 +706,8 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                     Buying sales software can look deceptively easy. Use this 10-step checklist to evaluate data quality, AI, deliverability, integrations, pricing, and more before making a purchase.
                   </p>
 
-                  {/* Meta info */}
+                  {/* Meta info — broken 360Airo Team image removed */}
                   <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="/logonew.png"
-                        alt="360Airo Team"
-                        width={140}
-                        height={40}
-                        className="h-7 md:h-10 w-auto object-contain"
-                        priority={false}
-                      />
-                    </div>
                     <span>• 360AIRO Team</span>
                     <span>• Updated: Dec 2026</span>
                     <span>• 14 min read</span>
@@ -643,7 +746,11 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                             : 'text-[#4b5563] hover:text-[#2f66db] hover:bg-white/70'
                         } ${item.indent ? 'ml-3' : ''}`}
                       >
-                        <span className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${isActive ? 'bg-[#4f63ff]' : 'bg-transparent'}`} />
+                        <span
+                          className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${
+                            isActive ? 'bg-[#4f63ff]' : 'bg-transparent'
+                          }`}
+                        />
                         <span className="flex items-start gap-1.5">
                           {item.arrow ? (
                             <span className={`mt-[1px] text-sm ${isActive ? 'text-[#2f66db]' : 'text-[#94a3b8]'}`}>›</span>
@@ -666,13 +773,13 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="Introduction"
                   showImage={false}
                   intro={[
-                    "Buying sales software can look deceptively easy.",
-                    "You find a few platforms, compare their features, check the pricing pages, book a couple of demos, and pick the one that looks like the best deal.",
-                    "Except that is usually where things go wrong.",
-                    "Most sales intelligence platforms will tell you they can help you find better prospects, enrich contact data, automate outreach, personalize emails, and generate more pipeline. On paper, many of them start looking almost identical.",
-                    "The real difference shows up when your sales team actually starts using the product.",
-                    "Can your reps find the right prospects quickly? Is the data reliable? Does the AI save time or just give you another text generator? Can you run outreach without constantly moving between five different tools? And, perhaps most importantly, what will the platform actually cost once you start using it seriously?",
-                    "If you are evaluating a sales intelligence platform, this is the checklist to take into the buying process.",
+                    'Buying sales software can look deceptively easy.',
+                    'You find a few platforms, compare their features, check the pricing pages, book a couple of demos, and pick the one that looks like the best deal.',
+                    'Except that is usually where things go wrong.',
+                    'Most sales intelligence platforms will tell you they can help you find better prospects, enrich contact data, automate outreach, personalize emails, and generate more pipeline. On paper, many of them start looking almost identical.',
+                    'The real difference shows up when your sales team actually starts using the product.',
+                    'Can your reps find the right prospects quickly? Is the data reliable? Does the AI save time or just give you another text generator? Can you run outreach without constantly moving between five different tools? And, perhaps most importantly, what will the platform actually cost once you start using it seriously?',
+                    'If you are evaluating a sales intelligence platform, this is the checklist to take into the buying process.',
                   ]}
                   infographic={{
                     title: 'The buying challenge',
@@ -694,14 +801,14 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="Start With the Problem, Not the Feature List"
                   showImage={true}
                   intro={[
-                    "Before looking at vendors, figure out what you want the software to fix. This sounds obvious, but it is surprisingly easy to skip.",
-                    "Maybe your sales reps are spending two hours every day searching for prospects. Maybe you already have a database but half the contact information is outdated. Or perhaps you have plenty of leads but no proper system for following up with them.",
-                    "Those are three different problems.",
-                    "A useful starting point is to write down the biggest frustrations in your current sales process. For example:",
+                    'Before looking at vendors, figure out what you want the software to fix. This sounds obvious, but it is surprisingly easy to skip.',
+                    'Maybe your sales reps are spending two hours every day searching for prospects. Maybe you already have a database but half the contact information is outdated. Or perhaps you have plenty of leads but no proper system for following up with them.',
+                    'Those are three different problems.',
+                    'A useful starting point is to write down the biggest frustrations in your current sales process. For example:',
                   ]}
                   infographic={{
                     title: 'Define the problem first',
-                    paragraphs: ['Start with your team\'s biggest frustrations – not the vendor\'s feature list.'],
+                    paragraphs: ["Start with your team's biggest frustrations – not the vendor's feature list."],
                     bullets: [
                       'Finding the right prospects takes too long',
                       'Contact information is incomplete or outdated',
@@ -729,9 +836,9 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="1. Look at the Data Before You Look at the AI"
                   showImage={false}
                   intro={[
-                    "AI gets most of the attention in sales software right now, but none of it matters much if the underlying prospect data is poor. A perfectly written email sent to the wrong person is still a bad sales email.",
-                    "During the evaluation, find out where the platform gets its data, how often that data is refreshed, and how email addresses and other contact details are verified.",
-                    "Ask: How often is the database updated? How are email addresses verified? Can the platform identify job changes? Can it enrich existing CRM records? Does it provide company-level information? How much information is available for each prospect? What happens when you find incorrect data? Can you see the source or reason behind a prospect's information?",
+                    'AI gets most of the attention in sales software right now, but none of it matters much if the underlying prospect data is poor. A perfectly written email sent to the wrong person is still a bad sales email.',
+                    'During the evaluation, find out where the platform gets its data, how often that data is refreshed, and how email addresses and other contact details are verified.',
+                    'Ask: How often is the database updated? How are email addresses verified? Can the platform identify job changes? Can it enrich existing CRM records? Does it provide company-level information? How much information is available for each prospect? What happens when you find incorrect data? Can you see the source or reason behind a prospect\'s information?',
                     "Do not get too distracted by claims such as 'hundreds of millions of contacts.' A smaller database with information you can actually trust can be far more useful than a gigantic database filled with stale records.",
                   ]}
                   infographic={{
@@ -755,8 +862,8 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="2. Check How Easy It Is to Find Your Ideal Prospects"
                   showImage={false}
                   intro={[
-                    "A sales intelligence platform should help you narrow down your market, not dump another enormous list of contacts in front of your sales team.",
-                    "Think about the filters your team actually needs. Can you search by industry, company size, location, revenue, job title, seniority, technology used, department, company characteristics, and buying or intent signals? More importantly, can you combine those filters without making the process unnecessarily complicated?",
+                    'A sales intelligence platform should help you narrow down your market, not dump another enormous list of contacts in front of your sales team.',
+                    'Think about the filters your team actually needs. Can you search by industry, company size, location, revenue, job title, seniority, technology used, department, company characteristics, and buying or intent signals? More importantly, can you combine those filters without making the process unnecessarily complicated?',
                     "Give the platform a real prospecting exercise during the demo. For example, tell the salesperson: 'We sell X to SaaS companies with 50 to 500 employees. Show me how you would find 100 relevant prospects.' That will tell you much more than a generic product presentation.",
                   ]}
                   infographic={{
@@ -780,11 +887,11 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title='3. Be Skeptical About "AI-Powered"'
                   showImage={false}
                   intro={[
-                    "Almost every sales platform has AI somewhere on its website now. That does not automatically make it useful.",
-                    "The better question is: What does the AI actually do? There is a big difference between an AI tool that writes an email and one that can help with the entire workflow around that email.",
-                    "Look for capabilities such as prospect research, account research, lead prioritization, personalization, automated sequence creation, follow-up recommendations, workflow automation, reply analysis, and next-step suggestions.",
+                    'Almost every sales platform has AI somewhere on its website now. That does not automatically make it useful.',
+                    'The better question is: What does the AI actually do? There is a big difference between an AI tool that writes an email and one that can help with the entire workflow around that email.',
+                    'Look for capabilities such as prospect research, account research, lead prioritization, personalization, automated sequence creation, follow-up recommendations, workflow automation, reply analysis, and next-step suggestions.',
                     "If the AI saves a rep 30 minutes of research every day, that is meaningful. If it simply generates another generic 'Hope you're doing well' email, it probably is not.",
-                    "This is one area where 360Airo is worth looking at closely. Its platform combines prospect intelligence and enrichment with AI personalization, automated workflows and AI SDR capabilities, rather than treating AI as just a copywriting feature.",
+                    'This is one area where 360Airo is worth looking at closely. Its platform combines prospect intelligence and enrichment with AI personalization, automated workflows and AI SDR capabilities, rather than treating AI as just a copywriting feature.',
                   ]}
                   infographic={{
                     title: 'Evaluate AI practically',
@@ -810,11 +917,11 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="4. See What Happens After You Find a Lead"
                   showImage={false}
                   intro={[
-                    "This is where many buying decisions become interesting. Finding a prospect is only the first step. Once you have the person, what happens next?",
-                    "Ideally, you should be able to move from prospect discovery to enrichment, personalization and outreach without rebuilding the same workflow somewhere else.",
-                    "Check whether the platform supports email sequences, automated follow-ups, LinkedIn outreach, multichannel campaigns, personalization, conditional workflows, reply management, campaign tracking, and unified inbox functionality.",
-                    "For a small sales team, having these functions connected can make a noticeable difference. You do not want one tool for finding leads, another for enrichment, another for email, another for LinkedIn, and yet another dashboard to figure out what happened.",
-                    "360Airo takes a more integrated approach, bringing prospecting, personalization, email and LinkedIn outreach, AI workflows and inbox management into the same platform.",
+                    'This is where many buying decisions become interesting. Finding a prospect is only the first step. Once you have the person, what happens next?',
+                    'Ideally, you should be able to move from prospect discovery to enrichment, personalization and outreach without rebuilding the same workflow somewhere else.',
+                    'Check whether the platform supports email sequences, automated follow-ups, LinkedIn outreach, multichannel campaigns, personalization, conditional workflows, reply management, campaign tracking, and unified inbox functionality.',
+                    'For a small sales team, having these functions connected can make a noticeable difference. You do not want one tool for finding leads, another for enrichment, another for email, another for LinkedIn, and yet another dashboard to figure out what happened.',
+                    '360Airo takes a more integrated approach, bringing prospecting, personalization, email and LinkedIn outreach, AI workflows and inbox management into the same platform.',
                   ]}
                   infographic={{
                     title: 'From prospect to outreach',
@@ -840,11 +947,11 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="5. Do Not Ignore Email Deliverability"
                   showImage={false}
                   intro={[
-                    "This is one of those things that tends to get ignored until there is a problem. You can have excellent prospect data and great messaging. If your emails keep landing in spam, your campaign is not going anywhere.",
-                    "So ask about the infrastructure behind outbound email.",
-                    "Look for email warmup, inbox rotation, multiple mailboxes, domain management, sending limits, bounce monitoring, deliverability monitoring, spam protection, and sender reputation controls.",
-                    "The important thing here is not simply whether the feature exists. Ask how it works. Ask what happens when you increase sending volume. Ask what controls you have. And ask what the vendor recommends before you launch a large campaign.",
-                    "360Airo includes features such as email warmup, inbox rotation and deliverability-related infrastructure as part of its outbound offering.",
+                    'This is one of those things that tends to get ignored until there is a problem. You can have excellent prospect data and great messaging. If your emails keep landing in spam, your campaign is not going anywhere.',
+                    'So ask about the infrastructure behind outbound email.',
+                    'Look for email warmup, inbox rotation, multiple mailboxes, domain management, sending limits, bounce monitoring, deliverability monitoring, spam protection, and sender reputation controls.',
+                    'The important thing here is not simply whether the feature exists. Ask how it works. Ask what happens when you increase sending volume. Ask what controls you have. And ask what the vendor recommends before you launch a large campaign.',
+                    '360Airo includes features such as email warmup, inbox rotation and deliverability-related infrastructure as part of its outbound offering.',
                   ]}
                   infographic={{
                     title: 'Deliverability matters',
@@ -870,9 +977,9 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="6. Check Your CRM and Other Integrations"
                   showImage={false}
                   intro={[
-                    "A sales intelligence platform should fit into your existing workflow. If your team already uses a CRM, make sure the integration does more than simply exist on a feature page.",
-                    "Find out what information gets synced, whether the sync is one-way or two-way, whether existing CRM contacts can be enriched, whether new prospects can be pushed into the CRM, whether activities are recorded automatically, whether you can export your data, whether there is an API, and whether your sales or RevOps team will need developers to maintain the integration.",
-                    "Also, do not choose a platform just because it has 50 integrations. You probably will not use 50. The five or six systems your team relies on every day are the ones that matter.",
+                    'A sales intelligence platform should fit into your existing workflow. If your team already uses a CRM, make sure the integration does more than simply exist on a feature page.',
+                    'Find out what information gets synced, whether the sync is one-way or two-way, whether existing CRM contacts can be enriched, whether new prospects can be pushed into the CRM, whether activities are recorded automatically, whether you can export your data, whether there is an API, and whether your sales or RevOps team will need developers to maintain the integration.',
+                    'Also, do not choose a platform just because it has 50 integrations. You probably will not use 50. The five or six systems your team relies on every day are the ones that matter.',
                   ]}
                   infographic={{
                     title: 'Integration questions',
@@ -896,10 +1003,10 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="7. Test the Product Yourself"
                   showImage={false}
                   intro={[
-                    "A sales demo can make almost any software look easy. That is why you should test the actual workflow.",
-                    "During a trial or demo, try doing something your sales team would genuinely do every week.",
-                    "For example: Find a company → find the right decision-maker → enrich the contact → research the account → personalize an email → add the prospect to a sequence → track the response.",
-                    "Notice how many clicks it takes. Notice whether you need to leave the platform. Notice whether the information is easy to understand. And notice how much of the process still needs to be done manually. Those little things become very noticeable when a sales rep repeats them 50 or 100 times a week.",
+                    'A sales demo can make almost any software look easy. That is why you should test the actual workflow.',
+                    'During a trial or demo, try doing something your sales team would genuinely do every week.',
+                    'For example: Find a company → find the right decision-maker → enrich the contact → research the account → personalize an email → add the prospect to a sequence → track the response.',
+                    'Notice how many clicks it takes. Notice whether you need to leave the platform. Notice whether the information is easy to understand. And notice how much of the process still needs to be done manually. Those little things become very noticeable when a sales rep repeats them 50 or 100 times a week.',
                   ]}
                   infographic={{
                     title: 'Test the real workflow',
@@ -923,10 +1030,10 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="8. Look Beyond the Dashboard"
                   showImage={false}
                   intro={[
-                    "Every sales platform will show you numbers. The question is whether those numbers help you make decisions.",
-                    "At minimum, you should be able to understand how many prospects were contacted, how many emails were delivered, reply rates, positive reply rates, meetings booked, campaign performance, conversion rates, deliverability, and rep or team performance.",
-                    "The best reporting is not necessarily the dashboard with the most charts. It is the one that helps answer simple questions: Which campaign is working? Which audience responds best? Which reps need help? Where are prospects dropping out? Are we generating meetings, or are we just sending more emails?",
-                    "That last question matters more than most sales teams realise.",
+                    'Every sales platform will show you numbers. The question is whether those numbers help you make decisions.',
+                    'At minimum, you should be able to understand how many prospects were contacted, how many emails were delivered, reply rates, positive reply rates, meetings booked, campaign performance, conversion rates, deliverability, and rep or team performance.',
+                    'The best reporting is not necessarily the dashboard with the most charts. It is the one that helps answer simple questions: Which campaign is working? Which audience responds best? Which reps need help? Where are prospects dropping out? Are we generating meetings, or are we just sending more emails?',
+                    'That last question matters more than most sales teams realise.',
                   ]}
                   infographic={{
                     title: 'Meaningful reporting',
@@ -948,14 +1055,14 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="9. Calculate the Real Price"
                   showImage={false}
                   intro={[
-                    "This is where a platform that looks cheap can suddenly become expensive. Do not compare only the number on the pricing page. Work out the cost of actually running your sales process.",
-                    "You may need to account for user seats, contact limits, AI credits, verification credits, mailboxes, LinkedIn seats, domains, additional integrations, onboarding, extra usage, and annual commitments.",
-                    "The easiest way to compare vendors is to calculate what you will spend over a year based on your expected usage, not the smallest available plan. For example, if your team needs 10,000 contacts today but expects that number to double within six months, use the higher figure when comparing platforms.",
-                    "360Airo currently has a free plan, with paid plans including Starter and Pro, while larger requirements can be handled through its Enterprise offering. The exact cost depends on factors such as contacts, users, mailboxes, AI credits and other usage requirements.",
+                    'This is where a platform that looks cheap can suddenly become expensive. Do not compare only the number on the pricing page. Work out the cost of actually running your sales process.',
+                    'You may need to account for user seats, contact limits, AI credits, verification credits, mailboxes, LinkedIn seats, domains, additional integrations, onboarding, extra usage, and annual commitments.',
+                    'The easiest way to compare vendors is to calculate what you will spend over a year based on your expected usage, not the smallest available plan. For example, if your team needs 10,000 contacts today but expects that number to double within six months, use the higher figure when comparing platforms.',
+                    '360Airo currently has a free plan, with paid plans including Starter and Pro, while larger requirements can be handled through its Enterprise offering. The exact cost depends on factors such as contacts, users, mailboxes, AI credits and other usage requirements.',
                   ]}
                   infographic={{
                     title: 'Total cost checklist',
-                    paragraphs: ['Headline price is just the beginning – calculate what you\'ll actually spend.'],
+                    paragraphs: ["Headline price is just the beginning – calculate what you'll actually spend."],
                     bullets: [
                       'User seats',
                       'Contact limits',
@@ -979,9 +1086,9 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="10. Ask About Support"
                   showImage={false}
                   intro={[
-                    "Software adoption rarely fails because people cannot click a button. It usually fails because nobody knows how to set the system up properly or how to fit it into the team's existing process.",
-                    "Ask what happens after you buy. Do you get onboarding, training, documentation, campaign support, technical support, a dedicated account manager, or help with migration?",
-                    "For a small team without a dedicated RevOps person, this can make a surprisingly big difference.",
+                    'Software adoption rarely fails because people cannot click a button. It usually fails because nobody knows how to set the system up properly or how to fit it into the team\'s existing process.',
+                    'Ask what happens after you buy. Do you get onboarding, training, documentation, campaign support, technical support, a dedicated account manager, or help with migration?',
+                    'For a small team without a dedicated RevOps person, this can make a surprisingly big difference.',
                   ]}
                   infographic={{
                     title: 'Support matters',
@@ -1005,12 +1112,12 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="Questions to Ask During the Demo"
                   showImage={false}
                   intro={[
-                    "Do not let the demo become a 45-minute feature tour. Take a list of questions with you.",
-                    "Where does your data come from? How often is it updated? How do you verify emails? How do you handle inaccurate records? What does the AI automate beyond writing emails? Can you demonstrate it using our actual use case? How much control does the user have over AI-generated actions? Can I run email and LinkedIn campaigns from the same workflow? How flexible are the sequences? Can follow-ups change based on what a prospect does? What will we actually pay at our expected usage? What happens when we cross our contact or credit limits? Are there any additional costs we should know about? Which metrics should we track after implementation? How do similar companies measure success with the platform?",
+                    'Do not let the demo become a 45-minute feature tour. Take a list of questions with you.',
+                    'Where does your data come from? How often is it updated? How do you verify emails? How do you handle inaccurate records? What does the AI automate beyond writing emails? Can you demonstrate it using our actual use case? How much control does the user have over AI-generated actions? Can I run email and LinkedIn campaigns from the same workflow? How flexible are the sequences? Can follow-ups change based on what a prospect does? What will we actually pay at our expected usage? What happens when we cross our contact or credit limits? Are there any additional costs we should know about? Which metrics should we track after implementation? How do similar companies measure success with the platform?',
                   ]}
                   infographic={{
                     title: 'Demo questions',
-                    paragraphs: ['Take these questions to your demo – don\'t let it become a feature tour.'],
+                    paragraphs: ["Take these questions to your demo – don't let it become a feature tour."],
                     bullets: [
                       'Where does your data come from? How often is it updated?',
                       'How do you verify emails and handle inaccurate records?',
@@ -1031,8 +1138,8 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="How to Compare Different Vendors"
                   showImage={false}
                   intro={[
-                    "Once you have finished the demos, resist the temptation to pick the platform you liked the most. Score them.",
-                    "A simple decision matrix can help:",
+                    'Once you have finished the demos, resist the temptation to pick the platform you liked the most. Score them.',
+                    'A simple decision matrix can help:',
                   ]}
                   infographic={{
                     title: 'Vendor comparison matrix',
@@ -1066,9 +1173,9 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   showImage={false}
                   intro={[
                     "There is no universal 'best' sales intelligence platform. The right choice depends heavily on how your team sells.",
-                    "360Airo makes the most sense to consider when you want more than a prospect database and would rather have prospecting, intelligence, personalization and outbound execution connected in one place.",
-                    "That can be particularly useful for small and mid-sized sales teams that do not want to maintain a large collection of separate sales tools, founders handling their own outbound who can use automation to reduce the amount of manual prospect research and follow-up, agencies running outbound campaigns for different clients who may benefit from having prospecting and campaign workflows under one platform, and growing outbound teams moving from basic cold email toward structured email, LinkedIn and multichannel campaigns who may find the broader workflow useful.",
-                    "But that does not mean 360Airo should automatically be your choice. If your company has highly specialised enterprise requirements, an unusually complex RevOps setup, or needs a particular data ecosystem, another platform may fit better. That is exactly why the evaluation process matters.",
+                    '360Airo makes the most sense to consider when you want more than a prospect database and would rather have prospecting, intelligence, personalization and outbound execution connected in one place.',
+                    'That can be particularly useful for small and mid-sized sales teams that do not want to maintain a large collection of separate sales tools, founders handling their own outbound who can use automation to reduce the amount of manual prospect research and follow-up, agencies running outbound campaigns for different clients who may benefit from having prospecting and campaign workflows under one platform, and growing outbound teams moving from basic cold email toward structured email, LinkedIn and multichannel campaigns who may find the broader workflow useful.',
+                    'But that does not mean 360Airo should automatically be your choice. If your company has highly specialised enterprise requirements, an unusually complex RevOps setup, or needs a particular data ecosystem, another platform may fit better. That is exactly why the evaluation process matters.',
                   ]}
                   infographic={{
                     title: 'Where 360Airo fits',
@@ -1090,12 +1197,12 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                   title="Conclusion"
                   showImage={false}
                   intro={[
-                    "Choosing sales intelligence software should not be about finding the platform with the longest feature list. It should be about finding the platform that removes the most friction from your sales process without creating a new set of problems.",
+                    'Choosing sales intelligence software should not be about finding the platform with the longest feature list. It should be about finding the platform that removes the most friction from your sales process without creating a new set of problems.',
                     "Start with your team's actual workflow. Test the data. Try the prospecting process yourself. See how AI behaves in real situations. Run a sample campaign. Check the integrations. Calculate the full cost.",
-                    "And then compare the options against the same criteria.",
-                    "For SMBs and growing outbound teams that want prospect intelligence, AI personalization, automated outreach and deliverability features in one place, 360Airo deserves a serious place on the shortlist.",
-                    "But do not take that conclusion at face value. Use the checklist. Run the numbers. Test the workflow.",
-                    "The best sales intelligence platform is the one that makes your sales team better at selling, not the one with the most impressive product page.",
+                    'And then compare the options against the same criteria.',
+                    'For SMBs and growing outbound teams that want prospect intelligence, AI personalization, automated outreach and deliverability features in one place, 360Airo deserves a serious place on the shortlist.',
+                    'But do not take that conclusion at face value. Use the checklist. Run the numbers. Test the workflow.',
+                    'The best sales intelligence platform is the one that makes your sales team better at selling, not the one with the most impressive product page.',
                   ]}
                   infographic={{
                     title: '360Airo',
@@ -1116,50 +1223,7 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
                       title="Quick answers"
                       paragraphs={['Common questions about buying sales intelligence platforms.']}
                     />
-                    <FaqAccordion
-                      faqs={[
-                        {
-                          subtitle: 'What should I evaluate before buying a sales intelligence platform?',
-                          paragraphs: ['Start with data quality, prospecting, AI capabilities, outreach, deliverability, integrations, usability, analytics, support and total cost. Most importantly, make sure the platform addresses a specific problem in your existing sales process.'],
-                        },
-                        {
-                          subtitle: 'How do I compare sales intelligence platforms?',
-                          paragraphs: ['Use the same criteria for every vendor. A weighted scorecard covering data, prospecting, AI, outreach, integrations, usability and pricing can make the final decision much less subjective.'],
-                        },
-                        {
-                          subtitle: 'Is a sales intelligence platform worth it for a small business?',
-                          paragraphs: ['It can be, particularly when salespeople are spending a significant amount of time finding prospects, researching accounts or managing repetitive follow-ups. The software needs to save enough time or generate enough additional opportunity to justify its cost.'],
-                        },
-                        {
-                          subtitle: 'What should I ask during a sales intelligence software demo?',
-                          paragraphs: ['Ask about data sources, data freshness, verification, AI functionality, automation, integrations, deliverability, pricing limits, onboarding and support. Also ask the vendor to demonstrate a real workflow instead of only showing individual features.'],
-                        },
-                        {
-                          subtitle: 'How much does 360Airo cost?',
-                          paragraphs: ['360Airo offers a free plan and paid plans such as Starter and Pro, with Enterprise pricing available for larger requirements. Pricing varies depending on factors including contacts, users, mailboxes, AI credits and other platform usage.'],
-                        },
-                        {
-                          subtitle: 'Is 360Airo good for SMBs?',
-                          paragraphs: ['360Airo is designed to support sales teams that want prospect intelligence and outbound execution in the same platform. Its current capabilities include prospecting, enrichment, AI personalization, email and LinkedIn outreach, automation and deliverability features.'],
-                        },
-                        {
-                          subtitle: 'Is a larger sales database always better?',
-                          paragraphs: ['No. Database size does not guarantee better sales results. Freshness, accuracy, relevance and how easily your team can turn prospect data into actual outreach matter much more.'],
-                        },
-                        {
-                          subtitle: 'Should I request a demo before buying?',
-                          paragraphs: ['Yes. A demo gives you the chance to test the product against your actual sales process. Ideally, give the vendor a specific use case and ask them to show how they would find, enrich, personalize, contact and manage that prospect from beginning to end.'],
-                        },
-                        {
-                          subtitle: 'What is the biggest mistake companies make when buying sales intelligence software?',
-                          paragraphs: ['Choosing based on features instead of workflow fit. A platform can have every feature you can think of and still be a poor choice if your team finds it difficult to use or if it does not integrate with the way you already sell.'],
-                        },
-                        {
-                          subtitle: 'What is the most important thing to check before signing up?',
-                          paragraphs: ['Look at the total cost and the actual workflow. Make sure you know what happens when you increase users, contacts, AI usage or outreach volume. Then test the product with a real sales use case before committing.'],
-                        },
-                      ]}
-                    />
+                    <FaqAccordion faqs={FAQ_ITEMS} />
                   </div>
                 </section>
 
@@ -1172,50 +1236,7 @@ export default function BlogSalesIntelligenceBuyersChecklistPage() {
           </section>
 
           {/* Recent Posts */}
-          <section className="px-3 md:px-4 pb-4 md:pb-8">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex items-center justify-between mb-3 md:mb-4">
-                <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
-                <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                {[
-                  {
-                    title: 'Why 360 Airo Is the Best Sales Intelligence Platform for SMB Growth',
-                    tag: 'Listicles',
-                    href: '/blogs/why-360airo-best-sales-intelligence-smb-growth',
-                    description: 'Discover why 360 Airo is the best sales intelligence platform for SMB growth.',
-                    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                  {
-                    title: 'Customer Success Story: How SMBs Increased Their Pipeline with 360 Airo',
-                    tag: 'Listicles',
-                    href: '/blogs/customer-success-story-smb-pipeline-growth',
-                    description: 'Read real customer success stories of SMBs that increased their pipeline with 360 Airo.',
-                    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                  {
-                    title: 'ZoomInfo Alternatives for Small Businesses: 8 Better Options That Deliver More Value in 2026',
-                    tag: 'Listicles',
-                    href: '/blogs/zoominfo-alternatives-small-businesses-2026',
-                    description: 'Compare the top 8 ZoomInfo alternatives for small businesses in 2026.',
-                    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                ].map((post) => (
-                  <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
-                    <div className="relative w-full aspect-[16/9] overflow-hidden">
-                      <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
-                    </div>
-                    <div className="p-3 md:p-5">
-                      <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
-                      <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
-                      <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
+          <RecentPosts />
         </main>
         <Footer />
       </div>

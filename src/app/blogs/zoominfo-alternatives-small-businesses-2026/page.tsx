@@ -104,6 +104,7 @@ function SectionImage({ id }: { id: string }) {
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
           priority={false}
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -201,21 +202,9 @@ function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          ZoomInfo
-          <br />
-          Alternatives
+        {/* Removed the broken Image wrapper here */}
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4">
+          ZoomInfo Alternatives
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Compare the top 8 ZoomInfo alternatives for small businesses in 2026 and find the right fit for your sales team.
@@ -307,25 +296,24 @@ export default function BlogZoomInfoAlternativesPage() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!ticking.current) {
-        rafId.current = requestAnimationFrame(() => {
-          const sections = tocItems
-            .map((item) => document.getElementById(item.id))
-            .filter(Boolean) as HTMLElement[];
+      if (ticking.current) return;
+      ticking.current = true;
+      rafId.current = requestAnimationFrame(() => {
+        const offset = 180;
+        let currentSectionId = 'introduction';
 
-          const scrollPosition = window.scrollY + 180;
-          let currentSectionId = sections[0]?.id || 'introduction';
-
-          for (const section of sections) {
-            if (scrollPosition >= section.offsetTop) {
-              currentSectionId = section.id;
-            }
+        for (const item of tocItems) {
+          const el = document.getElementById(item.id);
+          if (!el) continue;
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= offset) {
+            currentSectionId = item.id;
           }
-          setActiveId(currentSectionId);
-          ticking.current = false;
-        });
-        ticking.current = true;
-      }
+        }
+
+        setActiveId((prev) => (prev === currentSectionId ? prev : currentSectionId));
+        ticking.current = false;
+      });
     };
 
     handleScroll();
@@ -577,7 +565,6 @@ export default function BlogZoomInfoAlternativesPage() {
           {/* Hero Section */}
           <section className="pt-6 md:pt-10 pb-6 md:pb-8 px-3 md:px-4 border-b border-[#ddd9ef]">
             <div className="max-w-7xl mx-auto">
-              {/* Breadcrumb */}
               <div className="flex flex-wrap items-center gap-1 md:gap-2 text-[10px] md:text-sm text-[#6b7280] mb-2 md:mb-4">
                 <Link href="/blogs" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
                   Blog
@@ -630,18 +617,7 @@ export default function BlogZoomInfoAlternativesPage() {
                     ZoomInfo is powerful for enterprises, but small businesses often pay for features they don't need. Compare 8 better alternatives – from AI-powered prospecting to affordable contact lookup and cold email outreach.
                   </p>
 
-                  {/* Meta info */}
                   <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="/logonew.png"
-                        alt="360Airo Team"
-                        width={140}
-                        height={40}
-                        className="h-7 md:h-10 w-auto object-contain"
-                        priority={false}
-                      />
-                    </div>
                     <span>• 360AIRO Team</span>
                     <span>• Updated: Dec 2026</span>
                     <span>• 10 min read</span>
@@ -779,7 +755,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   blocks={[]}
                 />
 
-                {/* Alternative 1 - 360 Airo */}
                 <ArticleSection
                   key="alt-360airo"
                   id="alt-360airo"
@@ -806,7 +781,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   blocks={[]}
                 />
 
-                {/* Alternative 2 - Apollo.io */}
                 <ArticleSection
                   key="alt-apollo"
                   id="alt-apollo"
@@ -837,7 +811,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   ]}
                 />
 
-                {/* Alternative 3 - Lusha */}
                 <ArticleSection
                   key="alt-lusha"
                   id="alt-lusha"
@@ -869,7 +842,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   ]}
                 />
 
-                {/* Alternative 4 - Clay */}
                 <ArticleSection
                   key="alt-clay"
                   id="alt-clay"
@@ -901,7 +873,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   ]}
                 />
 
-                {/* Alternative 5 - Cognism */}
                 <ArticleSection
                   key="alt-cognism"
                   id="alt-cognism"
@@ -932,7 +903,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   ]}
                 />
 
-                {/* Alternative 6 - Lead411 */}
                 <ArticleSection
                   key="alt-lead411"
                   id="alt-lead411"
@@ -963,7 +933,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   ]}
                 />
 
-                {/* Alternative 7 - LinkedIn Sales Navigator */}
                 <ArticleSection
                   key="alt-linkedin"
                   id="alt-linkedin"
@@ -995,7 +964,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   ]}
                 />
 
-                {/* Alternative 8 - Saleshandy */}
                 <ArticleSection
                   key="alt-saleshandy"
                   id="alt-saleshandy"
@@ -1027,7 +995,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   ]}
                 />
 
-                {/* Comparison Table */}
                 <section id="comparison-table" className="scroll-mt-28">
                   <h2 className="text-[20px] md:text-[24px] font-bold text-[#111827] mb-3 md:mb-4">
                     Quick Comparison of ZoomInfo Competitors
@@ -1041,7 +1008,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   </div>
                 </section>
 
-                {/* Which Offers Best Value */}
                 <ArticleSection
                   key="which-offers-best-value"
                   id="which-offers-best-value"
@@ -1065,7 +1031,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   blocks={[]}
                 />
 
-                {/* How to Choose */}
                 <ArticleSection
                   key="how-to-choose"
                   id="how-to-choose"
@@ -1096,7 +1061,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   ]}
                 />
 
-                {/* Conclusion */}
                 <ArticleSection
                   key="conclusion"
                   id="conclusion"
@@ -1116,7 +1080,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   blocks={[]}
                 />
 
-                {/* FAQ Section */}
                 <section id="faqs" className="scroll-mt-28">
                   <h2 className="text-[20px] md:text-[24px] font-bold text-[#111827] mb-3 md:mb-4">
                     Frequently Asked Questions
@@ -1153,7 +1116,6 @@ export default function BlogZoomInfoAlternativesPage() {
                   </div>
                 </section>
 
-                {/* Demo CTA */}
                 <DemoCTA />
               </div>
 
@@ -1194,7 +1156,7 @@ export default function BlogZoomInfoAlternativesPage() {
                 ].map((post) => (
                   <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
                     <div className="relative w-full aspect-[16/9] overflow-hidden">
-                      <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
+                      <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} loading="lazy" />
                     </div>
                     <div className="p-3 md:p-5">
                       <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>

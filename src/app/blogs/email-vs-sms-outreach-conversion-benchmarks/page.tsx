@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo, useMemo, useCallback } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import Head from 'next/head';               // <-- added
+import Head from 'next/head';
 import '../../../styles/blogs.css';
 
 type TocItem = {
@@ -18,7 +18,7 @@ type TocItem = {
 
 const tocItems: TocItem[] = [
   { id: 'introduction', label: 'Introduction', arrow: false },
-  { id: 'what-is-the-difference', label: '1. SMS vs Email Marketing: What\'s the Difference?', arrow: true },
+  { id: 'what-is-the-difference', label: "1. SMS vs Email Marketing: What's the Difference?", arrow: true },
   { id: 'email-outreach', label: '1.1 Email Outreach', arrow: true, indent: true },
   { id: 'sms-sales-outreach', label: '1.2 SMS Sales Outreach', arrow: true, indent: true },
   { id: 'comparing-conversion-benchmarks', label: '2. Comparing Conversion Benchmarks', arrow: true },
@@ -47,7 +47,7 @@ const tocItems: TocItem[] = [
   { id: 'faqs', label: '8. Frequently Asked Questions', arrow: true },
 ];
 
-function MiniInfographic({
+const MiniInfographic = memo(function MiniInfographic({
   title,
   paragraphs,
   bullets,
@@ -75,9 +75,9 @@ function MiniInfographic({
       ) : null}
     </div>
   );
-}
+});
 
-function ContentBlock({
+const ContentBlock = memo(function ContentBlock({
   subtitle,
   paragraphs,
 }: {
@@ -96,15 +96,14 @@ function ContentBlock({
       </div>
     </div>
   );
-}
+});
 
-function SectionImage({ id }: { id: string }) {
+const SectionImage = memo(function SectionImage() {
   const image = {
     src: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1400&q=80&fm=webp',
     alt: 'Email and SMS communication dashboard',
     label: 'Multichannel',
   };
-  if (!image) return null;
 
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
@@ -113,9 +112,10 @@ function SectionImage({ id }: { id: string }) {
           src={image.src}
           alt={image.alt}
           fill
+          loading="lazy"
+          decoding="async"
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -124,9 +124,9 @@ function SectionImage({ id }: { id: string }) {
       </div>
     </div>
   );
-}
+});
 
-function ArticleSection({
+const ArticleSection = memo(function ArticleSection({
   id,
   title,
   intro,
@@ -162,32 +162,43 @@ function ArticleSection({
         {blocks.map((block) => (
           <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {showImage && <SectionImage id={id} />}
+        {showImage && <SectionImage />}
       </div>
     </section>
   );
-}
+});
 
 // --- FAQ Accordion Component ---
-function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[] }[] }) {
+const FaqAccordion = memo(function FaqAccordion({
+  faqs,
+}: {
+  faqs: { subtitle: string; paragraphs: string[] }[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const toggle = useCallback((index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  }, []);
 
   return (
     <div className="space-y-3 md:space-y-4">
       {faqs.map((faq, index) => {
         const isOpen = openIndex === index;
         return (
-          <div key={index} className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]">
+          <div
+            key={index}
+            className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]"
+          >
             <button
               onClick={() => toggle(index)}
+              aria-expanded={isOpen}
               className="w-full flex items-center justify-between px-4 py-3 md:px-6 md:py-4 text-left text-[15px] md:text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
             >
               <span>{faq.subtitle}</span>
-              <span className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+              <span
+                className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300"
+                style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              >
                 {isOpen ? '−' : '+'}
               </span>
             </button>
@@ -207,27 +218,14 @@ function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[]
       })}
     </div>
   );
-}
+});
 
-function RightPromoCards() {
+const RightPromoCards = memo(function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          Multichannel
-          <br />
-          Outreach
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4 pt-2">
+          Multichannel Outreach
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Combine email and SMS for higher engagement. Automate both from one platform.
@@ -249,16 +247,104 @@ function RightPromoCards() {
       </div>
     </aside>
   );
-}
+});
+
+// --- Hoisted static FAQ data ---
+const FAQ_ITEMS = [
+  {
+    subtitle: '8.1 Is SMS more effective than email?',
+    paragraphs: ['SMS often generates faster engagement, while email provides more space for detailed communication. The best results usually come from using both together.'],
+  },
+  {
+    subtitle: '8.2 What is SMS sales outreach?',
+    paragraphs: ['SMS sales outreach is the use of business text messaging to engage prospects and customers throughout the sales process, including follow‑ups, reminders, and appointment confirmations.'],
+  },
+  {
+    subtitle: '8.3 Should I replace email with SMS?',
+    paragraphs: ['No. Email and SMS serve different purposes. Combining both channels creates a more balanced and effective outreach strategy.'],
+  },
+  {
+    subtitle: '8.4 When should I send an SMS instead of an email?',
+    paragraphs: ['Use SMS for time‑sensitive communication, meeting reminders, follow‑ups, and quick confirmations. Use email when you need to share detailed information or educational content.'],
+  },
+  {
+    subtitle: '8.5 Which channel converts better?',
+    paragraphs: ['The answer depends on your audience, message, and stage of the buyer journey. Revenue teams typically achieve the best conversion benchmarks by integrating email and SMS into a coordinated outreach strategy.'],
+  },
+];
+
+// --- Hoisted static recent posts data ---
+const RECENT_POSTS = [
+  {
+    title: '10 Cheapest Cold Email Software Tools for Startups & Agencies',
+    tag: 'Cold Email',
+    href: '/blogs/10-cheapest-cold-email-software',
+    description: 'Discover affordable cold email tools for 2026.',
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'What Are Email Warmup Tools and How Do They Work?',
+    tag: 'Deliverability',
+    href: '/blogs/email-warmup-tools-guide',
+    description: 'Learn how warmup tools protect sender reputation.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'AI SDR vs Human SDR: Cost, Performance & ROI Comparison',
+    tag: 'AI SDR',
+    href: '/blogs/ai-sdr-vs-human-sdr',
+    description: 'Compare cost, performance, and ROI of AI vs human SDRs.',
+    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+];
+
+const RecentPosts = memo(function RecentPosts() {
+  return (
+    <section className="px-3 md:px-4 pb-4 md:pb-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
+          <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {RECENT_POSTS.map((post) => (
+            <a
+              key={post.href}
+              href={post.href}
+              className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow"
+            >
+              <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  loading="lazy"
+                  decoding="async"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                />
+              </div>
+              <div className="p-3 md:p-5">
+                <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
+                <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
 
 export default function BlogEmailVsSmsPage() {
   const [activeId, setActiveId] = useState('introduction');
-  const [searchQuery, setSearchQuery] = useState('');
-  const categoryScrollRef = useRef<HTMLDivElement | null>(null);
+  const activeIdRef = useRef('introduction');
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
   // INP FIX: Throttle scroll handler with requestAnimationFrame
+  // PERF: Only update state when active section actually changes
   useEffect(() => {
     const handleScroll = () => {
       if (!ticking.current) {
@@ -275,7 +361,11 @@ export default function BlogEmailVsSmsPage() {
               currentSectionId = section.id;
             }
           }
-          setActiveId(currentSectionId);
+
+          if (currentSectionId !== activeIdRef.current) {
+            activeIdRef.current = currentSectionId;
+            setActiveId(currentSectionId);
+          }
           ticking.current = false;
         });
         ticking.current = true;
@@ -296,13 +386,11 @@ export default function BlogEmailVsSmsPage() {
     };
   }, []);
 
-  // Define the image URL once
-  const featuredImageUrl = 'https://360airo.com/og-images/email-vs-sms-outreach.jpg'; // adjust as needed
+  const featuredImageUrl = 'https://360airo.com/og-images/email-vs-sms-outreach.jpg';
 
   return (
     <>
       <Head>
-        {/* PRIMARY META TAGS */}
         <title>Email vs SMS Outreach: Conversion Benchmarks</title>
         <meta
           name="description"
@@ -313,18 +401,13 @@ export default function BlogEmailVsSmsPage() {
           href="https://360airo.com/blog/email-vs-sms-outreach-conversion-benchmarks"
         />
 
-        {/* ROBOTS */}
         <meta
           name="robots"
           content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
         />
 
-        {/* OPEN GRAPH */}
         <meta property="og:type" content="article" />
-        <meta
-          property="og:title"
-          content="Email vs SMS Outreach: Conversion Benchmarks"
-        />
+        <meta property="og:title" content="Email vs SMS Outreach: Conversion Benchmarks" />
         <meta
           property="og:description"
           content="Compare email vs SMS outreach conversion benchmarks, response rates, engagement, and ROI to understand which channel works best for different sales campaigns."
@@ -334,30 +417,19 @@ export default function BlogEmailVsSmsPage() {
           content="https://360airo.com/blog/email-vs-sms-outreach-conversion-benchmarks"
         />
         <meta property="og:site_name" content="360 Airo" />
-        <meta
-          property="og:image"
-          content={featuredImageUrl}
-        />
+        <meta property="og:image" content={featuredImageUrl} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="en_US" />
 
-        {/* TWITTER CARD */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content="Email vs SMS Outreach: Conversion Benchmarks"
-        />
+        <meta name="twitter:title" content="Email vs SMS Outreach: Conversion Benchmarks" />
         <meta
           name="twitter:description"
           content="Compare email and SMS outreach benchmarks across conversion rates, engagement, response rates, and ROI to choose the right channel."
         />
-        <meta
-          name="twitter:image"
-          content={featuredImageUrl}
-        />
+        <meta name="twitter:image" content={featuredImageUrl} />
 
-        {/* JSON‑LD: Combined graph using @graph */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -379,9 +451,7 @@ export default function BlogEmailVsSmsPage() {
                   '@id': 'https://360airo.com/#website',
                   'name': '360 Airo',
                   'url': 'https://360airo.com/',
-                  'publisher': {
-                    '@id': 'https://360airo.com/#organization',
-                  },
+                  'publisher': { '@id': 'https://360airo.com/#organization' },
                 },
                 {
                   '@type': 'WebPage',
@@ -389,9 +459,7 @@ export default function BlogEmailVsSmsPage() {
                   'url': 'https://360airo.com/blog/email-vs-sms-outreach-conversion-benchmarks',
                   'name': 'Email vs SMS Outreach: Conversion Benchmarks',
                   'description': 'Compare email vs SMS outreach conversion benchmarks, response rates, engagement, and ROI to understand which channel works best for different sales campaigns.',
-                  'isPartOf': {
-                    '@id': 'https://360airo.com/#website',
-                  },
+                  'isPartOf': { '@id': 'https://360airo.com/#website' },
                   'breadcrumb': {
                     '@id': 'https://360airo.com/blog/email-vs-sms-outreach-conversion-benchmarks/#breadcrumb',
                   },
@@ -406,12 +474,8 @@ export default function BlogEmailVsSmsPage() {
                     '@type': 'ImageObject',
                     'url': featuredImageUrl,
                   },
-                  'author': {
-                    '@id': 'https://360airo.com/#organization',
-                  },
-                  'publisher': {
-                    '@id': 'https://360airo.com/#organization',
-                  },
+                  'author': { '@id': 'https://360airo.com/#organization' },
+                  'publisher': { '@id': 'https://360airo.com/#organization' },
                   'mainEntityOfPage': {
                     '@id': 'https://360airo.com/blog/email-vs-sms-outreach-conversion-benchmarks/#webpage',
                   },
@@ -432,18 +496,8 @@ export default function BlogEmailVsSmsPage() {
                   '@type': 'BreadcrumbList',
                   '@id': 'https://360airo.com/blog/email-vs-sms-outreach-conversion-benchmarks/#breadcrumb',
                   'itemListElement': [
-                    {
-                      '@type': 'ListItem',
-                      'position': 1,
-                      'name': 'Home',
-                      'item': 'https://360airo.com/',
-                    },
-                    {
-                      '@type': 'ListItem',
-                      'position': 2,
-                      'name': 'Blog',
-                      'item': 'https://360airo.com/blog',
-                    },
+                    { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://360airo.com/' },
+                    { '@type': 'ListItem', 'position': 2, 'name': 'Blog', 'item': 'https://360airo.com/blog' },
                     {
                       '@type': 'ListItem',
                       'position': 3,
@@ -503,7 +557,6 @@ export default function BlogEmailVsSmsPage() {
           }}
         />
 
-        {/* PRELOAD HERO IMAGE (performance) */}
         <link
           rel="preload"
           fetchPriority="high"
@@ -512,7 +565,6 @@ export default function BlogEmailVsSmsPage() {
           type="image/webp"
         />
 
-        {/* GLOBAL STYLES */}
         <style jsx global>{`
           .scrollbar-hide {
             -ms-overflow-style: none;
@@ -563,11 +615,11 @@ export default function BlogEmailVsSmsPage() {
                   initial={{ opacity: 0, x: -24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6 }}
-                  className="relative"
+                  className="relative transform-gpu"
                 >
                   <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
                     <Image
-                      src="/email-vs-sms-outreach.png"
+                      src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80&fm=webp"
                       alt="Email vs SMS outreach hero"
                       fill
                       priority
@@ -583,7 +635,7 @@ export default function BlogEmailVsSmsPage() {
                   initial={{ opacity: 0, x: 24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.08 }}
-                  className="max-w-2xl"
+                  className="max-w-2xl transform-gpu"
                 >
                   <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">
                     Multichannel Guide
@@ -597,16 +649,6 @@ export default function BlogEmailVsSmsPage() {
 
                   {/* Meta info */}
                   <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="/logonew.png"
-                        alt="360Airo Team"
-                        width={140}
-                        height={40}
-                        className="h-7 md:h-10 w-auto object-contain"
-                        priority={false}
-                      />
-                    </div>
                     <span>• 360AIRO Team</span>
                     <span>• Updated: Aug 2026</span>
                     <span>• 10 min read</span>
@@ -645,7 +687,11 @@ export default function BlogEmailVsSmsPage() {
                             : 'text-[#4b5563] hover:text-[#2f66db] hover:bg-white/70'
                         } ${item.indent ? 'ml-3' : ''}`}
                       >
-                        <span className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${isActive ? 'bg-[#4f63ff]' : 'bg-transparent'}`} />
+                        <span
+                          className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${
+                            isActive ? 'bg-[#4f63ff]' : 'bg-transparent'
+                          }`}
+                        />
                         <span className="flex items-start gap-1.5">
                           {item.arrow ? (
                             <span className={`mt-[1px] text-sm ${isActive ? 'text-[#2f66db]' : 'text-[#94a3b8]'}`}>›</span>
@@ -668,10 +714,10 @@ export default function BlogEmailVsSmsPage() {
                   title="Introduction"
                   showImage={false}
                   intro={[
-                    'Your buyers aren\'t ignoring your outreach because they\'re uninterested.',
-                    'They\'re ignoring it because they\'re busy.',
+                    "Your buyers aren't ignoring your outreach because they're uninterested.",
+                    "They're ignoring it because they're busy.",
                     'Every day, prospects receive dozens of emails, LinkedIn requests, phone calls, and marketing messages competing for their attention. As a result, revenue teams are asking an important question: Should you prioritize email or SMS?',
-                    'The answer isn\'t as simple as choosing one over the other.',
+                    "The answer isn't as simple as choosing one over the other.",
                     'Email and SMS serve different purposes throughout the buyer journey. While email is ideal for sharing detailed information and nurturing leads, SMS excels at creating timely, high-engagement conversations.',
                     'Understanding the strengths of each channel—and knowing when to use them—can help revenue teams improve response rates, increase conversions, and build a more effective multichannel outreach strategy.',
                   ]}
@@ -757,7 +803,7 @@ export default function BlogEmailVsSmsPage() {
                   title="2. Comparing Conversion Benchmarks"
                   showImage={true}
                   intro={[
-                    'When evaluating SMS vs email marketing, conversion isn\'t determined by one metric alone.',
+                    "When evaluating SMS vs email marketing, conversion isn't determined by one metric alone.",
                     'Revenue teams should look at engagement throughout the customer journey.',
                   ]}
                   infographic={{
@@ -773,7 +819,7 @@ export default function BlogEmailVsSmsPage() {
                   title="2.1 Open Rates"
                   showImage={false}
                   intro={[
-                    'SMS consistently achieves higher visibility than email because messages appear directly on a recipient\'s mobile device.',
+                    "SMS consistently achieves higher visibility than email because messages appear directly on a recipient's mobile device.",
                     'Email remains effective, but inbox competition means even well-crafted campaigns can go unnoticed.',
                     'Higher visibility often makes SMS an excellent channel for time-sensitive communication.',
                   ]}
@@ -825,9 +871,7 @@ export default function BlogEmailVsSmsPage() {
                   id="when-to-use-email"
                   title="3. When Should Revenue Teams Use Email?"
                   showImage={false}
-                  intro={[
-                    'Email remains essential throughout the buying journey.',
-                  ]}
+                  intro={['Email remains essential throughout the buying journey.']}
                   infographic={{
                     title: 'Email strengths',
                     paragraphs: ['Use email when you need to educate, share resources, and build relationships over time.'],
@@ -875,9 +919,7 @@ export default function BlogEmailVsSmsPage() {
                   id="when-to-use-sms"
                   title="4. When Should Revenue Teams Use SMS?"
                   showImage={false}
-                  intro={[
-                    'SMS performs best when speed matters.',
-                  ]}
+                  intro={['SMS performs best when speed matters.']}
                   infographic={{
                     title: 'SMS strengths',
                     paragraphs: ['Use SMS for follow‑ups, meeting confirmations, and driving immediate action.'],
@@ -939,7 +981,7 @@ export default function BlogEmailVsSmsPage() {
                   showImage={false}
                   intro={[
                     'The short answer? No.',
-                    'The highest‑performing revenue teams don\'t choose one channel over the other—they combine both.',
+                    "The highest‑performing revenue teams don't choose one channel over the other—they combine both.",
                   ]}
                   infographic={{
                     title: 'The winning combination',
@@ -953,9 +995,7 @@ export default function BlogEmailVsSmsPage() {
                   id="email-builds-context"
                   title="5.1 Email Builds Context"
                   showImage={false}
-                  intro={[
-                    'Email explains. It educates. It nurtures.',
-                  ]}
+                  intro={['Email explains. It educates. It nurtures.']}
                   blocks={[]}
                 />
 
@@ -964,9 +1004,7 @@ export default function BlogEmailVsSmsPage() {
                   id="sms-creates-momentum"
                   title="5.2 SMS Creates Momentum"
                   showImage={false}
-                  intro={[
-                    'SMS reminds. It confirms. It encourages quick responses.',
-                  ]}
+                  intro={['SMS reminds. It confirms. It encourages quick responses.']}
                   blocks={[
                     {
                       subtitle: 'Example workflow',
@@ -988,7 +1026,7 @@ export default function BlogEmailVsSmsPage() {
                   title="6. Best Practices for Combining Email and SMS"
                   showImage={false}
                   intro={[
-                    'Using multiple channels doesn\'t mean sending more messages—it means creating better experiences.',
+                    "Using multiple channels doesn't mean sending more messages—it means creating better experiences.",
                   ]}
                   infographic={{
                     title: 'Core principles',
@@ -1047,10 +1085,10 @@ export default function BlogEmailVsSmsPage() {
                   title="7. Build a Smarter Multichannel Outreach Strategy"
                   showImage={false}
                   intro={[
-                    'The debate isn\'t really SMS vs email marketing. It\'s about knowing when each channel creates the greatest impact.',
+                    "The debate isn't really SMS vs email marketing. It's about knowing when each channel creates the greatest impact.",
                     'Email remains the foundation for education and relationship building. SMS excels at creating timely, high-engagement conversations that keep deals moving forward.',
                     'When combined thoughtfully, they create a stronger buyer experience and help revenue teams communicate more effectively throughout the sales cycle.',
-                    'Instead of choosing one channel, build a strategy where each supports the other. That\'s how modern revenue teams increase engagement, improve conversions, and create more meaningful customer relationships.',
+                    "Instead of choosing one channel, build a strategy where each supports the other. That's how modern revenue teams increase engagement, improve conversions, and create more meaningful customer relationships.",
                   ]}
                   infographic={{
                     title: '360Airo',
@@ -1071,30 +1109,7 @@ export default function BlogEmailVsSmsPage() {
                       title="Quick answers"
                       paragraphs={['Common questions about email vs SMS outreach.']}
                     />
-                    <FaqAccordion
-                      faqs={[
-                        {
-                          subtitle: '8.1 Is SMS more effective than email?',
-                          paragraphs: ['SMS often generates faster engagement, while email provides more space for detailed communication. The best results usually come from using both together.'],
-                        },
-                        {
-                          subtitle: '8.2 What is SMS sales outreach?',
-                          paragraphs: ['SMS sales outreach is the use of business text messaging to engage prospects and customers throughout the sales process, including follow‑ups, reminders, and appointment confirmations.'],
-                        },
-                        {
-                          subtitle: '8.3 Should I replace email with SMS?',
-                          paragraphs: ['No. Email and SMS serve different purposes. Combining both channels creates a more balanced and effective outreach strategy.'],
-                        },
-                        {
-                          subtitle: '8.4 When should I send an SMS instead of an email?',
-                          paragraphs: ['Use SMS for time‑sensitive communication, meeting reminders, follow‑ups, and quick confirmations. Use email when you need to share detailed information or educational content.'],
-                        },
-                        {
-                          subtitle: '8.5 Which channel converts better?',
-                          paragraphs: ['The answer depends on your audience, message, and stage of the buyer journey. Revenue teams typically achieve the best conversion benchmarks by integrating email and SMS into a coordinated outreach strategy.'],
-                        },
-                      ]}
-                    />
+                    <FaqAccordion faqs={FAQ_ITEMS} />
                   </div>
                 </section>
               </div>
@@ -1104,50 +1119,7 @@ export default function BlogEmailVsSmsPage() {
           </section>
 
           {/* Recent Posts */}
-          <section className="px-3 md:px-4 pb-4 md:pb-8">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex items-center justify-between mb-3 md:mb-4">
-                <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
-                <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                {[
-                  {
-                    title: '10 Cheapest Cold Email Software Tools for Startups & Agencies',
-                    tag: 'Cold Email',
-                    href: '/blogs/10-cheapest-cold-email-software',
-                    description: 'Discover affordable cold email tools for 2026.',
-                    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                  {
-                    title: 'What Are Email Warmup Tools and How Do They Work?',
-                    tag: 'Deliverability',
-                    href: '/blogs/email-warmup-tools-guide',
-                    description: 'Learn how warmup tools protect sender reputation.',
-                    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                  {
-                    title: 'AI SDR vs Human SDR: Cost, Performance & ROI Comparison',
-                    tag: 'AI SDR',
-                    href: '/blogs/ai-sdr-vs-human-sdr',
-                    description: 'Compare cost, performance, and ROI of AI vs human SDRs.',
-                    image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                ].map((post) => (
-                  <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
-                    <div className="relative w-full aspect-[16/9] overflow-hidden">
-                      <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
-                    </div>
-                    <div className="p-3 md:p-5">
-                      <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
-                      <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
-                      <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
+          <RecentPosts />
         </main>
         <Footer />
       </div>

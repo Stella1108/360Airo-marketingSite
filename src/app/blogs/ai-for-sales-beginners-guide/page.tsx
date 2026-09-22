@@ -97,7 +97,9 @@ function MiniInfographic({ title, paragraphs, bullets }: { title: string; paragr
 function ContentBlock({ subtitle, paragraphs, bullets }: { subtitle: string; paragraphs: string[]; bullets?: string[] }) {
   return (
     <div>
-      <h3 className="text-[16px] md:text-[19px] font-bold text-[#111827] mb-2 md:mb-4">{subtitle}</h3>
+      {subtitle && (
+        <h3 className="text-[16px] md:text-[19px] font-bold text-[#111827] mb-2 md:mb-4">{subtitle}</h3>
+      )}
       <div className="space-y-3 md:space-y-4 text-[#4f5668] text-[15px] md:text-[17px] leading-7 text-justify">
         {paragraphs.map((text, index) => <p key={index}>{text}</p>)}
       </div>
@@ -186,23 +188,9 @@ function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-              loading="lazy"
-              quality={75}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          AI‑Powered Sales
-          <br />
-          Made Simple
+        {/* Removed the broken Image wrapper here */}
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4">
+          AI‑Powered Sales Made Simple
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Automate prospect research, personalize outreach, and close more deals with AI.
@@ -232,20 +220,26 @@ export default function BlogAISalesBeginnersGuidePage() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!ticking.current) {
-        rafId.current = requestAnimationFrame(() => {
-          const sections = tocItems.map((item) => document.getElementById(item.id)).filter(Boolean) as HTMLElement[];
-          const scrollPosition = window.scrollY + 180;
-          let currentSectionId = sections[0]?.id || 'introduction';
-          for (const section of sections) {
-            if (scrollPosition >= section.offsetTop) currentSectionId = section.id;
+      if (ticking.current) return;
+      ticking.current = true;
+      rafId.current = requestAnimationFrame(() => {
+        const offset = 180;
+        let currentSectionId = 'introduction';
+
+        for (const item of tocItems) {
+          const el = document.getElementById(item.id);
+          if (!el) continue;
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= offset) {
+            currentSectionId = item.id;
           }
-          setActiveId(currentSectionId);
-          ticking.current = false;
-        });
-        ticking.current = true;
-      }
+        }
+
+        setActiveId((prev) => (prev === currentSectionId ? prev : currentSectionId));
+        ticking.current = false;
+      });
     };
+
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true });
@@ -260,7 +254,7 @@ export default function BlogAISalesBeginnersGuidePage() {
     <div className="blog-shell">
       {/* Preconnect to Unsplash for faster image loading */}
       <link rel="preconnect" href="https://images.unsplash.com" />
-      
+
       <Navbar activeTab="resources" />
       <main className="min-h-screen bg-[#f4f2fb] text-[#111827] pt-20">
         <style jsx global>{`
@@ -269,10 +263,8 @@ export default function BlogAISalesBeginnersGuidePage() {
           @font-face { font-family: 'Barlow Condensed'; font-display: swap; }
           @font-face { font-family: 'DM Sans'; font-display: swap; }
           @font-face { font-family: 'Outfit'; font-display: swap; }
-          /* No fade animation to improve LCP */
         `}</style>
 
-        {/* Preload hero image with smaller size and WebP */}
         <link
           rel="preload"
           fetchPriority="high"
@@ -281,7 +273,7 @@ export default function BlogAISalesBeginnersGuidePage() {
           type="image/webp"
         />
 
-        {/* Hero Section – no animation for faster paint */}
+        {/* Hero Section */}
         <section className="pt-6 md:pt-10 pb-6 md:pb-8 px-3 md:px-4 border-b border-[#ddd9ef]">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-wrap items-center gap-1 md:gap-2 text-[10px] md:text-sm text-[#6b7280] mb-2 md:mb-4">
@@ -296,18 +288,18 @@ export default function BlogAISalesBeginnersGuidePage() {
             </div>
 
             <div className="grid lg:grid-cols-2 gap-6 md:gap-10 lg:gap-14 items-center">
-<div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
-  <Image
-    src="/ai-for-sales.png"
-    alt="AI for sales hero"
-    fill
-    priority
-    fetchPriority="high"
-    decoding="sync"
-    className="object-cover"
-    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-  />
-</div>
+              <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
+                <Image
+                  src="/ai-for-sales.png"
+                  alt="AI for sales hero"
+                  fill
+                  priority
+                  fetchPriority="high"
+                  decoding="sync"
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                />
+              </div>
 
               <div className="max-w-2xl">
                 <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">AI Guide</p>
@@ -318,18 +310,6 @@ export default function BlogAISalesBeginnersGuidePage() {
                   Sales has never been short on tools – but salespeople still spend too much time on administrative work. Discover how AI can help you work smarter, not harder.
                 </p>
                 <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src="/logonew.png"
-                      alt="360Airo Team"
-                      width={140}
-                      height={40}
-                      className="h-7 md:h-10 w-auto object-contain"
-                      priority={false}
-                      loading="lazy"
-                      quality={75}
-                    />
-                  </div>
                   <span>• 360AIRO Team</span>
                   <span>• Updated: Aug 2026</span>
                   <span>• 12 min read</span>
@@ -344,7 +324,7 @@ export default function BlogAISalesBeginnersGuidePage() {
           </div>
         </section>
 
-        {/* Main Content – same as before, but now with performance improvements */}
+        {/* Main Content */}
         <section className="px-3 md:px-4 py-4 md:py-8">
           <div className="max-w-[1440px] mx-auto grid xl:grid-cols-[250px_minmax(0,1fr)_250px] lg:grid-cols-[250px_minmax(0,1fr)] gap-6 md:gap-8">
             {/* TOC */}
@@ -657,7 +637,7 @@ export default function BlogAISalesBeginnersGuidePage() {
                 blocks={[]}
               />
 
-              {/* FAQ Section – using local FaqAccordion */}
+              {/* FAQ Section */}
               <section id="faqs" className="scroll-mt-28">
                 <h2 className="text-[20px] md:text-[24px] font-bold text-[#111827] mb-3 md:mb-4">8. Frequently Asked Questions</h2>
                 <div className="space-y-4">

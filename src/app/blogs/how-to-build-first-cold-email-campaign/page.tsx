@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import '../../../styles/blogs.css';
@@ -28,7 +28,7 @@ const tocItems: TocItem[] = [
   { id: 'conclusion', label: '9. Build Your First Campaign With Confidence', arrow: true },
 ];
 
-function MiniInfographic({
+const MiniInfographic = memo(function MiniInfographic({
   title,
   paragraphs,
   bullets,
@@ -56,9 +56,9 @@ function MiniInfographic({
       ) : null}
     </div>
   );
-}
+});
 
-function ContentBlock({
+const ContentBlock = memo(function ContentBlock({
   subtitle,
   paragraphs,
 }: {
@@ -77,15 +77,14 @@ function ContentBlock({
       </div>
     </div>
   );
-}
+});
 
-function SectionImage({ id }: { id: string }) {
+const SectionImage = memo(function SectionImage() {
   const image = {
     src: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1400&q=80&fm=webp',
     alt: 'Cold email campaign strategy',
     label: 'Cold Email',
   };
-  if (!image) return null;
 
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
@@ -94,9 +93,10 @@ function SectionImage({ id }: { id: string }) {
           src={image.src}
           alt={image.alt}
           fill
+          loading="lazy"
+          decoding="async"
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -105,9 +105,9 @@ function SectionImage({ id }: { id: string }) {
       </div>
     </div>
   );
-}
+});
 
-function ArticleSection({
+const ArticleSection = memo(function ArticleSection({
   id,
   title,
   intro,
@@ -143,32 +143,43 @@ function ArticleSection({
         {blocks.map((block) => (
           <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {showImage && <SectionImage id={id} />}
+        {showImage && <SectionImage />}
       </div>
     </section>
   );
-}
+});
 
 // --- FAQ Accordion Component ---
-function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[] }[] }) {
+const FaqAccordion = memo(function FaqAccordion({
+  faqs,
+}: {
+  faqs: { subtitle: string; paragraphs: string[] }[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const toggle = useCallback((index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  }, []);
 
   return (
     <div className="space-y-3 md:space-y-4">
       {faqs.map((faq, index) => {
         const isOpen = openIndex === index;
         return (
-          <div key={index} className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]">
+          <div
+            key={index}
+            className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]"
+          >
             <button
               onClick={() => toggle(index)}
+              aria-expanded={isOpen}
               className="w-full flex items-center justify-between px-4 py-3 md:px-6 md:py-4 text-left text-[15px] md:text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
             >
               <span>{faq.subtitle}</span>
-              <span className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+              <span
+                className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300"
+                style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              >
                 {isOpen ? '−' : '+'}
               </span>
             </button>
@@ -188,27 +199,14 @@ function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[]
       })}
     </div>
   );
-}
+});
 
-function RightPromoCards() {
+const RightPromoCards = memo(function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          First Campaign
-          <br />
-          Step‑by‑Step
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4 pt-2">
+          First Campaign Step‑by‑Step
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Build your first cold email campaign that actually gets replies, from targeting to follow-ups.
@@ -230,13 +228,13 @@ function RightPromoCards() {
       </div>
     </aside>
   );
-}
+});
 
 // --- Demo CTA Component ---
-function DemoCTA() {
+const DemoCTA = memo(function DemoCTA() {
   return (
     <div className="mt-8 rounded-[24px] bg-gradient-to-r from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] p-6 md:p-10 shadow-xl overflow-hidden relative text-center">
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/20"></div>
         <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-white/10"></div>
       </div>
@@ -256,16 +254,80 @@ function DemoCTA() {
       </div>
     </div>
   );
-}
+});
+
+// --- Hoisted static recent posts data ---
+const RECENT_POSTS = [
+  {
+    title: 'How Does Email Deliverability Work? A Step‑by‑Step Guide',
+    tag: 'Deliverability',
+    href: '/blogs/how-email-deliverability-works',
+    description: 'Learn how email deliverability works and how to keep your messages out of spam.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: "Email Delivery vs Email Deliverability: What's the Difference?",
+    tag: 'Deliverability',
+    href: '/blogs/email-delivery-vs-deliverability',
+    description: 'Learn the critical difference between delivery and inbox placement.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'Best Practices to Keep Email Bounce Rates Below the 3% Target',
+    tag: 'Bounce Rate',
+    href: '/blogs/best-practices-email-bounce-rates',
+    description: 'Keep bounce rates low with verified data and proper authentication.',
+    image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+];
+
+const RecentPosts = memo(function RecentPosts() {
+  return (
+    <section className="px-3 md:px-4 pb-4 md:pb-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
+          <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {RECENT_POSTS.map((post) => (
+            <a
+              key={post.href}
+              href={post.href}
+              className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow"
+            >
+              <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  loading="lazy"
+                  decoding="async"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                />
+              </div>
+              <div className="p-3 md:p-5">
+                <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
+                <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
 
 export default function BlogHowToBuildFirstColdEmailCampaignPage() {
   const [activeId, setActiveId] = useState('introduction');
-  const [searchQuery, setSearchQuery] = useState('');
-  const categoryScrollRef = useRef<HTMLDivElement | null>(null);
+  const activeIdRef = useRef('introduction');
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
   // INP FIX: Throttle scroll handler with requestAnimationFrame
+  // PERF: Only update state when active section actually changes
   useEffect(() => {
     const handleScroll = () => {
       if (!ticking.current) {
@@ -282,7 +344,11 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
               currentSectionId = section.id;
             }
           }
-          setActiveId(currentSectionId);
+
+          if (currentSectionId !== activeIdRef.current) {
+            activeIdRef.current = currentSectionId;
+            setActiveId(currentSectionId);
+          }
           ticking.current = false;
         });
         ticking.current = true;
@@ -363,7 +429,7 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                 initial={{ opacity: 0, x: -24 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
-                className="relative"
+                className="relative transform-gpu"
               >
                 <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
                   <Image
@@ -383,7 +449,7 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                 initial={{ opacity: 0, x: 24 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.08 }}
-                className="max-w-2xl"
+                className="max-w-2xl transform-gpu"
               >
                 <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">
                   Cold Email Guide
@@ -395,18 +461,8 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                   You don't need a massive sales team to generate pipeline. Learn how to build your first cold email campaign that actually gets replies – from targeting the right prospects to writing emails that start meaningful conversations.
                 </p>
 
-                {/* Meta info */}
+                {/* Meta info — broken 360Airo Team image removed */}
                 <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src="/logonew.png"
-                      alt="360Airo Team"
-                      width={140}
-                      height={40}
-                      className="h-7 md:h-10 w-auto object-contain"
-                      priority={false}
-                    />
-                  </div>
                   <span>• 360AIRO Team</span>
                   <span>• Updated: Sep 2026</span>
                   <span>• 10 min read</span>
@@ -445,7 +501,11 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                           : 'text-[#4b5563] hover:text-[#2f66db] hover:bg-white/70'
                       } ${item.indent ? 'ml-3' : ''}`}
                     >
-                      <span className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${isActive ? 'bg-[#4f63ff]' : 'bg-transparent'}`} />
+                      <span
+                        className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${
+                          isActive ? 'bg-[#4f63ff]' : 'bg-transparent'
+                        }`}
+                      />
                       <span className="flex items-start gap-1.5">
                         {item.arrow ? (
                           <span className={`mt-[1px] text-sm ${isActive ? 'text-[#2f66db]' : 'text-[#94a3b8]'}`}>›</span>
@@ -468,13 +528,13 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                 title="Introduction"
                 showImage={false}
                 intro={[
-                  'You don\'t need a massive sales team to generate pipeline.',
-                  'You don\'t need thousands of prospects or dozens of SDRs either.',
+                  "You don't need a massive sales team to generate pipeline.",
+                  "You don't need thousands of prospects or dozens of SDRs either.",
                   'What you need is a cold email campaign built on the right strategy.',
-                  'Many first-time campaigns fail for predictable reasons. Businesses target the wrong audience, skip email warm-up, write generic messages, or stop after sending a single email. When replies don\'t come in, they assume cold email doesn\'t work.',
+                  "Many first-time campaigns fail for predictable reasons. Businesses target the wrong audience, skip email warm-up, write generic messages, or stop after sending a single email. When replies don't come in, they assume cold email doesn't work.",
                   'The truth is different.',
-                  'Cold email remains one of the most effective outbound channels when it\'s done correctly. Research shows that campaigns with 3–5 touchpoints generate nearly 80% of all replies, while personalized emails consistently outperform generic outreach.',
-                  'Building a successful campaign isn\'t about sending more emails—it\'s about sending smarter ones.',
+                  "Cold email remains one of the most effective outbound channels when it's done correctly. Research shows that campaigns with 3–5 touchpoints generate nearly 80% of all replies, while personalized emails consistently outperform generic outreach.",
+                  "Building a successful campaign isn't about sending more emails—it's about sending smarter ones.",
                   "In this guide, you'll learn how to build your first cold email campaign, from identifying your ideal prospects to launching a campaign that generates meaningful conversations.",
                 ]}
                 infographic={{
@@ -490,9 +550,9 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                 title="1. What Is a Cold Email Campaign?"
                 showImage={false}
                 intro={[
-                  'A cold email campaign is a structured sequence of personalized emails sent to potential customers who haven\'t interacted with your business before.',
+                  "A cold email campaign is a structured sequence of personalized emails sent to potential customers who haven't interacted with your business before.",
                   'Unlike email marketing campaigns sent to subscribers, cold email focuses on carefully selected prospects who fit your Ideal Customer Profile (ICP).',
-                  'The objective isn\'t to close a sale immediately.',
+                  "The objective isn't to close a sale immediately.",
                   "It's to start a conversation.",
                   'A successful campaign answers three questions:',
                   'Who should you contact?',
@@ -547,7 +607,7 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                 title="3. Step 2: Build a High-Quality Prospect List"
                 showImage={false}
                 intro={[
-                  'Once you\'ve identified your ICP, the next step is finding people who match it.',
+                  "Once you've identified your ICP, the next step is finding people who match it.",
                   'Your prospect list is the foundation of your campaign.',
                   'A poor-quality list leads to low reply rates, higher bounce rates, and damaged sender reputation.',
                   'Look for prospects using:',
@@ -570,7 +630,7 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                   },
                   {
                     subtitle: 'Verify before sending',
-                    paragraphs: ['Before launching your campaign, always verify email addresses. Sending emails to invalid contacts increases bounce rates and can negatively affect your email deliverability. The goal isn\'t to build the biggest list – it\'s to build the right one.'],
+                    paragraphs: ["Before launching your campaign, always verify email addresses. Sending emails to invalid contacts increases bounce rates and can negatively affect your email deliverability. The goal isn't to build the biggest list – it's to build the right one."],
                   },
                 ]}
               />
@@ -607,9 +667,9 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                 title="5. Step 4: Write Your First Cold Email"
                 showImage={false}
                 intro={[
-                  'Now it\'s time to write.',
+                  "Now it's time to write.",
                   'Many first-time cold emails fail because they focus too much on the sender.',
-                  'Your prospect doesn\'t care about your product—at least not yet.',
+                  "Your prospect doesn't care about your product—at least not yet.",
                   'They care about solving a problem.',
                   'A simple structure works best:',
                 ]}
@@ -619,7 +679,7 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                   bullets: [
                     'Subject Line – keep it natural and curiosity-driven',
                     'Opening – reference something relevant about the prospect or company',
-                    'Problem – highlight a challenge they\'re likely facing',
+                    "Problem – highlight a challenge they're likely facing",
                     'Value – briefly explain how you help solve that challenge',
                     'Call-to-Action – end with one simple question',
                   ],
@@ -642,7 +702,7 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                   'Prospects are busy, not necessarily uninterested.',
                   "That's why follow-ups are essential.",
                   'Research shows that 3–5 touchpoints generate nearly 80% of all replies, making structured sequences far more effective than one-off emails.',
-                  'Here\'s a simple sequence to get started:',
+                  "Here's a simple sequence to get started:",
                 ]}
                 infographic={{
                   title: 'Example 5‑step sequence',
@@ -669,7 +729,7 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                 title="7. Step 6: Launch and Measure Your Campaign"
                 showImage={false}
                 intro={[
-                  'Once your sequence is ready, launch your campaign – but don\'t stop paying attention.',
+                  "Once your sequence is ready, launch your campaign – but don't stop paying attention.",
                   'Successful outreach is built through continuous improvement.',
                   'Monitor key performance metrics such as:',
                 ]}
@@ -718,7 +778,7 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                 blocks={[
                   {
                     subtitle: 'Continuous improvement',
-                    paragraphs: ['The most successful cold email campaigns aren\'t perfect from day one. They\'re continuously improved.'],
+                    paragraphs: ["The most successful cold email campaigns aren't perfect from day one. They're continuously improved."],
                   },
                 ]}
               />
@@ -729,18 +789,18 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
                 title="9. Build Your First Campaign With Confidence"
                 showImage={false}
                 intro={[
-                  'Your first cold email campaign doesn\'t need to be complicated.',
+                  "Your first cold email campaign doesn't need to be complicated.",
                   'It needs to be intentional.',
                   'Start with the right audience. Build a verified prospect list. Protect your sender reputation. Write concise, relevant emails. Follow up consistently. Then measure, learn, and improve.',
-                  'Cold email isn\'t about sending thousands of messages.',
+                  "Cold email isn't about sending thousands of messages.",
                   "It's about creating meaningful conversations with the right people.",
                   'When every part of your campaign works together – from targeting and deliverability to personalization and follow-ups – you create a predictable system for generating pipeline.',
                 ]}
                 infographic={{
                   title: '360Airo',
                   paragraphs: [
-                    'Launching your first campaign shouldn\'t require juggling multiple tools. 360Airo brings together AI-powered prospect research, email verification, deliverability monitoring, domain warm-up, intelligent personalization, automated follow-up sequences, and campaign analytics in one platform.',
-                    'Whether you\'re sending your first 100 emails or scaling outbound across multiple markets, 360Airo helps you build campaigns that reach inboxes, generate replies, and turn prospects into qualified opportunities.',
+                    "Launching your first campaign shouldn't require juggling multiple tools. 360Airo brings together AI-powered prospect research, email verification, deliverability monitoring, domain warm-up, intelligent personalization, automated follow-up sequences, and campaign analytics in one platform.",
+                    "Whether you're sending your first 100 emails or scaling outbound across multiple markets, 360Airo helps you build campaigns that reach inboxes, generate replies, and turn prospects into qualified opportunities.",
                   ],
                 }}
                 blocks={[]}
@@ -755,50 +815,7 @@ export default function BlogHowToBuildFirstColdEmailCampaignPage() {
         </section>
 
         {/* Recent Posts */}
-        <section className="px-3 md:px-4 pb-4 md:pb-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-3 md:mb-4">
-              <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
-              <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-              {[
-                {
-                  title: 'How Does Email Deliverability Work? A Step‑by‑Step Guide',
-                  tag: 'Deliverability',
-                  href: '/blogs/how-email-deliverability-works',
-                  description: 'Learn how email deliverability works and how to keep your messages out of spam.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-                {
-                  title: 'Email Delivery vs Email Deliverability: What\'s the Difference?',
-                  tag: 'Deliverability',
-                  href: '/blogs/email-delivery-vs-deliverability',
-                  description: 'Learn the critical difference between delivery and inbox placement.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-                {
-                  title: 'Best Practices to Keep Email Bounce Rates Below the 3% Target',
-                  tag: 'Bounce Rate',
-                  href: '/blogs/best-practices-email-bounce-rates',
-                  description: 'Keep bounce rates low with verified data and proper authentication.',
-                  image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-              ].map((post) => (
-                <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
-                  <div className="relative w-full aspect-[16/9] overflow-hidden">
-                    <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
-                  </div>
-                  <div className="p-3 md:p-5">
-                    <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
-                    <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
-                    <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
+        <RecentPosts />
       </main>
       <Footer />
     </div>

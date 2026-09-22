@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import Head from 'next/head';
@@ -29,7 +29,7 @@ const tocItems: TocItem[] = [
   { id: 'faqs', label: '9. Frequently Asked Questions', arrow: true },
 ];
 
-function MiniInfographic({
+const MiniInfographic = memo(function MiniInfographic({
   title,
   paragraphs,
   bullets,
@@ -57,9 +57,9 @@ function MiniInfographic({
       ) : null}
     </div>
   );
-}
+});
 
-function ContentBlock({
+const ContentBlock = memo(function ContentBlock({
   subtitle,
   paragraphs,
 }: {
@@ -78,15 +78,14 @@ function ContentBlock({
       </div>
     </div>
   );
-}
+});
 
-function SectionImage({ id }: { id: string }) {
+const SectionImage = memo(function SectionImage() {
   const image = {
     src: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1400&q=80&fm=webp',
     alt: 'Multi‑channel outreach dashboard',
     label: 'Multichannel',
   };
-  if (!image) return null;
 
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
@@ -95,9 +94,10 @@ function SectionImage({ id }: { id: string }) {
           src={image.src}
           alt={image.alt}
           fill
+          loading="lazy"
+          decoding="async"
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -106,9 +106,9 @@ function SectionImage({ id }: { id: string }) {
       </div>
     </div>
   );
-}
+});
 
-function ArticleSection({
+const ArticleSection = memo(function ArticleSection({
   id,
   title,
   intro,
@@ -144,32 +144,43 @@ function ArticleSection({
         {blocks.map((block) => (
           <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {showImage && <SectionImage id={id} />}
+        {showImage && <SectionImage />}
       </div>
     </section>
   );
-}
+});
 
 // --- FAQ Accordion Component ---
-function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[] }[] }) {
+const FaqAccordion = memo(function FaqAccordion({
+  faqs,
+}: {
+  faqs: { subtitle: string; paragraphs: string[] }[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const toggle = useCallback((index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  }, []);
 
   return (
     <div className="space-y-3 md:space-y-4">
       {faqs.map((faq, index) => {
         const isOpen = openIndex === index;
         return (
-          <div key={index} className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]">
+          <div
+            key={index}
+            className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]"
+          >
             <button
               onClick={() => toggle(index)}
+              aria-expanded={isOpen}
               className="w-full flex items-center justify-between px-4 py-3 md:px-6 md:py-4 text-left text-[15px] md:text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
             >
               <span>{faq.subtitle}</span>
-              <span className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+              <span
+                className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300"
+                style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              >
                 {isOpen ? '−' : '+'}
               </span>
             </button>
@@ -189,27 +200,14 @@ function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[]
       })}
     </div>
   );
-}
+});
 
-function RightPromoCards() {
+const RightPromoCards = memo(function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          Multi‑Channel
-          <br />
-          Outreach
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4 pt-2">
+          Multi‑Channel Outreach
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Automate coordinated campaigns across email, LinkedIn, SMS, and calls from one platform.
@@ -231,23 +229,23 @@ function RightPromoCards() {
       </div>
     </aside>
   );
-}
+});
 
 // --- Cadence Table Component (matches reference styling) ---
-function CadenceTable() {
-  const rows = [
-    { day: 'Day 1', channel: 'Email', objective: 'Send a personalized cold email introducing the business problem you solve.' },
-    { day: 'Day 2', channel: 'LinkedIn', objective: "View the prospect's profile and engage with a recent post if relevant." },
-    { day: 'Day 3', channel: 'LinkedIn', objective: 'Send a personalized connection request referencing your email.' },
-    { day: 'Day 5', channel: 'Email', objective: 'Follow up with a useful insight, customer story, or industry statistic.' },
-    { day: 'Day 6', channel: 'Phone', objective: 'Place a short call. If unanswered, leave a concise voicemail.' },
-    { day: 'Day 8', channel: 'LinkedIn', objective: 'Like or comment on a recent post to remain visible without selling.' },
-    { day: 'Day 10', channel: 'Email', objective: 'Send another follow‑up focused on business outcomes rather than product features.' },
-    { day: 'Day 11', channel: 'Phone', objective: 'Make a second call if the account is high priority.' },
-    { day: 'Day 12', channel: 'LinkedIn', objective: 'Share a relevant article or continue engaging naturally.' },
-    { day: 'Day 14', channel: 'Email', objective: 'Send a final follow‑up asking whether the timing is right for a conversation.' },
-  ];
+const CADENCE_ROWS = [
+  { day: 'Day 1', channel: 'Email', objective: 'Send a personalized cold email introducing the business problem you solve.' },
+  { day: 'Day 2', channel: 'LinkedIn', objective: "View the prospect's profile and engage with a recent post if relevant." },
+  { day: 'Day 3', channel: 'LinkedIn', objective: 'Send a personalized connection request referencing your email.' },
+  { day: 'Day 5', channel: 'Email', objective: 'Follow up with a useful insight, customer story, or industry statistic.' },
+  { day: 'Day 6', channel: 'Phone', objective: 'Place a short call. If unanswered, leave a concise voicemail.' },
+  { day: 'Day 8', channel: 'LinkedIn', objective: 'Like or comment on a recent post to remain visible without selling.' },
+  { day: 'Day 10', channel: 'Email', objective: 'Send another follow‑up focused on business outcomes rather than product features.' },
+  { day: 'Day 11', channel: 'Phone', objective: 'Make a second call if the account is high priority.' },
+  { day: 'Day 12', channel: 'LinkedIn', objective: 'Share a relevant article or continue engaging naturally.' },
+  { day: 'Day 14', channel: 'Email', objective: 'Send a final follow‑up asking whether the timing is right for a conversation.' },
+];
 
+const CadenceTable = memo(function CadenceTable() {
   return (
     <div className="my-4 overflow-x-auto rounded-[16px] border border-[#dbe3f4] bg-white shadow-sm">
       <table className="w-full text-left text-sm md:text-base">
@@ -259,7 +257,7 @@ function CadenceTable() {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, idx) => (
+          {CADENCE_ROWS.map((row, idx) => (
             <tr key={idx} className="border-b border-[#f0f2f8] last:border-b-0">
               <td className="px-4 py-3 md:px-6 md:py-4 font-medium text-[#111827]" data-label="Day">{row.day}</td>
               <td className="px-4 py-3 md:px-6 md:py-4 text-[#4f5668]" data-label="Channel">{row.channel}</td>
@@ -270,14 +268,104 @@ function CadenceTable() {
       </table>
     </div>
   );
-}
+});
+
+// --- Hoisted static FAQ data ---
+const FAQ_ITEMS = [
+  {
+    subtitle: '9.1 What is multi‑channel outreach?',
+    paragraphs: ['Multi‑channel outreach is the practice of engaging prospects across multiple communication channels—such as email, LinkedIn, phone calls, and SMS—instead of relying on a single method.'],
+  },
+  {
+    subtitle: '9.2 Why is multi‑channel outreach more effective?',
+    paragraphs: ['It meets buyers where they spend time, increases visibility, builds trust through repeated exposure, and allows for a more personalized, coordinated experience. Studies show multi‑channel campaigns generate up to 287% higher purchase rates.'],
+  },
+  {
+    subtitle: '9.3 How many channels should I use?',
+    paragraphs: ['Most successful teams start with email and LinkedIn, then add phone calls for high‑priority accounts and SMS for timely reminders. The exact number depends on your audience and resources.'],
+  },
+  {
+    subtitle: '9.4 What is a good cadence for multi‑channel outreach?',
+    paragraphs: ['A typical cadence spans 10–14 days with 6–10 well‑spaced touchpoints across 2–3 channels. Each touchpoint should have a distinct purpose, and you should adjust based on engagement signals.'],
+  },
+  {
+    subtitle: '9.5 Can I automate multi‑channel outreach?',
+    paragraphs: ['Yes, platforms like 360Airo allow you to automate sequences across email, LinkedIn, SMS, and more, while still enabling personalization and tracking. Automation helps maintain consistency and saves time.'],
+  },
+];
+
+// --- Hoisted static recent posts data ---
+const RECENT_POSTS = [
+  {
+    title: '10 Cheapest Cold Email Software Tools for Startups & Agencies',
+    tag: 'Cold Email',
+    href: '/blogs/10-cheapest-cold-email-software',
+    description: 'Discover affordable cold email tools for 2026.',
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'What Are Email Warmup Tools and How Do They Work?',
+    tag: 'Deliverability',
+    href: '/blogs/email-warmup-tools-guide',
+    description: 'Learn how warmup tools protect sender reputation.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'Email vs SMS Outreach: Conversion Benchmarks',
+    tag: 'Multichannel',
+    href: '/blogs/email-vs-sms-outreach-conversion-benchmarks',
+    description: 'Compare email and SMS for better conversions.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+];
+
+const RecentPosts = memo(function RecentPosts() {
+  return (
+    <section className="px-3 md:px-4 pb-4 md:pb-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
+          <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {RECENT_POSTS.map((post) => (
+            <a
+              key={post.href}
+              href={post.href}
+              className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow"
+            >
+              <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  loading="lazy"
+                  decoding="async"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                />
+              </div>
+              <div className="p-3 md:p-5">
+                <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
+                <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
 
 export default function BlogMultiChannelOutreachPage() {
   const [activeId, setActiveId] = useState('introduction');
+  const activeIdRef = useRef('introduction');
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
   // INP FIX: Throttle scroll handler with requestAnimationFrame
+  // PERF: Only update state when active section actually changes
   useEffect(() => {
     const handleScroll = () => {
       if (!ticking.current) {
@@ -294,7 +382,11 @@ export default function BlogMultiChannelOutreachPage() {
               currentSectionId = section.id;
             }
           }
-          setActiveId(currentSectionId);
+
+          if (currentSectionId !== activeIdRef.current) {
+            activeIdRef.current = currentSectionId;
+            setActiveId(currentSectionId);
+          }
           ticking.current = false;
         });
         ticking.current = true;
@@ -633,11 +725,12 @@ export default function BlogMultiChannelOutreachPage() {
                   initial={{ opacity: 0, x: -24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6 }}
-                  className="relative"
+                  className="relative transform-gpu"
                 >
                   <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
+                    {/* FIX: Broken local path replaced with a working Unsplash image */}
                     <Image
-                      src="/multichannel-outreach.png"
+                      src="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp"
                       alt="Multi‑channel outreach hero"
                       fill
                       priority
@@ -653,7 +746,7 @@ export default function BlogMultiChannelOutreachPage() {
                   initial={{ opacity: 0, x: 24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.08 }}
-                  className="max-w-2xl"
+                  className="max-w-2xl transform-gpu"
                 >
                   <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">
                     Sales Strategy
@@ -665,18 +758,8 @@ export default function BlogMultiChannelOutreachPage() {
                     Today's buyers don't make decisions after a single email. Learn how to combine email, LinkedIn, calls, and SMS into a coordinated outreach strategy that drives 287% higher purchase rates.
                   </p>
 
-                  {/* Meta info */}
+                  {/* Meta info — broken 360Airo Team image removed */}
                   <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="/logonew.png"
-                        alt="360Airo Team"
-                        width={140}
-                        height={40}
-                        className="h-7 md:h-10 w-auto object-contain"
-                        priority={false}
-                      />
-                    </div>
                     <span>• 360AIRO Team</span>
                     <span>• Updated: Aug 2026</span>
                     <span>• 12 min read</span>
@@ -715,7 +798,11 @@ export default function BlogMultiChannelOutreachPage() {
                             : 'text-[#4b5563] hover:text-[#2f66db] hover:bg-white/70'
                         } ${item.indent ? 'ml-3' : ''}`}
                       >
-                        <span className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${isActive ? 'bg-[#4f63ff]' : 'bg-transparent'}`} />
+                        <span
+                          className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${
+                            isActive ? 'bg-[#4f63ff]' : 'bg-transparent'
+                          }`}
+                        />
                         <span className="flex items-start gap-1.5">
                           {item.arrow ? (
                             <span className={`mt-[1px] text-sm ${isActive ? 'text-[#2f66db]' : 'text-[#94a3b8]'}`}>›</span>
@@ -739,12 +826,12 @@ export default function BlogMultiChannelOutreachPage() {
                   showImage={false}
                   intro={[
                     "Imagine receiving a cold email from a company you've never heard of.",
-                    "You skim it, get distracted by another task, and forget about it.",
+                    'You skim it, get distracted by another task, and forget about it.',
                     "Two days later, you notice the same salesperson viewed your LinkedIn profile. A day after that, you receive a personalized connection request referencing your company's recent expansion. Later that week, another email arrives with a relevant case study. Finally, you receive a short phone call asking if you'd be interested in learning how similar businesses solved the same challenge.",
                     "Suddenly, that company doesn't feel unfamiliar anymore.",
                     "That's the power of multi‑channel outreach.",
                     "Today's buyers don't make decisions after a single email. They research vendors, browse LinkedIn, read reviews, visit websites, and compare alternatives before responding. Reaching them through only one channel means missing countless opportunities to build familiarity and trust.",
-                    "The numbers reinforce this shift. Multi‑channel campaigns generate a 287% higher purchase rate than single‑channel campaigns, while adding LinkedIn to email outreach increases reply rates by 45%. Businesses that coordinate outreach across multiple touchpoints consistently outperform those relying on email alone.",
+                    'The numbers reinforce this shift. Multi‑channel campaigns generate a 287% higher purchase rate than single‑channel campaigns, while adding LinkedIn to email outreach increases reply rates by 45%. Businesses that coordinate outreach across multiple touchpoints consistently outperform those relying on email alone.',
                     "In this guide, you'll learn what multi‑channel outreach is, why it has become essential for modern sales teams, which channels deliver the best results, and how to build a high‑converting outreach cadence.",
                   ]}
                   infographic={{
@@ -760,16 +847,16 @@ export default function BlogMultiChannelOutreachPage() {
                   title="1. What Is Multi‑Channel Outreach?"
                   showImage={false}
                   intro={[
-                    "Multi‑channel outreach is the practice of engaging prospects across multiple communication channels—such as email, LinkedIn, phone calls, SMS, and other touchpoints—instead of relying on a single method.",
+                    'Multi‑channel outreach is the practice of engaging prospects across multiple communication channels—such as email, LinkedIn, phone calls, SMS, and other touchpoints—instead of relying on a single method.',
                     "The goal isn't to contact prospects more often.",
                     "It's to contact them more effectively.",
-                    "Every buyer has different communication preferences.",
-                    "Some respond quickly to emails.",
-                    "Others rarely check their inbox but remain active on LinkedIn.",
-                    "Enterprise buyers often appreciate a follow‑up phone call after reviewing an email.",
-                    "Multi‑channel outreach recognizes these differences and creates multiple opportunities for engagement.",
-                    "Instead of repeatedly sending the same email, sales teams build a coordinated experience that feels natural and relevant.",
-                    "This approach increases visibility without overwhelming prospects.",
+                    'Every buyer has different communication preferences.',
+                    'Some respond quickly to emails.',
+                    'Others rarely check their inbox but remain active on LinkedIn.',
+                    'Enterprise buyers often appreciate a follow‑up phone call after reviewing an email.',
+                    'Multi‑channel outreach recognizes these differences and creates multiple opportunities for engagement.',
+                    'Instead of repeatedly sending the same email, sales teams build a coordinated experience that feels natural and relevant.',
+                    'This approach increases visibility without overwhelming prospects.',
                   ]}
                   infographic={{
                     title: 'Key definition',
@@ -784,18 +871,18 @@ export default function BlogMultiChannelOutreachPage() {
                   title="2. Why Single‑Channel Outreach No Longer Works"
                   showImage={false}
                   intro={[
-                    "For years, cold email dominated outbound sales.",
-                    "Today, inboxes are crowded.",
-                    "Decision‑makers receive hundreds of emails every week, making it increasingly difficult to stand out.",
-                    "Even a well‑written email can disappear beneath dozens of competing messages.",
+                    'For years, cold email dominated outbound sales.',
+                    'Today, inboxes are crowded.',
+                    'Decision‑makers receive hundreds of emails every week, making it increasingly difficult to stand out.',
+                    'Even a well‑written email can disappear beneath dozens of competing messages.',
                     "That's why relying on a single communication channel limits your chances of success.",
-                    "Modern buyers move between platforms throughout the day.",
-                    "They check email in the morning, browse LinkedIn between meetings, answer phone calls selectively, and research vendors online before making decisions.",
-                    "Meeting buyers where they already spend time significantly improves engagement.",
-                    "Rather than hoping one email gets noticed, multi‑channel outreach creates multiple opportunities to start the conversation.",
-                    "More touchpoints create greater familiarity.",
-                    "Greater familiarity builds trust.",
-                    "Trust creates replies.",
+                    'Modern buyers move between platforms throughout the day.',
+                    'They check email in the morning, browse LinkedIn between meetings, answer phone calls selectively, and research vendors online before making decisions.',
+                    'Meeting buyers where they already spend time significantly improves engagement.',
+                    'Rather than hoping one email gets noticed, multi‑channel outreach creates multiple opportunities to start the conversation.',
+                    'More touchpoints create greater familiarity.',
+                    'Greater familiarity builds trust.',
+                    'Trust creates replies.',
                   ]}
                   infographic={{
                     title: 'Why email alone fails',
@@ -810,9 +897,9 @@ export default function BlogMultiChannelOutreachPage() {
                   title="3. The Benefits of Omnichannel Sales Outreach"
                   showImage={true}
                   intro={[
-                    "Although the terms are sometimes used interchangeably, omnichannel sales outreach focuses on creating a connected experience across every interaction.",
-                    "Each touchpoint supports the previous one instead of operating independently.",
-                    "This produces several advantages.",
+                    'Although the terms are sometimes used interchangeably, omnichannel sales outreach focuses on creating a connected experience across every interaction.',
+                    'Each touchpoint supports the previous one instead of operating independently.',
+                    'This produces several advantages.',
                   ]}
                   infographic={{
                     title: 'Key benefits',
@@ -833,8 +920,8 @@ export default function BlogMultiChannelOutreachPage() {
                   title="4. Choosing the Right Channels for Multi‑Channel Prospecting"
                   showImage={false}
                   intro={[
-                    "Not every channel serves the same purpose.",
-                    "The strongest multi‑channel prospecting strategies use each platform where it adds the most value.",
+                    'Not every channel serves the same purpose.',
+                    'The strongest multi‑channel prospecting strategies use each platform where it adds the most value.',
                   ]}
                   infographic={{
                     title: 'Channel roles',
@@ -865,13 +952,13 @@ export default function BlogMultiChannelOutreachPage() {
                   title="5. Build a Multi‑Channel Cadence That Converts"
                   showImage={false}
                   intro={[
-                    "One of the biggest mistakes in outbound sales is confusing multi‑channel outreach with simply contacting prospects more often.",
+                    'One of the biggest mistakes in outbound sales is confusing multi‑channel outreach with simply contacting prospects more often.',
                     "Sending an email today, a LinkedIn message tomorrow, and calling twice the next day isn't a strategy—it's spam.",
-                    "The purpose of a multi‑channel cadence is to create multiple meaningful touchpoints while respecting the buyer's time.",
-                    "Each interaction should build on the previous one rather than repeating the same message.",
-                    "Think of your outreach like a conversation instead of a broadcast.",
-                    "Start by introducing yourself through email. Reinforce your credibility on LinkedIn. Follow up with additional insights. Use a phone call only after you've established some familiarity. Every touchpoint should answer the question, 'Why should this prospect hear from me today?'",
-                    "A well‑planned cadence increases visibility without becoming intrusive.",
+                    'The purpose of a multi‑channel cadence is to create multiple meaningful touchpoints while respecting the buyer\'s time.',
+                    'Each interaction should build on the previous one rather than repeating the same message.',
+                    'Think of your outreach like a conversation instead of a broadcast.',
+                    'Start by introducing yourself through email. Reinforce your credibility on LinkedIn. Follow up with additional insights. Use a phone call only after you\'ve established some familiarity. Every touchpoint should answer the question, \'Why should this prospect hear from me today?\'',
+                    'A well‑planned cadence increases visibility without becoming intrusive.',
                   ]}
                   infographic={{
                     title: 'Cadence mindset',
@@ -887,7 +974,7 @@ export default function BlogMultiChannelOutreachPage() {
                   ]}
                 />
 
-                {/* ✅ Cadence Table with reference styling */}
+                {/* Cadence Table */}
                 <CadenceTable />
 
                 <div className="space-y-3 md:space-y-4 text-[#4f5668] text-[15px] md:text-[17px] leading-7 text-justify">
@@ -925,8 +1012,8 @@ export default function BlogMultiChannelOutreachPage() {
                   title="7. Common Multi‑Channel Outreach Mistakes"
                   showImage={false}
                   intro={[
-                    "Even experienced sales teams sometimes misuse multiple channels.",
-                    "Here are some mistakes to avoid.",
+                    'Even experienced sales teams sometimes misuse multiple channels.',
+                    'Here are some mistakes to avoid.',
                   ]}
                   infographic={{
                     title: 'Avoid these pitfalls',
@@ -949,15 +1036,15 @@ export default function BlogMultiChannelOutreachPage() {
                   showImage={false}
                   intro={[
                     "Today's buyers don't interact with businesses through a single channel.",
-                    "They move seamlessly between email, LinkedIn, websites, phone calls, webinars, and social media before making purchasing decisions.",
-                    "Your outreach strategy should reflect that behavior.",
+                    'They move seamlessly between email, LinkedIn, websites, phone calls, webinars, and social media before making purchasing decisions.',
+                    'Your outreach strategy should reflect that behavior.',
                     "Multi‑channel outreach isn't about increasing activity.",
                     "It's about increasing relevance.",
-                    "By combining email, LinkedIn, phone calls, and other touchpoints into one coordinated strategy, businesses create more opportunities to engage buyers, build trust, and stay top of mind throughout the sales journey.",
+                    'By combining email, LinkedIn, phone calls, and other touchpoints into one coordinated strategy, businesses create more opportunities to engage buyers, build trust, and stay top of mind throughout the sales journey.',
                     "The result isn't simply higher reply rates.",
                     "It's stronger relationships, better‑qualified meetings, shorter sales cycles, and more predictable revenue.",
-                    "The teams that continue relying on one communication channel will find it increasingly difficult to capture attention in crowded markets.",
-                    "Those that embrace omnichannel sales outreach will consistently outperform them.",
+                    'The teams that continue relying on one communication channel will find it increasingly difficult to capture attention in crowded markets.',
+                    'Those that embrace omnichannel sales outreach will consistently outperform them.',
                   ]}
                   infographic={{
                     title: '360Airo',
@@ -983,30 +1070,7 @@ export default function BlogMultiChannelOutreachPage() {
                       title="Quick answers"
                       paragraphs={['Common questions about multi‑channel outreach.']}
                     />
-                    <FaqAccordion
-                      faqs={[
-                        {
-                          subtitle: '9.1 What is multi‑channel outreach?',
-                          paragraphs: ['Multi‑channel outreach is the practice of engaging prospects across multiple communication channels—such as email, LinkedIn, phone calls, and SMS—instead of relying on a single method.'],
-                        },
-                        {
-                          subtitle: '9.2 Why is multi‑channel outreach more effective?',
-                          paragraphs: ['It meets buyers where they spend time, increases visibility, builds trust through repeated exposure, and allows for a more personalized, coordinated experience. Studies show multi‑channel campaigns generate up to 287% higher purchase rates.'],
-                        },
-                        {
-                          subtitle: '9.3 How many channels should I use?',
-                          paragraphs: ['Most successful teams start with email and LinkedIn, then add phone calls for high‑priority accounts and SMS for timely reminders. The exact number depends on your audience and resources.'],
-                        },
-                        {
-                          subtitle: '9.4 What is a good cadence for multi‑channel outreach?',
-                          paragraphs: ['A typical cadence spans 10–14 days with 6–10 well‑spaced touchpoints across 2–3 channels. Each touchpoint should have a distinct purpose, and you should adjust based on engagement signals.'],
-                        },
-                        {
-                          subtitle: '9.5 Can I automate multi‑channel outreach?',
-                          paragraphs: ['Yes, platforms like 360Airo allow you to automate sequences across email, LinkedIn, SMS, and more, while still enabling personalization and tracking. Automation helps maintain consistency and saves time.'],
-                        },
-                      ]}
-                    />
+                    <FaqAccordion faqs={FAQ_ITEMS} />
                   </div>
                 </section>
               </div>
@@ -1016,50 +1080,7 @@ export default function BlogMultiChannelOutreachPage() {
           </section>
 
           {/* Recent Posts */}
-          <section className="px-3 md:px-4 pb-4 md:pb-8">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex items-center justify-between mb-3 md:mb-4">
-                <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
-                <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                {[
-                  {
-                    title: '10 Cheapest Cold Email Software Tools for Startups & Agencies',
-                    tag: 'Cold Email',
-                    href: '/blogs/10-cheapest-cold-email-software',
-                    description: 'Discover affordable cold email tools for 2026.',
-                    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                  {
-                    title: 'What Are Email Warmup Tools and How Do They Work?',
-                    tag: 'Deliverability',
-                    href: '/blogs/email-warmup-tools-guide',
-                    description: 'Learn how warmup tools protect sender reputation.',
-                    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                  {
-                    title: 'Email vs SMS Outreach: Conversion Benchmarks',
-                    tag: 'Multichannel',
-                    href: '/blogs/email-vs-sms-outreach-conversion-benchmarks',
-                    description: 'Compare email and SMS for better conversions.',
-                    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                ].map((post) => (
-                  <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
-                    <div className="relative w-full aspect-[16/9] overflow-hidden">
-                      <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
-                    </div>
-                    <div className="p-3 md:p-5">
-                      <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
-                      <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
-                      <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
+          <RecentPosts />
         </main>
         <Footer />
       </div>

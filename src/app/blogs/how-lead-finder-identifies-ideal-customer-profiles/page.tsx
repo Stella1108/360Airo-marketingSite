@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import Head from 'next/head';
@@ -29,7 +29,7 @@ const tocItems: TocItem[] = [
   { id: 'faqs', label: '9. Frequently Asked Questions', arrow: true },
 ];
 
-function MiniInfographic({
+const MiniInfographic = memo(function MiniInfographic({
   title,
   paragraphs,
   bullets,
@@ -57,9 +57,9 @@ function MiniInfographic({
       ) : null}
     </div>
   );
-}
+});
 
-function ContentBlock({
+const ContentBlock = memo(function ContentBlock({
   subtitle,
   paragraphs,
 }: {
@@ -78,15 +78,14 @@ function ContentBlock({
       </div>
     </div>
   );
-}
+});
 
-function SectionImage({ id }: { id: string }) {
+const SectionImage = memo(function SectionImage() {
   const image = {
     src: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1400&q=80&fm=webp',
     alt: 'Lead finder identifying ideal customer profiles',
     label: 'Lead Finder',
   };
-  if (!image) return null;
 
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
@@ -95,9 +94,10 @@ function SectionImage({ id }: { id: string }) {
           src={image.src}
           alt={image.alt}
           fill
+          loading="lazy"
+          decoding="async"
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -106,9 +106,9 @@ function SectionImage({ id }: { id: string }) {
       </div>
     </div>
   );
-}
+});
 
-function ArticleSection({
+const ArticleSection = memo(function ArticleSection({
   id,
   title,
   intro,
@@ -144,32 +144,43 @@ function ArticleSection({
         {blocks.map((block) => (
           <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {showImage && <SectionImage id={id} />}
+        {showImage && <SectionImage />}
       </div>
     </section>
   );
-}
+});
 
 // --- FAQ Accordion Component ---
-function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[] }[] }) {
+const FaqAccordion = memo(function FaqAccordion({
+  faqs,
+}: {
+  faqs: { subtitle: string; paragraphs: string[] }[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const toggle = useCallback((index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  }, []);
 
   return (
     <div className="space-y-3 md:space-y-4">
       {faqs.map((faq, index) => {
         const isOpen = openIndex === index;
         return (
-          <div key={index} className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]">
+          <div
+            key={index}
+            className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]"
+          >
             <button
               onClick={() => toggle(index)}
+              aria-expanded={isOpen}
               className="w-full flex items-center justify-between px-4 py-3 md:px-6 md:py-4 text-left text-[15px] md:text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
             >
               <span>{faq.subtitle}</span>
-              <span className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+              <span
+                className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300"
+                style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              >
                 {isOpen ? '−' : '+'}
               </span>
             </button>
@@ -189,27 +200,14 @@ function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[]
       })}
     </div>
   );
-}
+});
 
-function RightPromoCards() {
+const RightPromoCards = memo(function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          Lead Finder
-          <br />
-          Best Practices
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4 pt-2">
+          Lead Finder Best Practices
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Discover how AI‑powered lead finder identifies ICP, enriches prospect data, and accelerates prospecting.
@@ -231,13 +229,13 @@ function RightPromoCards() {
       </div>
     </aside>
   );
-}
+});
 
 // --- Demo CTA Component ---
-function DemoCTA() {
+const DemoCTA = memo(function DemoCTA() {
   return (
     <div className="mt-8 rounded-[24px] bg-gradient-to-r from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] p-6 md:p-10 shadow-xl overflow-hidden relative text-center">
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/20"></div>
         <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-white/10"></div>
       </div>
@@ -257,13 +255,123 @@ function DemoCTA() {
       </div>
     </div>
   );
-}
+});
+
+// --- Hoisted static FAQ data ---
+const FAQ_ITEMS = [
+  {
+    subtitle: 'What is a Lead Finder?',
+    paragraphs: ['A Lead Finder is software that helps businesses discover and qualify potential customers based on specific business criteria such as industry, company size, revenue, and location.'],
+  },
+  {
+    subtitle: 'What is the best lead finder?',
+    paragraphs: ['The best Lead Finder combines AI‑powered prospecting, lead enrichment, ICP identification, sales intelligence, and CRM integration to help revenue teams identify qualified opportunities more efficiently.'],
+  },
+  {
+    subtitle: 'What is the best way to find leads?',
+    paragraphs: ['The most effective approach combines AI‑powered lead generation, firmographic filtering, lead enrichment, and sales intelligence to identify prospects that closely match your Ideal Customer Profile.'],
+  },
+  {
+    subtitle: 'How do I identify my ICP?',
+    paragraphs: ['Analyze your highest‑performing customers, identify shared characteristics, evaluate firmographic data, and continuously refine your profile using customer and campaign insights.'],
+  },
+  {
+    subtitle: 'What is an Ideal Customer Profile in sales?',
+    paragraphs: ['An Ideal Customer Profile is a detailed description of the type of company most likely to benefit from your solution and become a successful long‑term customer.'],
+  },
+  {
+    subtitle: 'What does ICP stand for?',
+    paragraphs: ['ICP stands for Ideal Customer Profile.'],
+  },
+  {
+    subtitle: 'How does a Lead Finder identify Ideal Customer Profiles?',
+    paragraphs: ['AI‑powered Lead Finder Software analyzes customer data, firmographic information, lead enrichment, engagement signals, and sales intelligence to identify organizations that closely match your Ideal Customer Profile.'],
+  },
+  {
+    subtitle: 'How do B2B lead generation tools work?',
+    paragraphs: ['B2B lead generation tools collect and organize company and contact data, apply filters, enrich prospect information, and help sales teams identify qualified opportunities.'],
+  },
+  {
+    subtitle: 'Can AI help find B2B leads?',
+    paragraphs: ['Yes. AI improves B2B lead generation by automating prospect discovery, enriching company profiles, identifying buying signals, and prioritizing leads that best match your ICP.'],
+  },
+  {
+    subtitle: 'What data is used for ICP identification?',
+    paragraphs: ['ICP identification typically uses firmographic data, company size, revenue, industry, technology stack, geographic location, customer behavior, engagement history, and sales intelligence.'],
+  },
+];
+
+// --- Hoisted static recent posts data ---
+const RECENT_POSTS = [
+  {
+    title: 'Competitors Offering Similar Unlimited Inbox Pricing Models',
+    tag: 'Pricing',
+    href: '/blogs/competitors-offering-unlimited-inbox-pricing',
+    description: 'Compare unlimited inbox pricing vs per-user, contact, and send‑based models.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'Why 360Airo Is the Best Outbound Email Campaign Platform',
+    tag: 'Outbound',
+    href: '/blogs/why-360airo-is-best-outbound-email-platform',
+    description: 'Discover why 360Airo is the best outbound email campaign platform.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'What Is Spam Filter Analysis? How It Works and Why It Matters for Email Deliverability',
+    tag: 'Deliverability',
+    href: '/blogs/what-is-spam-filter-analysis',
+    description: 'Learn how spam filter analysis helps you maximize inbox placement.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+];
+
+const RecentPosts = memo(function RecentPosts() {
+  return (
+    <section className="px-3 md:px-4 pb-4 md:pb-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
+          <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {RECENT_POSTS.map((post) => (
+            <a
+              key={post.href}
+              href={post.href}
+              className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow"
+            >
+              <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  loading="lazy"
+                  decoding="async"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                />
+              </div>
+              <div className="p-3 md:p-5">
+                <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
+                <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
 
 export default function BlogLeadFinderICPPage() {
   const [activeId, setActiveId] = useState('introduction');
+  const activeIdRef = useRef('introduction');
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
+  // PERF: rAF-throttled scroll + only update state when active section changes
   useEffect(() => {
     const handleScroll = () => {
       if (!ticking.current) {
@@ -280,7 +388,11 @@ export default function BlogLeadFinderICPPage() {
               currentSectionId = section.id;
             }
           }
-          setActiveId(currentSectionId);
+
+          if (currentSectionId !== activeIdRef.current) {
+            activeIdRef.current = currentSectionId;
+            setActiveId(currentSectionId);
+          }
           ticking.current = false;
         });
         ticking.current = true;
@@ -556,7 +668,7 @@ export default function BlogLeadFinderICPPage() {
                   initial={{ opacity: 0, x: -24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6 }}
-                  className="relative"
+                  className="relative transform-gpu"
                 >
                   <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
                     <Image
@@ -576,7 +688,7 @@ export default function BlogLeadFinderICPPage() {
                   initial={{ opacity: 0, x: 24 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.08 }}
-                  className="max-w-2xl"
+                  className="max-w-2xl transform-gpu"
                 >
                   <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">
                     Lead Generation
@@ -588,18 +700,8 @@ export default function BlogLeadFinderICPPage() {
                     Finding prospects isn't the difficult part anymore – finding the right prospects is. Learn how AI‑powered Lead Finder identifies Ideal Customer Profiles using firmographic data, sales intelligence, lead enrichment, and continuous ICP refinement.
                   </p>
 
-                  {/* Meta info */}
+                  {/* Meta info — broken 360Airo Team image removed */}
                   <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="/logonew.png"
-                        alt="360Airo Team"
-                        width={140}
-                        height={40}
-                        className="h-7 md:h-10 w-auto object-contain"
-                        priority={false}
-                      />
-                    </div>
                     <span>• 360AIRO Team</span>
                     <span>• Updated: Oct 2026</span>
                     <span>• 9 min read</span>
@@ -638,7 +740,11 @@ export default function BlogLeadFinderICPPage() {
                             : 'text-[#4b5563] hover:text-[#2f66db] hover:bg-white/70'
                         } ${item.indent ? 'ml-3' : ''}`}
                       >
-                        <span className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${isActive ? 'bg-[#4f63ff]' : 'bg-transparent'}`} />
+                        <span
+                          className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${
+                            isActive ? 'bg-[#4f63ff]' : 'bg-transparent'
+                          }`}
+                        />
                         <span className="flex items-start gap-1.5">
                           {item.arrow ? (
                             <span className={`mt-[1px] text-sm ${isActive ? 'text-[#2f66db]' : 'text-[#94a3b8]'}`}>›</span>
@@ -662,12 +768,12 @@ export default function BlogLeadFinderICPPage() {
                   showImage={false}
                   intro={[
                     "Finding prospects isn't the difficult part anymore.",
-                    "Finding the right prospects is.",
+                    'Finding the right prospects is.',
                     "Today's sales teams have access to millions of contacts, countless databases, and dozens of B2B lead generation tools. Yet many still struggle to consistently identify companies that are genuinely likely to buy.",
                     "The problem isn't a lack of data.",
                     "It's knowing which data matters.",
                     "That's where a modern Lead Finder changes the process.",
-                    "Instead of manually searching databases or relying on broad filters, AI-powered Lead Finder software helps revenue teams identify companies and decision-makers that closely match their Ideal Customer Profile (ICP). By combining sales intelligence, lead enrichment, firmographic data, and buying signals, it helps businesses generate qualified opportunities instead of large volumes of unqualified leads.",
+                    'Instead of manually searching databases or relying on broad filters, AI-powered Lead Finder software helps revenue teams identify companies and decision-makers that closely match their Ideal Customer Profile (ICP). By combining sales intelligence, lead enrichment, firmographic data, and buying signals, it helps businesses generate qualified opportunities instead of large volumes of unqualified leads.',
                     "Let's explore how Lead Finder identifies ideal customer profiles and why ICP-driven prospecting is becoming essential for modern B2B sales.",
                   ]}
                   infographic={{
@@ -689,10 +795,10 @@ export default function BlogLeadFinderICPPage() {
                   title="1. What Is a Lead Finder?"
                   showImage={false}
                   intro={[
-                    "A Lead Finder is software that helps sales and marketing teams discover potential customers based on specific business criteria.",
-                    "Instead of searching manually across multiple websites, spreadsheets, and databases, a Lead Finder centralizes prospect discovery and surfaces companies that match your sales objectives.",
-                    "Modern Lead Finder Software goes beyond providing names and email addresses. It combines sales intelligence, company insights, lead enrichment, and AI to help teams prioritize prospects with the highest likelihood of becoming customers.",
-                    "Whether your goal is to find B2B leads, expand into new industries, or build an outbound sales pipeline, Lead Finder simplifies the prospecting process.",
+                    'A Lead Finder is software that helps sales and marketing teams discover potential customers based on specific business criteria.',
+                    'Instead of searching manually across multiple websites, spreadsheets, and databases, a Lead Finder centralizes prospect discovery and surfaces companies that match your sales objectives.',
+                    'Modern Lead Finder Software goes beyond providing names and email addresses. It combines sales intelligence, company insights, lead enrichment, and AI to help teams prioritize prospects with the highest likelihood of becoming customers.',
+                    'Whether your goal is to find B2B leads, expand into new industries, or build an outbound sales pipeline, Lead Finder simplifies the prospecting process.',
                   ]}
                   infographic={{
                     title: 'What is a Lead Finder?',
@@ -709,7 +815,7 @@ export default function BlogLeadFinderICPPage() {
                       subtitle: 'Why traditional lead generation falls short',
                       paragraphs: [
                         'Traditional prospecting often begins with broad searches. Sales representatives filter companies by industry or location, export long lists of contacts, and manually determine whether each business is a good fit.',
-                        'This process is time‑consuming and inconsistent. Many prospects meet basic demographic requirements but still don\'t align with the organization\'s buying profile. The result? Sales teams spend more time researching than selling.',
+                        "This process is time‑consuming and inconsistent. Many prospects meet basic demographic requirements but still don't align with the organization's buying profile. The result? Sales teams spend more time researching than selling.",
                         'Modern B2B lead generation requires a more intelligent approach.',
                       ],
                     },
@@ -723,11 +829,11 @@ export default function BlogLeadFinderICPPage() {
                   showImage={true}
                   intro={[
                     "Before you can identify the right leads, you need to define what 'right' actually means.",
-                    "This is where the Ideal Customer Profile (ICP) comes in.",
-                    "An Ideal Customer Profile is a detailed description of the type of company most likely to benefit from your solution and become a successful long-term customer.",
-                    "Unlike a buyer persona, which focuses on individual decision-makers, an ICP focuses on the organization itself.",
-                    "It answers questions such as which industries benefit most from our product, what company size should we target, which regions do our best customers operate in, what technologies do they already use, and what business challenges do they typically face.",
-                    "These characteristics become the foundation for ICP Identification.",
+                    'This is where the Ideal Customer Profile (ICP) comes in.',
+                    'An Ideal Customer Profile is a detailed description of the type of company most likely to benefit from your solution and become a successful long-term customer.',
+                    'Unlike a buyer persona, which focuses on individual decision-makers, an ICP focuses on the organization itself.',
+                    'It answers questions such as which industries benefit most from our product, what company size should we target, which regions do our best customers operate in, what technologies do they already use, and what business challenges do they typically face.',
+                    'These characteristics become the foundation for ICP Identification.',
                   ]}
                   infographic={{
                     title: 'What is an ICP?',
@@ -757,8 +863,8 @@ export default function BlogLeadFinderICPPage() {
                   title="3. How Does Lead Finder Identify Ideal Customer Profiles?"
                   showImage={false}
                   intro={[
-                    "The strength of a modern Lead Finder lies in its ability to combine multiple data sources into one intelligent prospecting workflow.",
-                    "Rather than relying on a single filter, AI evaluates dozens of signals to determine whether a company aligns with your Ideal Customer Profile.",
+                    'The strength of a modern Lead Finder lies in its ability to combine multiple data sources into one intelligent prospecting workflow.',
+                    'Rather than relying on a single filter, AI evaluates dozens of signals to determine whether a company aligns with your Ideal Customer Profile.',
                   ]}
                   infographic={{
                     title: 'The ICP identification process',
@@ -782,15 +888,15 @@ export default function BlogLeadFinderICPPage() {
                     },
                     {
                       subtitle: 'Enrich prospect data',
-                      paragraphs: ['Company names and email addresses rarely provide enough information to prioritize leads effectively. That\'s why Lead Finder uses lead enrichment to add valuable business intelligence to every prospect. Enriched profiles may include decision‑maker information, job titles, verified contact details, technology usage, funding history, company growth indicators, and social profiles. This additional context helps sales representatives personalize outreach and improve lead qualification.'],
+                      paragraphs: ["Company names and email addresses rarely provide enough information to prioritize leads effectively. That's why Lead Finder uses lead enrichment to add valuable business intelligence to every prospect. Enriched profiles may include decision‑maker information, job titles, verified contact details, technology usage, funding history, company growth indicators, and social profiles. This additional context helps sales representatives personalize outreach and improve lead qualification."],
                     },
                     {
                       subtitle: 'Apply AI‑powered sales intelligence',
-                      paragraphs: ['Not every prospect meeting your ICP deserves immediate attention. Some organizations may actively be evaluating solutions, while others aren\'t currently in a buying cycle. AI‑powered sales intelligence helps prioritize prospects by analyzing intent signals, engagement data, and business activity. Instead of generating long lists of contacts, Lead Finder surfaces organizations that are more likely to engage with your outreach. This allows sales teams to spend less time searching for leads and more time building relationships with qualified buyers.'],
+                      paragraphs: ["Not every prospect meeting your ICP deserves immediate attention. Some organizations may actively be evaluating solutions, while others aren't currently in a buying cycle. AI‑powered sales intelligence helps prioritize prospects by analyzing intent signals, engagement data, and business activity. Instead of generating long lists of contacts, Lead Finder surfaces organizations that are more likely to engage with your outreach. This allows sales teams to spend less time searching for leads and more time building relationships with qualified buyers."],
                     },
                     {
                       subtitle: 'Continuously refine the Ideal Customer Profile',
-                      paragraphs: ['An ICP shouldn\'t remain static. Markets evolve. Customer needs change. New industries emerge. Modern Lead Finder Software continuously learns from campaign performance, closed deals, and customer engagement to refine the Ideal Customer Profile over time. As new patterns emerge, AI updates prospect recommendations automatically, helping sales teams stay aligned with changing market conditions instead of relying on outdated targeting assumptions.'],
+                      paragraphs: ["An ICP shouldn't remain static. Markets evolve. Customer needs change. New industries emerge. Modern Lead Finder Software continuously learns from campaign performance, closed deals, and customer engagement to refine the Ideal Customer Profile over time. As new patterns emerge, AI updates prospect recommendations automatically, helping sales teams stay aligned with changing market conditions instead of relying on outdated targeting assumptions."],
                     },
                   ]}
                 />
@@ -801,11 +907,11 @@ export default function BlogLeadFinderICPPage() {
                   title="4. How AI Improves B2B Lead Generation"
                   showImage={true}
                   intro={[
-                    "Traditional lead generation relies heavily on manual research.",
-                    "Sales representatives spend hours searching databases, verifying contact information, enriching company profiles, and determining whether prospects fit their Ideal Customer Profile.",
-                    "AI changes that process.",
-                    "Instead of manually evaluating thousands of companies, AI analyzes firmographic data, engagement signals, historical customer information, and buying patterns to identify prospects that closely match your ICP.",
-                    "The result is faster prospecting, better lead quality, and more efficient sales teams.",
+                    'Traditional lead generation relies heavily on manual research.',
+                    'Sales representatives spend hours searching databases, verifying contact information, enriching company profiles, and determining whether prospects fit their Ideal Customer Profile.',
+                    'AI changes that process.',
+                    'Instead of manually evaluating thousands of companies, AI analyzes firmographic data, engagement signals, historical customer information, and buying patterns to identify prospects that closely match your ICP.',
+                    'The result is faster prospecting, better lead quality, and more efficient sales teams.',
                   ]}
                   infographic={{
                     title: 'AI‑powered lead generation',
@@ -826,15 +932,15 @@ export default function BlogLeadFinderICPPage() {
                   title="5. Best Practices for Identifying Your Ideal Customer Profile"
                   showImage={false}
                   intro={[
-                    "Technology provides the foundation for smarter prospecting, but defining a strong ICP requires thoughtful planning.",
-                    "Here are several best practices that help organizations improve ICP Identification.",
+                    'Technology provides the foundation for smarter prospecting, but defining a strong ICP requires thoughtful planning.',
+                    'Here are several best practices that help organizations improve ICP Identification.',
                   ]}
                   infographic={{
                     title: 'ICP best practices',
                     paragraphs: ['A well‑defined ICP combines data, analysis, and continuous refinement.'],
                     bullets: [
-                      'Analyze Your Best Customers – identify patterns across revenue, retention, and expansion',
-                      'Combine Firmographic and Behavioral Data – understand who a company is and what they\'re doing',
+                      "Analyze Your Best Customers – identify patterns across revenue, retention, and expansion",
+                      "Combine Firmographic and Behavioral Data – understand who a company is and what they're doing",
                       'Continuously Update Your ICP – markets change, so should your profile',
                       'Prioritize Quality Over Quantity – a smaller list of highly qualified leads generates better results',
                     ],
@@ -848,12 +954,12 @@ export default function BlogLeadFinderICPPage() {
                   title="6. Why Revenue Teams Choose AI-Powered Lead Finder"
                   showImage={false}
                   intro={[
-                    "Revenue teams face increasing pressure to generate more pipeline with fewer resources.",
+                    'Revenue teams face increasing pressure to generate more pipeline with fewer resources.',
                     "Manual prospecting simply doesn't scale.",
-                    "AI-powered Lead Finder Software helps solve this challenge by combining prospect discovery, lead enrichment, ICP identification, and sales intelligence into one workflow.",
-                    "Instead of switching between multiple tools, sales teams gain a single platform that helps them find B2B leads faster, improve lead qualification, enrich customer profiles automatically, build stronger prospect databases, support Account‑Based Marketing initiatives, and generate more personalized outreach.",
-                    "By reducing administrative work and improving lead quality, AI enables sales representatives to spend more time building relationships and closing opportunities.",
-                    "The result is a more efficient outbound sales process and a healthier revenue pipeline.",
+                    'AI-powered Lead Finder Software helps solve this challenge by combining prospect discovery, lead enrichment, ICP identification, and sales intelligence into one workflow.',
+                    'Instead of switching between multiple tools, sales teams gain a single platform that helps them find B2B leads faster, improve lead qualification, enrich customer profiles automatically, build stronger prospect databases, support Account‑Based Marketing initiatives, and generate more personalized outreach.',
+                    'By reducing administrative work and improving lead quality, AI enables sales representatives to spend more time building relationships and closing opportunities.',
+                    'The result is a more efficient outbound sales process and a healthier revenue pipeline.',
                   ]}
                   infographic={{
                     title: 'Why teams choose AI Lead Finder',
@@ -876,16 +982,16 @@ export default function BlogLeadFinderICPPage() {
                   title="7. Find Better Leads With AI-Powered ICP Identification"
                   showImage={false}
                   intro={[
-                    "The success of outbound sales depends on targeting the right companies—not just finding more companies.",
-                    "A modern Lead Finder helps revenue teams move beyond manual prospecting by combining AI, sales intelligence, lead enrichment, and continuous ICP identification into one intelligent workflow.",
-                    "Instead of relying on static lead lists, organizations can identify businesses that closely resemble their highest-value customers, prioritize qualified accounts, and personalize outreach with greater confidence.",
-                    "As competition for buyer attention continues to increase, organizations that combine AI with data-driven prospecting will be better positioned to generate qualified pipeline, improve sales productivity, and accelerate revenue growth.",
+                    'The success of outbound sales depends on targeting the right companies—not just finding more companies.',
+                    'A modern Lead Finder helps revenue teams move beyond manual prospecting by combining AI, sales intelligence, lead enrichment, and continuous ICP identification into one intelligent workflow.',
+                    'Instead of relying on static lead lists, organizations can identify businesses that closely resemble their highest-value customers, prioritize qualified accounts, and personalize outreach with greater confidence.',
+                    'As competition for buyer attention continues to increase, organizations that combine AI with data-driven prospecting will be better positioned to generate qualified pipeline, improve sales productivity, and accelerate revenue growth.',
                   ]}
                   infographic={{
                     title: '360Airo',
                     paragraphs: [
-                      '360Airo\'s AI‑powered Lead Finder helps revenue teams identify qualified B2B leads, enrich prospect data, and continuously refine ICP – all from one platform.',
-                      'Whether you\'re building your first prospect list or scaling enterprise outbound, 360Airo gives you the intelligence to find better‑fit customers faster.',
+                      "360Airo's AI‑powered Lead Finder helps revenue teams identify qualified B2B leads, enrich prospect data, and continuously refine ICP – all from one platform.",
+                      "Whether you're building your first prospect list or scaling enterprise outbound, 360Airo gives you the intelligence to find better‑fit customers faster.",
                     ],
                   }}
                   blocks={[]}
@@ -909,7 +1015,7 @@ export default function BlogLeadFinderICPPage() {
                     <MiniInfographic
                       title="Start finding better-fit customers"
                       paragraphs={[
-                        'Discover how 360Airo\'s AI-powered Lead Finder helps you identify qualified B2B leads, accelerate prospecting, and build a stronger revenue pipeline.',
+                        "Discover how 360Airo's AI-powered Lead Finder helps you identify qualified B2B leads, accelerate prospecting, and build a stronger revenue pipeline.",
                       ]}
                     />
                   </div>
@@ -925,50 +1031,7 @@ export default function BlogLeadFinderICPPage() {
                       title="Quick answers"
                       paragraphs={['Common questions about Lead Finder, ICP identification, and B2B lead generation.']}
                     />
-                    <FaqAccordion
-                      faqs={[
-                        {
-                          subtitle: 'What is a Lead Finder?',
-                          paragraphs: ['A Lead Finder is software that helps businesses discover and qualify potential customers based on specific business criteria such as industry, company size, revenue, and location.'],
-                        },
-                        {
-                          subtitle: 'What is the best lead finder?',
-                          paragraphs: ['The best Lead Finder combines AI‑powered prospecting, lead enrichment, ICP identification, sales intelligence, and CRM integration to help revenue teams identify qualified opportunities more efficiently.'],
-                        },
-                        {
-                          subtitle: 'What is the best way to find leads?',
-                          paragraphs: ['The most effective approach combines AI‑powered lead generation, firmographic filtering, lead enrichment, and sales intelligence to identify prospects that closely match your Ideal Customer Profile.'],
-                        },
-                        {
-                          subtitle: 'How do I identify my ICP?',
-                          paragraphs: ['Analyze your highest‑performing customers, identify shared characteristics, evaluate firmographic data, and continuously refine your profile using customer and campaign insights.'],
-                        },
-                        {
-                          subtitle: 'What is an Ideal Customer Profile in sales?',
-                          paragraphs: ['An Ideal Customer Profile is a detailed description of the type of company most likely to benefit from your solution and become a successful long‑term customer.'],
-                        },
-                        {
-                          subtitle: 'What does ICP stand for?',
-                          paragraphs: ['ICP stands for Ideal Customer Profile.'],
-                        },
-                        {
-                          subtitle: 'How does a Lead Finder identify Ideal Customer Profiles?',
-                          paragraphs: ['AI‑powered Lead Finder Software analyzes customer data, firmographic information, lead enrichment, engagement signals, and sales intelligence to identify organizations that closely match your Ideal Customer Profile.'],
-                        },
-                        {
-                          subtitle: 'How do B2B lead generation tools work?',
-                          paragraphs: ['B2B lead generation tools collect and organize company and contact data, apply filters, enrich prospect information, and help sales teams identify qualified opportunities.'],
-                        },
-                        {
-                          subtitle: 'Can AI help find B2B leads?',
-                          paragraphs: ['Yes. AI improves B2B lead generation by automating prospect discovery, enriching company profiles, identifying buying signals, and prioritizing leads that best match your ICP.'],
-                        },
-                        {
-                          subtitle: 'What data is used for ICP identification?',
-                          paragraphs: ['ICP identification typically uses firmographic data, company size, revenue, industry, technology stack, geographic location, customer behavior, engagement history, and sales intelligence.'],
-                        },
-                      ]}
-                    />
+                    <FaqAccordion faqs={FAQ_ITEMS} />
                   </div>
                 </section>
 
@@ -981,50 +1044,7 @@ export default function BlogLeadFinderICPPage() {
           </section>
 
           {/* Recent Posts */}
-          <section className="px-3 md:px-4 pb-4 md:pb-8">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex items-center justify-between mb-3 md:mb-4">
-                <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
-                <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                {[
-                  {
-                    title: 'Competitors Offering Similar Unlimited Inbox Pricing Models',
-                    tag: 'Pricing',
-                    href: '/blogs/competitors-offering-unlimited-inbox-pricing',
-                    description: 'Compare unlimited inbox pricing vs per-user, contact, and send‑based models.',
-                    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                  {
-                    title: 'Why 360Airo Is the Best Outbound Email Campaign Platform',
-                    tag: 'Outbound',
-                    href: '/blogs/why-360airo-is-best-outbound-email-platform',
-                    description: 'Discover why 360Airo is the best outbound email campaign platform.',
-                    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                  {
-                    title: 'What Is Spam Filter Analysis? How It Works and Why It Matters for Email Deliverability',
-                    tag: 'Deliverability',
-                    href: '/blogs/what-is-spam-filter-analysis',
-                    description: 'Learn how spam filter analysis helps you maximize inbox placement.',
-                    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                  },
-                ].map((post) => (
-                  <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
-                    <div className="relative w-full aspect-[16/9] overflow-hidden">
-                      <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
-                    </div>
-                    <div className="p-3 md:p-5">
-                      <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
-                      <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
-                      <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </section>
+          <RecentPosts />
         </main>
         <Footer />
       </div>

@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import '../../../styles/blogs.css';
@@ -29,7 +29,7 @@ const tocItems: TocItem[] = [
   { id: 'conclusion', label: 'Turn More Opens Into Replies', arrow: true },
 ];
 
-function MiniInfographic({
+const MiniInfographic = memo(function MiniInfographic({
   title,
   paragraphs,
   bullets,
@@ -57,9 +57,9 @@ function MiniInfographic({
       ) : null}
     </div>
   );
-}
+});
 
-function ContentBlock({
+const ContentBlock = memo(function ContentBlock({
   subtitle,
   paragraphs,
 }: {
@@ -78,15 +78,14 @@ function ContentBlock({
       </div>
     </div>
   );
-}
+});
 
-function SectionImage({ id }: { id: string }) {
+const SectionImage = memo(function SectionImage() {
   const image = {
     src: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1400&q=80&fm=webp',
     alt: 'Cold email reply rate strategies',
     label: 'Cold Email',
   };
-  if (!image) return null;
 
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
@@ -95,9 +94,10 @@ function SectionImage({ id }: { id: string }) {
           src={image.src}
           alt={image.alt}
           fill
+          loading="lazy"
+          decoding="async"
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -106,9 +106,9 @@ function SectionImage({ id }: { id: string }) {
       </div>
     </div>
   );
-}
+});
 
-function ArticleSection({
+const ArticleSection = memo(function ArticleSection({
   id,
   title,
   intro,
@@ -144,32 +144,43 @@ function ArticleSection({
         {blocks.map((block) => (
           <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {showImage && <SectionImage id={id} />}
+        {showImage && <SectionImage />}
       </div>
     </section>
   );
-}
+});
 
 // --- FAQ Accordion Component ---
-function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[] }[] }) {
+const FaqAccordion = memo(function FaqAccordion({
+  faqs,
+}: {
+  faqs: { subtitle: string; paragraphs: string[] }[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const toggle = useCallback((index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  }, []);
 
   return (
     <div className="space-y-3 md:space-y-4">
       {faqs.map((faq, index) => {
         const isOpen = openIndex === index;
         return (
-          <div key={index} className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]">
+          <div
+            key={index}
+            className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]"
+          >
             <button
               onClick={() => toggle(index)}
+              aria-expanded={isOpen}
               className="w-full flex items-center justify-between px-4 py-3 md:px-6 md:py-4 text-left text-[15px] md:text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
             >
               <span>{faq.subtitle}</span>
-              <span className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+              <span
+                className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300"
+                style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              >
                 {isOpen ? '−' : '+'}
               </span>
             </button>
@@ -189,27 +200,14 @@ function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[]
       })}
     </div>
   );
-}
+});
 
-function RightPromoCards() {
+const RightPromoCards = memo(function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          Reply Rate
-          <br />
-          Best Practices
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4 pt-2">
+          Reply Rate Best Practices
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Learn 7 proven strategies to improve cold email reply rates and generate more conversations.
@@ -231,10 +229,17 @@ function RightPromoCards() {
       </div>
     </aside>
   );
-}
+});
 
 // --- Follow-Up Sequence Table Component ---
-function FollowUpSequenceTable() {
+const FOLLOW_UP_ROWS = [
+  { day: 'Day 1', touchpoint: 'Initial email' },
+  { day: 'Day 3', touchpoint: 'Follow‑up with an additional insight' },
+  { day: 'Day 6', touchpoint: 'Share a relevant case study or resource' },
+  { day: 'Day 9', touchpoint: 'Final follow‑up with a simple CTA' },
+];
+
+const FollowUpSequenceTable = memo(function FollowUpSequenceTable() {
   return (
     <div className="my-6 md:my-8 overflow-x-auto rounded-[16px] border border-[#dbe3f4] bg-white shadow-sm">
       <table className="w-full text-left text-sm md:text-base">
@@ -245,33 +250,23 @@ function FollowUpSequenceTable() {
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b border-[#f0f2f8]">
-            <td className="px-4 py-3 md:px-6 md:py-4 font-medium text-[#111827]">Day 1</td>
-            <td className="px-4 py-3 md:px-6 md:py-4 text-[#4f5668]">Initial email</td>
-          </tr>
-          <tr className="border-b border-[#f0f2f8]">
-            <td className="px-4 py-3 md:px-6 md:py-4 font-medium text-[#111827]">Day 3</td>
-            <td className="px-4 py-3 md:px-6 md:py-4 text-[#4f5668]">Follow‑up with an additional insight</td>
-          </tr>
-          <tr className="border-b border-[#f0f2f8]">
-            <td className="px-4 py-3 md:px-6 md:py-4 font-medium text-[#111827]">Day 6</td>
-            <td className="px-4 py-3 md:px-6 md:py-4 text-[#4f5668]">Share a relevant case study or resource</td>
-          </tr>
-          <tr>
-            <td className="px-4 py-3 md:px-6 md:py-4 font-medium text-[#111827]">Day 9</td>
-            <td className="px-4 py-3 md:px-6 md:py-4 text-[#4f5668]">Final follow‑up with a simple CTA</td>
-          </tr>
+          {FOLLOW_UP_ROWS.map((row, idx) => (
+            <tr key={idx} className="border-b border-[#f0f2f8] last:border-b-0">
+              <td className="px-4 py-3 md:px-6 md:py-4 font-medium text-[#111827]" data-label="Day">{row.day}</td>
+              <td className="px-4 py-3 md:px-6 md:py-4 text-[#4f5668]" data-label="Touchpoint">{row.touchpoint}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
   );
-}
+});
 
 // --- Demo CTA Component ---
-function DemoCTA() {
+const DemoCTA = memo(function DemoCTA() {
   return (
     <div className="mt-8 rounded-[24px] bg-gradient-to-r from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] p-6 md:p-10 shadow-xl overflow-hidden relative text-center">
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/20"></div>
         <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-white/10"></div>
       </div>
@@ -291,16 +286,104 @@ function DemoCTA() {
       </div>
     </div>
   );
-}
+});
+
+// --- Hoisted static FAQ data ---
+const FAQ_ITEMS = [
+  {
+    subtitle: 'What is a good cold email reply rate?',
+    paragraphs: ['A good cold email reply rate typically ranges from 1% to 5%. The top 10% of campaigns achieve reply rates above 9%.'],
+  },
+  {
+    subtitle: 'Why are my cold emails opened but not replied to?',
+    paragraphs: ['If your emails are opened but not replied to, your subject line is working, but your message may not be compelling enough. Focus on personalization, value proposition, and a clear call-to-action.'],
+  },
+  {
+    subtitle: 'How many follow-ups should I send?',
+    paragraphs: ['Research shows that 3–5 touchpoints generate nearly 80% of all replies. A sequence of 4 emails over 9 days is a good starting point.'],
+  },
+  {
+    subtitle: 'Should I personalize every cold email?',
+    paragraphs: ['Yes. Personalization beyond the first name significantly improves reply rates. Reference company news, recent activity, or specific business challenges.'],
+  },
+  {
+    subtitle: 'How long should a cold email be?',
+    paragraphs: ['Keep your cold email under 125 words, or about 30 seconds of reading time. Focus on one problem, one value proposition, and one call-to-action.'],
+  },
+];
+
+// --- Hoisted static recent posts data ---
+const RECENT_POSTS = [
+  {
+    title: 'How to Build Your First Cold Email Campaign: A Step‑by‑Step Guide',
+    tag: 'Cold Email',
+    href: '/blogs/how-to-build-first-cold-email-campaign',
+    description: 'Build your first cold email campaign that actually gets replies.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'How Does Email Deliverability Work? A Step‑by‑Step Guide',
+    tag: 'Deliverability',
+    href: '/blogs/how-email-deliverability-works',
+    description: 'Learn how email deliverability works and how to keep your messages out of spam.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: "Email Delivery vs Email Deliverability: What's the Difference?",
+    tag: 'Deliverability',
+    href: '/blogs/email-delivery-vs-deliverability',
+    description: 'Learn the critical difference between delivery and inbox placement.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+];
+
+const RecentPosts = memo(function RecentPosts() {
+  return (
+    <section className="px-3 md:px-4 pb-4 md:pb-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
+          <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {RECENT_POSTS.map((post) => (
+            <a
+              key={post.href}
+              href={post.href}
+              className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow"
+            >
+              <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  loading="lazy"
+                  decoding="async"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                />
+              </div>
+              <div className="p-3 md:p-5">
+                <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
+                <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
 
 export default function BlogHowToImproveColdEmailReplyRatesPage() {
   const [activeId, setActiveId] = useState('introduction');
-  const [searchQuery, setSearchQuery] = useState('');
-  const categoryScrollRef = useRef<HTMLDivElement | null>(null);
+  const activeIdRef = useRef('introduction');
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
   // INP FIX: Throttle scroll handler with requestAnimationFrame
+  // PERF: Only update state when active section actually changes
   useEffect(() => {
     const handleScroll = () => {
       if (!ticking.current) {
@@ -317,7 +400,11 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
               currentSectionId = section.id;
             }
           }
-          setActiveId(currentSectionId);
+
+          if (currentSectionId !== activeIdRef.current) {
+            activeIdRef.current = currentSectionId;
+            setActiveId(currentSectionId);
+          }
           ticking.current = false;
         });
         ticking.current = true;
@@ -398,7 +485,7 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                 initial={{ opacity: 0, x: -24 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
-                className="relative"
+                className="relative transform-gpu"
               >
                 <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
                   <Image
@@ -418,7 +505,7 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                 initial={{ opacity: 0, x: 24 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.08 }}
-                className="max-w-2xl"
+                className="max-w-2xl transform-gpu"
               >
                 <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">
                   Cold Email Guide
@@ -430,18 +517,8 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                   You spent hours building a prospect list. The opens start coming in – but the replies never follow. Learn 7 proven strategies to turn more opens into meaningful conversations.
                 </p>
 
-                {/* Meta info */}
+                {/* Meta info — broken 360Airo Team image removed */}
                 <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src="/logonew.png"
-                      alt="360Airo Team"
-                      width={140}
-                      height={40}
-                      className="h-7 md:h-10 w-auto object-contain"
-                      priority={false}
-                    />
-                  </div>
                   <span>• 360AIRO Team</span>
                   <span>• Updated: Sep 2026</span>
                   <span>• 10 min read</span>
@@ -480,7 +557,11 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                           : 'text-[#4b5563] hover:text-[#2f66db] hover:bg-white/70'
                       } ${item.indent ? 'ml-3' : ''}`}
                     >
-                      <span className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${isActive ? 'bg-[#4f63ff]' : 'bg-transparent'}`} />
+                      <span
+                        className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${
+                          isActive ? 'bg-[#4f63ff]' : 'bg-transparent'
+                        }`}
+                      />
                       <span className="flex items-start gap-1.5">
                         {item.arrow ? (
                           <span className={`mt-[1px] text-sm ${isActive ? 'text-[#2f66db]' : 'text-[#94a3b8]'}`}>›</span>
@@ -508,9 +589,9 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                   'The opens start coming in.',
                   'But the replies never follow.',
                   "It's one of the most frustrating situations in outbound sales. High open rates may indicate your subject line worked—but reply rate is what determines whether your campaign actually generates opportunities.",
-                  'The average cold email response rate typically falls between 1% and 5%, yet the top 10% of campaigns consistently achieve reply rates above 9%. The difference isn\'t luck. It\'s the strategy.',
+                  "The average cold email response rate typically falls between 1% and 5%, yet the top 10% of campaigns consistently achieve reply rates above 9%. The difference isn't luck. It's the strategy.",
                   'Another important insight? Emails with at least one follow-up receive 66% more replies than those that stop after the first message.',
-                  'The encouraging news is that improving reply rates doesn\'t require sending more emails. It requires sending better ones.',
+                  "The encouraging news is that improving reply rates doesn't require sending more emails. It requires sending better ones.",
                   "In this guide, you'll learn seven practical ways to improve cold email reply rates, backed by proven cold email best practices that help turn more prospects into conversations.",
                 ]}
                 infographic={{
@@ -526,7 +607,7 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                 title="1. What Is a Cold Email Reply Rate?"
                 showImage={false}
                 intro={[
-                  'Before improving it, it\'s important to understand what it measures.',
+                  "Before improving it, it's important to understand what it measures.",
                   'Reply rate is the percentage of recipients who respond to your cold email.',
                   'The formula is simple:',
                   'Reply Rate = (Total Replies ÷ Total Emails Delivered) × 100',
@@ -554,9 +635,9 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                 ]}
                 infographic={{
                   title: 'Bad vs. Good Example',
-                  paragraphs: ['Talk about the prospect\'s business before talking about your own.'],
+                  paragraphs: ["Talk about the prospect's business before talking about your own."],
                   bullets: [
-                    '❌ BAD: "We\'re an AI-powered sales automation platform..."',
+                    "❌ BAD: \"We're an AI-powered sales automation platform...\"",
                     '✅ GOOD: "Many growing sales teams struggle to personalize outreach while maintaining consistent follow-ups..."',
                   ],
                 }}
@@ -571,7 +652,7 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                 intro={[
                   'Long emails rarely improve reply rates.',
                   'In fact, they often do the opposite.',
-                  'Decision-makers scan emails quickly. If your message looks like a wall of text, most recipients won\'t read it.',
+                  "Decision-makers scan emails quickly. If your message looks like a wall of text, most recipients won't read it.",
                   'Aim for:',
                 ]}
                 infographic={{
@@ -598,9 +679,9 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                 title="4. Personalize Beyond the First Name"
                 showImage={false}
                 intro={[
-                  'Adding {{First Name}} isn\'t real personalization.',
+                  "Adding {{First Name}} isn't real personalization.",
                   "It's expected.",
-                  'True personalization demonstrates that you\'ve invested time understanding the prospect\'s business.',
+                  "True personalization demonstrates that you've invested time understanding the prospect's business.",
                   'Mention something meaningful, such as:',
                 ]}
                 infographic={{
@@ -618,7 +699,7 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                 blocks={[
                   {
                     subtitle: 'Real personalization in action',
-                    paragraphs: ['Imagine receiving two emails. One begins with your first name. The other references your company\'s recent expansion into a new market. Which one feels more relevant? Exactly.'],
+                    paragraphs: ["Imagine receiving two emails. One begins with your first name. The other references your company's recent expansion into a new market. Which one feels more relevant? Exactly."],
                   },
                 ]}
               />
@@ -701,7 +782,7 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                 intro={[
                   "The highest-performing outbound teams don't rely on intuition.",
                   'They rely on data.',
-                  'Every campaign provides insights into what\'s working—and what isn\'t.',
+                  "Every campaign provides insights into what's working—and what isn't.",
                   'Rather than launching one campaign and hoping for better results next time, review your performance regularly.',
                 ]}
                 infographic={{
@@ -719,7 +800,7 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                 blocks={[
                   {
                     subtitle: 'Optimize systematically',
-                    paragraphs: ['If reply rates are low but open rates are high, your subject line is probably working—but your message isn\'t compelling enough. If both metrics are low, you may have deliverability or targeting issues. When testing improvements, change one variable at a time. Great cold email campaigns aren\'t written once—they\'re continuously optimized.'],
+                    paragraphs: ["If reply rates are low but open rates are high, your subject line is probably working—but your message isn't compelling enough. If both metrics are low, you may have deliverability or targeting issues. When testing improvements, change one variable at a time. Great cold email campaigns aren't written once—they're continuously optimized."],
                   },
                 ]}
               />
@@ -737,9 +818,9 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                   paragraphs: ['These simple best practices can dramatically improve your response rates over time.'],
                   bullets: [
                     '✔ Target the right prospects.',
-                    '✔ Personalize beyond the recipient\'s name.',
+                    "✔ Personalize beyond the recipient's name.",
                     '✔ Keep emails under 125 words.',
-                    '✔ Focus on the buyer\'s challenge, not your product.',
+                    "✔ Focus on the buyer's challenge, not your product.",
                     '✔ Include one clear call-to-action.',
                     '✔ Follow up consistently with additional value.',
                     '✔ Measure performance and optimize continuously.',
@@ -758,30 +839,7 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                     title="Quick answers"
                     paragraphs={['Common questions about improving cold email reply rates.']}
                   />
-                  <FaqAccordion
-                    faqs={[
-                      {
-                        subtitle: 'What is a good cold email reply rate?',
-                        paragraphs: ['A good cold email reply rate typically ranges from 1% to 5%. The top 10% of campaigns achieve reply rates above 9%.'],
-                      },
-                      {
-                        subtitle: 'Why are my cold emails opened but not replied to?',
-                        paragraphs: ['If your emails are opened but not replied to, your subject line is working, but your message may not be compelling enough. Focus on personalization, value proposition, and a clear call-to-action.'],
-                      },
-                      {
-                        subtitle: 'How many follow-ups should I send?',
-                        paragraphs: ['Research shows that 3–5 touchpoints generate nearly 80% of all replies. A sequence of 4 emails over 9 days is a good starting point.'],
-                      },
-                      {
-                        subtitle: 'Should I personalize every cold email?',
-                        paragraphs: ['Yes. Personalization beyond the first name significantly improves reply rates. Reference company news, recent activity, or specific business challenges.'],
-                      },
-                      {
-                        subtitle: 'How long should a cold email be?',
-                        paragraphs: ['Keep your cold email under 125 words, or about 30 seconds of reading time. Focus on one problem, one value proposition, and one call-to-action.'],
-                      },
-                    ]}
-                  />
+                  <FaqAccordion faqs={FAQ_ITEMS} />
                 </div>
               </section>
 
@@ -792,12 +850,12 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
                 showImage={false}
                 intro={[
                   'A high open rate might feel encouraging.',
-                  'But opens don\'t create revenue.',
+                  "But opens don't create revenue.",
                   'Replies do.',
-                  'The difference between an average campaign and an exceptional one usually isn\'t a completely different strategy—it\'s better execution.',
+                  "The difference between an average campaign and an exceptional one usually isn't a completely different strategy—it's better execution.",
                   'The best-performing outreach campaigns focus on relevance instead of volume, conversations instead of pitches, and continuous improvement instead of guesswork.',
-                  'Whether you\'re writing your first cold email or optimizing an existing outbound program, small improvements in personalization, follow-up, messaging, and targeting can significantly increase your reply rates.',
-                  'Remember, the goal isn\'t simply to send more emails.',
+                  "Whether you're writing your first cold email or optimizing an existing outbound program, small improvements in personalization, follow-up, messaging, and targeting can significantly increase your reply rates.",
+                  "Remember, the goal isn't simply to send more emails.",
                   "It's to start more meaningful conversations.",
                 ]}
                 infographic={{
@@ -819,50 +877,7 @@ export default function BlogHowToImproveColdEmailReplyRatesPage() {
         </section>
 
         {/* Recent Posts */}
-        <section className="px-3 md:px-4 pb-4 md:pb-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-3 md:mb-4">
-              <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
-              <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-              {[
-                {
-                  title: 'How to Build Your First Cold Email Campaign: A Step‑by‑Step Guide',
-                  tag: 'Cold Email',
-                  href: '/blogs/how-to-build-first-cold-email-campaign',
-                  description: 'Build your first cold email campaign that actually gets replies.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-                {
-                  title: 'How Does Email Deliverability Work? A Step‑by‑Step Guide',
-                  tag: 'Deliverability',
-                  href: '/blogs/how-email-deliverability-works',
-                  description: 'Learn how email deliverability works and how to keep your messages out of spam.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-                {
-                  title: 'Email Delivery vs Email Deliverability: What\'s the Difference?',
-                  tag: 'Deliverability',
-                  href: '/blogs/email-delivery-vs-deliverability',
-                  description: 'Learn the critical difference between delivery and inbox placement.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-              ].map((post) => (
-                <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
-                  <div className="relative w-full aspect-[16/9] overflow-hidden">
-                    <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
-                  </div>
-                  <div className="p-3 md:p-5">
-                    <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
-                    <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
-                    <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
+        <RecentPosts />
       </main>
       <Footer />
     </div>

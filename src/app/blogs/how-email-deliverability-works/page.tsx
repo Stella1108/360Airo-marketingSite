@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import '../../../styles/blogs.css';
@@ -33,7 +33,7 @@ const tocItems: TocItem[] = [
   { id: 'conclusion', label: '13. Deliverability Is the Foundation of Every Successful Email Campaign', arrow: true },
 ];
 
-function MiniInfographic({
+const MiniInfographic = memo(function MiniInfographic({
   title,
   paragraphs,
   bullets,
@@ -61,9 +61,9 @@ function MiniInfographic({
       ) : null}
     </div>
   );
-}
+});
 
-function ContentBlock({
+const ContentBlock = memo(function ContentBlock({
   subtitle,
   paragraphs,
 }: {
@@ -82,15 +82,14 @@ function ContentBlock({
       </div>
     </div>
   );
-}
+});
 
-function SectionImage({ id }: { id: string }) {
+const SectionImage = memo(function SectionImage() {
   const image = {
     src: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1400&q=80&fm=webp',
     alt: 'Email deliverability process illustration',
     label: 'Deliverability',
   };
-  if (!image) return null;
 
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
@@ -99,9 +98,10 @@ function SectionImage({ id }: { id: string }) {
           src={image.src}
           alt={image.alt}
           fill
+          loading="lazy"
+          decoding="async"
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -110,9 +110,9 @@ function SectionImage({ id }: { id: string }) {
       </div>
     </div>
   );
-}
+});
 
-function ArticleSection({
+const ArticleSection = memo(function ArticleSection({
   id,
   title,
   intro,
@@ -148,32 +148,43 @@ function ArticleSection({
         {blocks.map((block) => (
           <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {showImage && <SectionImage id={id} />}
+        {showImage && <SectionImage />}
       </div>
     </section>
   );
-}
+});
 
 // --- FAQ Accordion Component ---
-function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[] }[] }) {
+const FaqAccordion = memo(function FaqAccordion({
+  faqs,
+}: {
+  faqs: { subtitle: string; paragraphs: string[] }[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const toggle = useCallback((index: number) => {
+    setOpenIndex((prev) => (prev === index ? null : index));
+  }, []);
 
   return (
     <div className="space-y-3 md:space-y-4">
       {faqs.map((faq, index) => {
         const isOpen = openIndex === index;
         return (
-          <div key={index} className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]">
+          <div
+            key={index}
+            className="border border-[#dbe3f4] rounded-[16px] bg-white overflow-hidden shadow-[0_4px_12px_rgba(17,24,39,0.04)]"
+          >
             <button
               onClick={() => toggle(index)}
+              aria-expanded={isOpen}
               className="w-full flex items-center justify-between px-4 py-3 md:px-6 md:py-4 text-left text-[15px] md:text-[17px] font-semibold text-[#111827] hover:bg-[#f8f9ff] transition-colors duration-200"
             >
               <span>{faq.subtitle}</span>
-              <span className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+              <span
+                className="text-[#4f63ff] text-xl md:text-2xl leading-none ml-4 transition-transform duration-300"
+                style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              >
                 {isOpen ? '−' : '+'}
               </span>
             </button>
@@ -193,27 +204,14 @@ function FaqAccordion({ faqs }: { faqs: { subtitle: string; paragraphs: string[]
       })}
     </div>
   );
-}
+});
 
-function RightPromoCards() {
+const RightPromoCards = memo(function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          Deliverability
-          <br />
-          Step‑by‑Step
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4 pt-2">
+          Deliverability Step‑by‑Step
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Learn how email deliverability works and how to keep your messages out of spam.
@@ -235,13 +233,13 @@ function RightPromoCards() {
       </div>
     </aside>
   );
-}
+});
 
 // --- Demo CTA Component ---
-function DemoCTA() {
+const DemoCTA = memo(function DemoCTA() {
   return (
     <div className="mt-8 rounded-[24px] bg-gradient-to-r from-[#0a3f7a] via-[#0b5ca8] to-[#36a7e8] p-6 md:p-10 shadow-xl overflow-hidden relative text-center">
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/20"></div>
         <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-white/10"></div>
       </div>
@@ -261,15 +259,103 @@ function DemoCTA() {
       </div>
     </div>
   );
-}
+});
+
+// --- Hoisted static FAQ data ---
+const FAQ_ITEMS = [
+  {
+    subtitle: '1. What is email deliverability?',
+    paragraphs: ["Email deliverability is the ability of an email to successfully reach a recipient's inbox instead of being blocked or filtered into spam."],
+  },
+  {
+    subtitle: '2. What is inbox placement?',
+    paragraphs: ['Inbox placement measures where your email lands after being accepted by the receiving mail server. A higher inbox placement rate means more emails reach the primary inbox.'],
+  },
+  {
+    subtitle: '3. Why is email reputation important?',
+    paragraphs: ["Email reputation helps mailbox providers determine whether you're a trustworthy sender. A strong reputation improves inbox placement, while a poor reputation increases the likelihood of spam filtering."],
+  },
+  {
+    subtitle: '4. What affects email deliverability?',
+    paragraphs: ['Several factors influence deliverability, including sender reputation, domain reputation, authentication (SPF, DKIM, DMARC), email list quality, bounce rates, spam complaints, recipient engagement, and sending consistency.'],
+  },
+  {
+    subtitle: '5. How can I improve email deliverability?',
+    paragraphs: ['You can improve deliverability by authenticating your domain, warming up new email accounts, verifying email addresses, sending personalized relevant emails, monitoring sender reputation, and maintaining consistent sending behavior.'],
+  },
+];
+
+// --- Hoisted static recent posts data ---
+const RECENT_POSTS = [
+  {
+    title: "Email Delivery vs Email Deliverability: What's the Difference?",
+    tag: 'Deliverability',
+    href: '/blogs/email-delivery-vs-deliverability',
+    description: 'Learn the critical difference between delivery and inbox placement.',
+    image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'Why Your Cold Emails Go to Spam (And How to Keep Them Out)',
+    tag: 'Deliverability',
+    href: '/blogs/why-cold-emails-go-to-spam',
+    description: 'Understand why spam filters block your emails and how to fix it.',
+    image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+  {
+    title: 'Best Practices to Keep Email Bounce Rates Below the 3% Target',
+    tag: 'Bounce Rate',
+    href: '/blogs/best-practices-email-bounce-rates',
+    description: 'Keep bounce rates low with verified data and proper authentication.',
+    image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80&fm=webp',
+  },
+];
+
+const RecentPosts = memo(function RecentPosts() {
+  return (
+    <section className="px-3 md:px-4 pb-4 md:pb-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
+          <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          {RECENT_POSTS.map((post) => (
+            <a
+              key={post.href}
+              href={post.href}
+              className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow"
+            >
+              <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  loading="lazy"
+                  decoding="async"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                />
+              </div>
+              <div className="p-3 md:p-5">
+                <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
+                <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
 
 export default function BlogHowEmailDeliverabilityWorksPage() {
   const [activeId, setActiveId] = useState('introduction');
-  const [searchQuery, setSearchQuery] = useState('');
-  const categoryScrollRef = useRef<HTMLDivElement | null>(null);
+  const activeIdRef = useRef('introduction');
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
+  // PERF: rAF-throttled scroll + only update state when active section changes
   useEffect(() => {
     const handleScroll = () => {
       if (!ticking.current) {
@@ -286,7 +372,11 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
               currentSectionId = section.id;
             }
           }
-          setActiveId(currentSectionId);
+
+          if (currentSectionId !== activeIdRef.current) {
+            activeIdRef.current = currentSectionId;
+            setActiveId(currentSectionId);
+          }
           ticking.current = false;
         });
         ticking.current = true;
@@ -367,7 +457,7 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                 initial={{ opacity: 0, x: -24 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
-                className="relative"
+                className="relative transform-gpu"
               >
                 <div className="relative w-full aspect-[16/10] md:aspect-[16/9] lg:aspect-auto lg:min-h-[410px] rounded-[20px] md:rounded-[28px] overflow-hidden shadow-xl">
                   <Image
@@ -387,7 +477,7 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                 initial={{ opacity: 0, x: 24 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.08 }}
-                className="max-w-2xl"
+                className="max-w-2xl transform-gpu"
               >
                 <p className="text-[#0ea5b7] font-semibold uppercase tracking-wide text-[10px] md:text-[12px] mb-2 md:mb-3">
                   Deliverability Guide
@@ -399,17 +489,8 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                   You spend hours crafting the perfect email. Your subject line is compelling. Your message is personalized. You click Send, expecting conversations to begin. But reply rates remain low. The problem might not be your copy – it might be that your email never reached the inbox.
                 </p>
 
+                {/* Meta info — broken 360Airo Team image removed */}
                 <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src="/logonew.png"
-                      alt="360Airo Team"
-                      width={140}
-                      height={40}
-                      className="h-7 md:h-10 w-auto object-contain"
-                      priority={false}
-                    />
-                  </div>
                   <span>• 360AIRO Team</span>
                   <span>• Updated: Sep 2026</span>
                   <span>• 11 min read</span>
@@ -447,7 +528,11 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                           : 'text-[#4b5563] hover:text-[#2f66db] hover:bg-white/70'
                       } ${item.indent ? 'ml-3' : ''}`}
                     >
-                      <span className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${isActive ? 'bg-[#4f63ff]' : 'bg-transparent'}`} />
+                      <span
+                        className={`absolute left-[-13px] top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full transition-all ${
+                          isActive ? 'bg-[#4f63ff]' : 'bg-transparent'
+                        }`}
+                      />
                       <span className="flex items-start gap-1.5">
                         {item.arrow ? (
                           <span className={`mt-[1px] text-sm ${isActive ? 'text-[#2f66db]' : 'text-[#94a3b8]'}`}>›</span>
@@ -479,11 +564,11 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                   'Your email never reached the inbox.',
                   'This happens more often than many businesses realize. In fact, 1 in 4 marketing emails never reaches the inbox, meaning thousands of carefully written emails are filtered into spam folders or blocked before recipients ever see them.',
                   "That's why understanding email deliverability is just as important as writing a great email.",
-                  'A well-written email has little value if it isn\'t delivered.',
+                  "A well-written email has little value if it isn't delivered.",
                   "In this guide, you'll learn how email deliverability works, what influences your email reputation, why inbox placement matters, and the journey every email takes before reaching your recipient.",
                 ]}
                 infographic={{
-                  title: 'What you\'ll learn',
+                  title: "What you'll learn",
                   paragraphs: ['The complete journey of an email – from send to inbox – and how to improve your deliverability step by step.'],
                 }}
                 blocks={[]}
@@ -495,11 +580,11 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                 title="1. What Is Email Deliverability?"
                 showImage={false}
                 intro={[
-                  'Email deliverability is the ability of an email to successfully reach a recipient\'s inbox instead of being rejected, blocked, or delivered to the spam folder.',
+                  "Email deliverability is the ability of an email to successfully reach a recipient's inbox instead of being rejected, blocked, or delivered to the spam folder.",
                   'Many people confuse delivery with deliverability.',
                   "They're not the same.",
                   'Imagine mailing a letter.',
-                  'The postal service may successfully deliver it to the recipient\'s building.',
+                  "The postal service may successfully deliver it to the recipient's building.",
                   'But if someone immediately throws it into the recycling bin before the recipient sees it, your message still failed to achieve its purpose.',
                   'Email works similarly.',
                   'An email can technically be delivered while still landing in spam.',
@@ -616,7 +701,7 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                 blocks={[
                   {
                     subtitle: 'Why it matters',
-                    paragraphs: ['Without authentication, mailbox providers may suspect spoofing or phishing attempts. Even legitimate emails can struggle with deliverability if authentication isn\'t configured correctly. Think of authentication as showing identification before entering a secure building – without ID, entry becomes much more difficult.'],
+                    paragraphs: ["Without authentication, mailbox providers may suspect spoofing or phishing attempts. Even legitimate emails can struggle with deliverability if authentication isn't configured correctly. Think of authentication as showing identification before entering a secure building – without ID, entry becomes much more difficult."],
                   },
                 ]}
               />
@@ -648,7 +733,7 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                 blocks={[
                   {
                     subtitle: 'Think of it like a credit score',
-                    paragraphs: ['You build it gradually through consistent, responsible behavior. Positive sending habits improve reputation; negative behavior damages it. For example, sending relevant emails to verified contacts strengthens trust, while sending thousands of emails to outdated lists creates the opposite effect. Once reputation begins declining, recovering it takes time – that\'s why proactive deliverability management is so important.'],
+                    paragraphs: ["You build it gradually through consistent, responsible behavior. Positive sending habits improve reputation; negative behavior damages it. For example, sending relevant emails to verified contacts strengthens trust, while sending thousands of emails to outdated lists creates the opposite effect. Once reputation begins declining, recovering it takes time – that's why proactive deliverability management is so important."],
                   },
                 ]}
               />
@@ -681,7 +766,7 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                 blocks={[
                   {
                     subtitle: 'What triggers spam filtering?',
-                    paragraphs: ['If enough signals appear suspicious, your email may be routed to spam instead of the inbox. Importantly, this doesn\'t necessarily mean your email was malicious – it simply means the provider wasn\'t confident enough to place it directly into the inbox.'],
+                    paragraphs: ["If enough signals appear suspicious, your email may be routed to spam instead of the inbox. Importantly, this doesn't necessarily mean your email was malicious – it simply means the provider wasn't confident enough to place it directly into the inbox."],
                   },
                 ]}
               />
@@ -700,7 +785,7 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                   title: 'Inbox placement decisions',
                   paragraphs: ['Where your email lands determines its success.'],
                   bullets: [
-                    'Primary inbox – your email reaches the main inbox, where it\'s most likely to be opened and acted upon.',
+                    "Primary inbox – your email reaches the main inbox, where it's most likely to be opened and acted upon.",
                     'Spam or junk folder – the email is delivered but unlikely to be seen.',
                     'Rejected or blocked – the email never reaches the recipient at all.',
                   ],
@@ -720,7 +805,7 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                 showImage={false}
                 intro={[
                   'Many marketers think the email journey ends once the message reaches the inbox.',
-                  'In reality, that\'s only the beginning.',
+                  "In reality, that's only the beginning.",
                   'Mailbox providers closely monitor how recipients interact with your emails.',
                   'Every action tells them something about the quality and relevance of your messages.',
                 ]}
@@ -746,7 +831,7 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                 title="9. Step 7: Monitor and Improve Email Deliverability"
                 showImage={false}
                 intro={[
-                  'Email deliverability isn\'t something you set up once and forget.',
+                  "Email deliverability isn't something you set up once and forget.",
                   "It's an ongoing process that requires regular monitoring and optimization.",
                   'The most successful outbound teams continuously track key performance indicators to ensure their domains remain healthy.',
                   'Some of the most important metrics include:',
@@ -831,30 +916,7 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                     title="Quick answers"
                     paragraphs={['Common questions about email deliverability.']}
                   />
-                  <FaqAccordion
-                    faqs={[
-                      {
-                        subtitle: '1. What is email deliverability?',
-                        paragraphs: ['Email deliverability is the ability of an email to successfully reach a recipient\'s inbox instead of being blocked or filtered into spam.'],
-                      },
-                      {
-                        subtitle: '2. What is inbox placement?',
-                        paragraphs: ['Inbox placement measures where your email lands after being accepted by the receiving mail server. A higher inbox placement rate means more emails reach the primary inbox.'],
-                      },
-                      {
-                        subtitle: '3. Why is email reputation important?',
-                        paragraphs: ['Email reputation helps mailbox providers determine whether you\'re a trustworthy sender. A strong reputation improves inbox placement, while a poor reputation increases the likelihood of spam filtering.'],
-                      },
-                      {
-                        subtitle: '4. What affects email deliverability?',
-                        paragraphs: ['Several factors influence deliverability, including sender reputation, domain reputation, authentication (SPF, DKIM, DMARC), email list quality, bounce rates, spam complaints, recipient engagement, and sending consistency.'],
-                      },
-                      {
-                        subtitle: '5. How can I improve email deliverability?',
-                        paragraphs: ['You can improve deliverability by authenticating your domain, warming up new email accounts, verifying email addresses, sending personalized relevant emails, monitoring sender reputation, and maintaining consistent sending behavior.'],
-                      },
-                    ]}
-                  />
+                  <FaqAccordion faqs={FAQ_ITEMS} />
                 </div>
               </section>
 
@@ -867,7 +929,7 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
                   'Every successful email begins long before the recipient reads the subject line.',
                   'It begins with trust.',
                   'Mailbox providers continuously evaluate who you are, how you send emails, and how recipients respond to your messages. Those signals determine whether your emails reach the inbox, disappear into spam, or get blocked entirely.',
-                  'Understanding email deliverability isn\'t just a technical exercise – it\'s a competitive advantage. Businesses that invest in healthy sender reputation, strong authentication, clean email lists, and consistent sending practices give every campaign a better chance of succeeding.',
+                  "Understanding email deliverability isn't just a technical exercise – it's a competitive advantage. Businesses that invest in healthy sender reputation, strong authentication, clean email lists, and consistent sending practices give every campaign a better chance of succeeding.",
                   'When your emails consistently reach the inbox, every other part of your outreach – from personalization to follow-ups – becomes more effective.',
                 ]}
                 infographic={{
@@ -888,50 +950,7 @@ export default function BlogHowEmailDeliverabilityWorksPage() {
         </section>
 
         {/* Recent Posts */}
-        <section className="px-3 md:px-4 pb-4 md:pb-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-3 md:mb-4">
-              <h2 className="text-[18px] md:text-[24px] font-bold text-[#111827]">Recent blog posts</h2>
-              <a href="/blogs" className="text-[12px] md:text-[14px] font-medium text-[#4f63ff] hover:underline">View all</a>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-              {[
-                {
-                  title: 'Email Delivery vs Email Deliverability: What\'s the Difference?',
-                  tag: 'Deliverability',
-                  href: '/blogs/email-delivery-vs-deliverability',
-                  description: 'Learn the critical difference between delivery and inbox placement.',
-                  image: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-                {
-                  title: 'Why Your Cold Emails Go to Spam (And How to Keep Them Out)',
-                  tag: 'Deliverability',
-                  href: '/blogs/why-cold-emails-go-to-spam',
-                  description: 'Understand why spam filters block your emails and how to fix it.',
-                  image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-                {
-                  title: 'Best Practices to Keep Email Bounce Rates Below the 3% Target',
-                  tag: 'Bounce Rate',
-                  href: '/blogs/best-practices-email-bounce-rates',
-                  description: 'Keep bounce rates low with verified data and proper authentication.',
-                  image: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80&fm=webp',
-                },
-              ].map((post) => (
-                <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
-                  <div className="relative w-full aspect-[16/9] overflow-hidden">
-                    <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
-                  </div>
-                  <div className="p-3 md:p-5">
-                    <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
-                    <h3 className="text-[14px] md:text-[16px] font-bold text-[#111827] leading-snug mb-1.5 md:mb-3 group-hover:text-[#4f63ff] transition-colors line-clamp-2">{post.title}</h3>
-                    <p className="text-[11px] md:text-[13px] text-[#6b7280] line-clamp-2">{post.description}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
+        <RecentPosts />
       </main>
       <Footer />
     </div>

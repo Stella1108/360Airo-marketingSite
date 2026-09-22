@@ -83,13 +83,12 @@ function ContentBlock({
   );
 }
 
-function SectionImage({ id }: { id: string }) {
+function SectionImage() {
   const image = {
     src: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1400&q=80&fm=webp',
     alt: '360 Airo vs ZoomInfo comparison',
     label: 'Sales Intelligence',
   };
-  if (!image) return null;
 
   return (
     <div className="rounded-[24px] overflow-hidden border border-[#dbe3f4] bg-white shadow-[0_12px_32px_rgba(79,99,255,0.08)]">
@@ -101,6 +100,7 @@ function SectionImage({ id }: { id: string }) {
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
           priority={false}
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -147,7 +147,7 @@ function ArticleSection({
         {blocks.map((block) => (
           <ContentBlock key={block.subtitle} {...block} />
         ))}
-        {showImage && <SectionImage id={id} />}
+        {showImage && <SectionImage />}
       </div>
     </section>
   );
@@ -157,21 +157,9 @@ function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          360 Airo
-          <br />
-          vs ZoomInfo
+        {/* Removed the broken Image wrapper here */}
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4">
+          360 Airo vs ZoomInfo
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Compare the two platforms and find the best fit for your sales team.
@@ -243,7 +231,7 @@ function ProsConsComponent() {
   return (
     <div className="my-4 grid gap-6 md:grid-cols-2">
       <div className="rounded-[16px] border border-[#dbe3f4] bg-white p-4 md:p-6 shadow-sm">
-        <h3 className="text-[18px] md:text-[20px] font-bold text-[#111827] mb-3 md:mb-4 text-[#0b5ca8]">360 Airo Pros</h3>
+        <h3 className="text-[18px] md:text-[20px] font-bold text-[#0b5ca8] mb-3 md:mb-4">360 Airo Pros</h3>
         <ul className="space-y-2 text-[#4f5668] text-[14px] md:text-[15px] leading-7 list-disc pl-5">
           <li>More than a contact database – combines prospecting with enrichment, signals, personalization, outreach, and automation</li>
           <li>Strong outbound focus – Email, LinkedIn, and SMS workflows</li>
@@ -259,7 +247,7 @@ function ProsConsComponent() {
         </ul>
       </div>
       <div className="rounded-[16px] border border-[#dbe3f4] bg-white p-4 md:p-6 shadow-sm">
-        <h3 className="text-[18px] md:text-[20px] font-bold text-[#111827] mb-3 md:mb-4 text-[#0b5ca8]">ZoomInfo Pros</h3>
+        <h3 className="text-[18px] md:text-[20px] font-bold text-[#0b5ca8] mb-3 md:mb-4">ZoomInfo Pros</h3>
         <ul className="space-y-2 text-[#4f5668] text-[14px] md:text-[15px] leading-7 list-disc pl-5">
           <li>Strong B2B intelligence – extensive search and targeting capabilities</li>
           <li>Intent data – identify companies showing relevant buying behavior</li>
@@ -310,25 +298,24 @@ export default function BlogAiroVsZoomInfoPage() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!ticking.current) {
-        rafId.current = requestAnimationFrame(() => {
-          const sections = tocItems
-            .map((item) => document.getElementById(item.id))
-            .filter(Boolean) as HTMLElement[];
+      if (ticking.current) return;
+      ticking.current = true;
+      rafId.current = requestAnimationFrame(() => {
+        const offset = 180;
+        let currentSectionId = 'introduction';
 
-          const scrollPosition = window.scrollY + 180;
-          let currentSectionId = sections[0]?.id || 'introduction';
-
-          for (const section of sections) {
-            if (scrollPosition >= section.offsetTop) {
-              currentSectionId = section.id;
-            }
+        for (const item of tocItems) {
+          const el = document.getElementById(item.id);
+          if (!el) continue;
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= offset) {
+            currentSectionId = item.id;
           }
-          setActiveId(currentSectionId);
-          ticking.current = false;
-        });
-        ticking.current = true;
-      }
+        }
+
+        setActiveId((prev) => (prev === currentSectionId ? prev : currentSectionId));
+        ticking.current = false;
+      });
     };
 
     handleScroll();
@@ -337,9 +324,7 @@ export default function BlogAiroVsZoomInfoPage() {
     window.addEventListener('resize', handleScroll, { passive: true });
 
     return () => {
-      if (rafId.current) {
-        cancelAnimationFrame(rafId.current);
-      }
+      if (rafId.current) cancelAnimationFrame(rafId.current);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
     };
@@ -633,16 +618,6 @@ export default function BlogAiroVsZoomInfoPage() {
 
                   {/* Meta info */}
                   <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="/logonew.png"
-                        alt="360Airo Team"
-                        width={140}
-                        height={40}
-                        className="h-7 md:h-10 w-auto object-contain"
-                        priority={false}
-                      />
-                    </div>
                     <span>• 360AIRO Team</span>
                     <span>• Updated: Nov 2026</span>
                     <span>• 10 min read</span>
@@ -716,7 +691,7 @@ export default function BlogAiroVsZoomInfoPage() {
                     bullets: [
                       'ZoomInfo: Deep B2B intelligence, company and contact data, intent signals',
                       '360 Airo: Intelligence + execution, AI SDR, multichannel outreach, deliverability',
-                      'The right choice depends on your team&apos;s biggest bottleneck',
+                      "The right choice depends on your team's biggest bottleneck",
                     ],
                   }}
                   blocks={[]}
@@ -1048,7 +1023,7 @@ export default function BlogAiroVsZoomInfoPage() {
                 ].map((post) => (
                   <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
                     <div className="relative w-full aspect-[16/9] overflow-hidden">
-                      <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
+                      <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} loading="lazy" />
                     </div>
                     <div className="p-3 md:p-5">
                       <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>

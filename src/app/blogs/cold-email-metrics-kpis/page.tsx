@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import Head from 'next/head';               // <-- added
+import Head from 'next/head';
 import '../../../styles/blogs.css';
 
 type TocItem = {
@@ -102,6 +102,7 @@ function SectionImage({ id }: { id: string }) {
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
           priority={false}
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#091b36]/50 via-transparent to-transparent" />
         <div className="absolute top-3 left-3 md:top-4 md:left-4 rounded-full bg-white/90 px-2.5 py-1 md:px-3 md:py-1.5 text-[10px] md:text-xs font-semibold text-[#4f63ff] backdrop-blur">
@@ -199,21 +200,9 @@ function RightPromoCards() {
   return (
     <aside className="sticky top-20 self-start hidden xl:block space-y-4 w-[250px]">
       <div className="rounded-[20px] border border-[#0C162C] bg-[#0C162C] p-4 shadow-[0_8px_24px_rgba(12,22,44,0.35)]">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="relative w-[180px] md:w-[200px] h-[110px] md:h-[130px] shrink-0">
-            <Image
-              src="/360aironewlog.png"
-              alt="360Airo logo"
-              fill
-              className="object-contain"
-              priority={false}
-            />
-          </div>
-        </div>
-        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mt-[-20px] md:mt-[-30px] mb-3 md:mb-4">
-          Cold Email
-          <br />
-          Metrics Guide
+        {/* Removed the broken Image wrapper here */}
+        <h3 className="text-[15px] md:text-[16px] leading-[1.3] font-bold text-white text-center mb-3 md:mb-4">
+          Cold Email Metrics Guide
         </h3>
         <p className="text-[11px] md:text-[12px] leading-5 text-white text-center mb-3 md:mb-4">
           Track the KPIs that actually matter—from deliverability to pipeline impact.
@@ -239,33 +228,29 @@ function RightPromoCards() {
 
 export default function BlogColdEmailMetricsPage() {
   const [activeId, setActiveId] = useState('introduction');
-  const [searchQuery, setSearchQuery] = useState('');
-  const categoryScrollRef = useRef<HTMLDivElement | null>(null);
   const ticking = useRef(false);
   const rafId = useRef<number | null>(null);
 
-  // INP FIX: Throttle scroll handler with requestAnimationFrame
   useEffect(() => {
     const handleScroll = () => {
-      if (!ticking.current) {
-        rafId.current = requestAnimationFrame(() => {
-          const sections = tocItems
-            .map((item) => document.getElementById(item.id))
-            .filter(Boolean) as HTMLElement[];
+      if (ticking.current) return;
+      ticking.current = true;
+      rafId.current = requestAnimationFrame(() => {
+        const offset = 180;
+        let currentSectionId = 'introduction';
 
-          const scrollPosition = window.scrollY + 180;
-          let currentSectionId = sections[0]?.id || 'introduction';
-
-          for (const section of sections) {
-            if (scrollPosition >= section.offsetTop) {
-              currentSectionId = section.id;
-            }
+        for (const item of tocItems) {
+          const el = document.getElementById(item.id);
+          if (!el) continue;
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= offset) {
+            currentSectionId = item.id;
           }
-          setActiveId(currentSectionId);
-          ticking.current = false;
-        });
-        ticking.current = true;
-      }
+        }
+
+        setActiveId((prev) => (prev === currentSectionId ? prev : currentSectionId));
+        ticking.current = false;
+      });
     };
 
     handleScroll();
@@ -282,13 +267,11 @@ export default function BlogColdEmailMetricsPage() {
     };
   }, []);
 
-  // Define the featured image URL once
   const featuredImageUrl = 'https://360airo.com/og-images/cold-email-metrics.jpg';
 
   return (
     <>
       <Head>
-        {/* PRIMARY META TAGS */}
         <title>Cold Email Metrics: Key KPIs to Measure Outreach Success</title>
         <meta
           name="description"
@@ -303,13 +286,11 @@ export default function BlogColdEmailMetricsPage() {
           href="https://360airo.com/blog/key-metrics-used-to-measure-cold-email-outreach-success"
         />
 
-        {/* ROBOTS */}
         <meta
           name="robots"
           content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
         />
 
-        {/* OPEN GRAPH */}
         <meta property="og:type" content="article" />
         <meta
           property="og:title"
@@ -329,7 +310,6 @@ export default function BlogColdEmailMetricsPage() {
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="en_US" />
 
-        {/* TWITTER CARD */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
@@ -341,7 +321,6 @@ export default function BlogColdEmailMetricsPage() {
         />
         <meta name="twitter:image" content={featuredImageUrl} />
 
-        {/* JSON‑LD: Combined @graph (Organization, WebSite, WebPage, Article, BreadcrumbList, FAQPage) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -489,7 +468,6 @@ export default function BlogColdEmailMetricsPage() {
           }}
         />
 
-        {/* PRELOAD HERO IMAGE (performance) */}
         <link
           rel="preload"
           fetchPriority="high"
@@ -498,7 +476,6 @@ export default function BlogColdEmailMetricsPage() {
           type="image/webp"
         />
 
-        {/* GLOBAL STYLES */}
         <style jsx global>{`
           .scrollbar-hide {
             -ms-overflow-style: none;
@@ -528,7 +505,6 @@ export default function BlogColdEmailMetricsPage() {
           {/* Hero Section */}
           <section className="pt-6 md:pt-10 pb-6 md:pb-8 px-3 md:px-4 border-b border-[#ddd9ef]">
             <div className="max-w-7xl mx-auto">
-              {/* Breadcrumb */}
               <div className="flex flex-wrap items-center gap-1 md:gap-2 text-[10px] md:text-sm text-[#6b7280] mb-2 md:mb-4">
                 <Link href="/blogs" className="font-medium text-[#111827] hover:text-[#4f63ff] transition-colors">
                   Blog
@@ -581,18 +557,7 @@ export default function BlogColdEmailMetricsPage() {
                     You send 1,000 cold emails. Seven hundred are opened. Fifty prospects reply. Ten book a meeting. Was the campaign successful? Learn which metrics truly measure cold email performance.
                   </p>
 
-                  {/* Meta info */}
                   <div className="mb-3 md:mb-4 inline-flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 rounded-xl border border-[#0C162C] bg-[#0C162C] px-3 py-2 md:px-4 md:py-3 text-white text-[10px] md:text-sm whitespace-normal md:whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="/logonew.png"
-                        alt="360Airo Team"
-                        width={140}
-                        height={40}
-                        className="h-7 md:h-10 w-auto object-contain"
-                        priority={false}
-                      />
-                    </div>
                     <span>• 360AIRO Team</span>
                     <span>• Updated: Jun 2026</span>
                     <span>• 10 min read</span>
@@ -648,7 +613,6 @@ export default function BlogColdEmailMetricsPage() {
 
               {/* Articles */}
               <div className="min-w-0 space-y-4">
-                {/* Introduction */}
                 <ArticleSection
                   key="introduction"
                   id="introduction"
@@ -671,7 +635,6 @@ export default function BlogColdEmailMetricsPage() {
                   blocks={[]}
                 />
 
-                {/* 1. Why Cold Email Metrics Matter */}
                 <ArticleSection
                   key="why-metrics-matter"
                   id="why-metrics-matter"
@@ -705,7 +668,6 @@ export default function BlogColdEmailMetricsPage() {
                   ]}
                 />
 
-                {/* 2. Delivery Rate and Bounce Rate */}
                 <ArticleSection
                   key="delivery-and-bounce"
                   id="delivery-and-bounce"
@@ -732,7 +694,6 @@ export default function BlogColdEmailMetricsPage() {
                   ]}
                 />
 
-                {/* 3. Email Open Rate */}
                 <ArticleSection
                   key="open-rate"
                   id="open-rate"
@@ -789,7 +750,6 @@ export default function BlogColdEmailMetricsPage() {
                   ]}
                 />
 
-                {/* 4. Email Response Rate */}
                 <ArticleSection
                   key="response-rate"
                   id="response-rate"
@@ -821,7 +781,6 @@ export default function BlogColdEmailMetricsPage() {
                   ]}
                 />
 
-                {/* 5. Positive Reply Rate */}
                 <ArticleSection
                   key="positive-reply-rate"
                   id="positive-reply-rate"
@@ -852,7 +811,6 @@ export default function BlogColdEmailMetricsPage() {
                   ]}
                 />
 
-                {/* 6. Email Conversion Rate */}
                 <ArticleSection
                   key="conversion-rate"
                   id="conversion-rate"
@@ -881,7 +839,6 @@ export default function BlogColdEmailMetricsPage() {
                   ]}
                 />
 
-                {/* 7. Unsubscribe Rate */}
                 <ArticleSection
                   key="unsubscribe-rate"
                   id="unsubscribe-rate"
@@ -909,7 +866,6 @@ export default function BlogColdEmailMetricsPage() {
                   ]}
                 />
 
-                {/* 8. Spam Complaint Rate */}
                 <ArticleSection
                   key="spam-complaint-rate"
                   id="spam-complaint-rate"
@@ -940,7 +896,6 @@ export default function BlogColdEmailMetricsPage() {
                   ]}
                 />
 
-                {/* 9. Which KPIs Matter Most */}
                 <ArticleSection
                   key="which-kpis-matter"
                   id="which-kpis-matter"
@@ -971,7 +926,6 @@ export default function BlogColdEmailMetricsPage() {
                   ]}
                 />
 
-                {/* 10. How to Improve Cold Email Reply Rate */}
                 <ArticleSection
                   key="improve-reply-rate"
                   id="improve-reply-rate"
@@ -1004,7 +958,6 @@ export default function BlogColdEmailMetricsPage() {
                   ]}
                 />
 
-                {/* FAQ Section */}
                 <section id="faqs" className="scroll-mt-28">
                   <h2 className="text-[20px] md:text-[24px] font-bold text-[#111827] mb-3 md:mb-4">
                     11. Frequently Asked Questions
@@ -1041,7 +994,6 @@ export default function BlogColdEmailMetricsPage() {
                   </div>
                 </section>
 
-                {/* Conclusion */}
                 <ArticleSection
                   key="conclusion"
                   id="conclusion"
@@ -1099,7 +1051,7 @@ export default function BlogColdEmailMetricsPage() {
                 ].map((post) => (
                   <a key={post.href} href={post.href} className="group overflow-hidden rounded-[16px] md:rounded-[20px] border border-[#dbe3f4] bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] hover:shadow-[0_14px_32px_rgba(15,23,42,0.08)] transition-shadow">
                     <div className="relative w-full aspect-[16/9] overflow-hidden">
-                      <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} />
+                      <Image src={post.image} alt={post.title} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={false} loading="lazy" />
                     </div>
                     <div className="p-3 md:p-5">
                       <p className="text-[10px] md:text-[11px] font-semibold tracking-[0.18em] uppercase text-[#4f63ff] mb-1 md:mb-2">{post.tag}</p>
